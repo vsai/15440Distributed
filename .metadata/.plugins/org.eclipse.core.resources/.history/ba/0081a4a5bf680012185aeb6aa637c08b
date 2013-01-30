@@ -1,0 +1,30 @@
+package processManaging;
+
+import java.util.Scanner;
+
+public class ProcessManager {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		while(true){
+			String input = sc.nextLine();
+			if (input.equals("ps")) {
+				
+			} else if (input.equals("quit")){
+				
+			} else {
+				String in[] = input.split(" ");
+				//in[0] = process name
+				//in[1] = arg0
+				//in[2] = arg1
+				//etc.
+			}
+			
+		}
+	}
+
+}

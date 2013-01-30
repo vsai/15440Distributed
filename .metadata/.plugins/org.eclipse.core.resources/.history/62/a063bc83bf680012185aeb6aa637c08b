@@ -1,0 +1,28 @@
+package processMigration;
+
+public class MigratableProcesses implements MigratableProcess {
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void suspend() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		System.out.println("YOLO SWAG: ");
+		for (String arg : args) {
+			System.out.println(arg);
+		}
+	}
+
+}

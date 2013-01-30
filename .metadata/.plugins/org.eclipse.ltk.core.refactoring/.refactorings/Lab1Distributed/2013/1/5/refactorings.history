@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;Lab1Distributed&apos;&#x0A;- Original project: &apos;Lab1Distributed&apos;&#x0A;- Original element: &apos;processMigration.MigrateProcesses.java&apos;" description="Delete element" element1="/src&lt;processMigration{MigrateProcesses.java" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1359322012443" subPackages="false" version="1.0"/>
+</session>

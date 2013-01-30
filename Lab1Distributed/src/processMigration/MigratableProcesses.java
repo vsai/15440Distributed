@@ -16,7 +16,6 @@ public class MigratableProcesses implements MigratableProcess {
 		System.out.println("Suspended");
 	}
 
-	static ArrayList<String> processArgs;
 	
 	/**
 	 * @param args
@@ -26,9 +25,6 @@ public class MigratableProcesses implements MigratableProcess {
 		
 		System.out.println("YOLO SWAG: ");
 		System.out.println(args.length);
-		for (String arg : args) {
-			processArgs.add(arg);
-		}
 	}
-
+	
 }
