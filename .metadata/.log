@@ -265,3 +265,35 @@ Caused by: java.lang.IllegalArgumentException: Project facet jst.web has not bee
 	at org.eclipse.wst.common.project.facet.core.ProjectFacetsManager.getProjectFacet(ProjectFacetsManager.java:75)
 	at org.eclipse.jpt.jpa.core.JptJpaCorePlugin.<clinit>(JptJpaCorePlugin.java:210)
 	... 41 more
+!SESSION 2013-01-30 14:59:38.920 -----------------------------------------------
+eclipse.buildId=M20110909-1335
+java.version=1.6.0_37
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product -keyring /Users/apple/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.java.product -keyring /Users/apple/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2013-01-30 15:06:40.401
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY com.surelogic.common.core 2 0 2013-01-30 15:19:33.130
+!MESSAGE Eclipse's maximum memory is set to 379 MB. This setting may be too low to reliably run SureLogic's Eclipse-based tools. SureLogic recommends a maximum memory setting of 768 MB which can be accomplished by adding '-vmargs -Xmx768m' to the Eclipse command line. (in method com.surelogic.common.core.logging.SLEclipseStatusUtility$LogTouchNotificationUI.notifyLowMemory(-) thread "main")
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.130
+!MESSAGE Plug-in Vendor: SureLogic, Inc.
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.130
+!MESSAGE Plug-in Name: SureLogic Non-User Interface Eclipse Common Code
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.130
+!MESSAGE Version: 4.2.1.201201121049
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.130
+!MESSAGE Plug-in ID: com.surelogic.common.core
+
+!ENTRY com.surelogic.common.core 2 0 2013-01-30 15:19:33.177
+!MESSAGE Eclipse's maximum PermGen size is set to 2147483647 MB. This setting may be too low to reliably run SureLogic's Eclipse-based tools. SureLogic recommends a maximum PermGen setting of 256 MB which can be accomplished on Sun JVMs by adding '-vmargs -XX:MaxPermSize=256m' to the Eclipse command line. (in method com.surelogic.common.core.logging.SLEclipseStatusUtility$LogTouchNotificationUI.notifyLowMemory(-) thread "main")
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.177
+!MESSAGE Plug-in Vendor: SureLogic, Inc.
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.177
+!MESSAGE Plug-in Name: SureLogic Non-User Interface Eclipse Common Code
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.177
+!MESSAGE Version: 4.2.1.201201121049
+!SUBENTRY 1 com.surelogic.common.core 2 0 2013-01-30 15:19:33.177
+!MESSAGE Plug-in ID: com.surelogic.common.core

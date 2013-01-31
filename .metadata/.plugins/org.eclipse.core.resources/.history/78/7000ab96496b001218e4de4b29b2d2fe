@@ -1,0 +1,13 @@
+package processManaging;
+
+import java.net.Socket;
+
+public class SocketRespondThread extends Thread{
+
+	Socket conn;
+	
+	SocketRespondThread(Socket conn){
+		this.conn = conn;
+	}
+	
+}

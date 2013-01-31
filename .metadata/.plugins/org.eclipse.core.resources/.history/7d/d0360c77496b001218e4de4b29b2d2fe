@@ -1,0 +1,11 @@
+package processManaging;
+
+public class SocketRespondThread extends Thread{
+
+	Socket conn;
+	
+	SocketRespondThread(Socket conn){
+		this.conn = conn;
+	}
+	
+}

@@ -1,14 +1,15 @@
 package processManaging;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Scanner;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
+//import java.lang.reflect.Constructor;
+//import java.util.HashMap;
+//import java.util.Scanner;
 
-import processMigration.MigratableProcess;
+//import processMigration.MigratableProcess;
 
-import java.net.Socket;
+//import java.net.ServerSocket;
+//import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -20,29 +21,18 @@ public class ProcessManager {
 	private static boolean isSlave;
 	private static String hostname;
 	private static int hostPortnum = 12121;
-	private static HashMap<MigratableProcess, String[]> processes;
+//	private static HashMap<MigratableProcess, String[]> processes;
+//	private static HashMap<ProcessManager, HashMap<MigratableProcess, String[]>> a;
 	private static InetAddress ip;
-	private static Socket clientSocket;
-	
-	//Master = start the new processes
-	//Slave = does not start new processes
-	//Master = accepts ps, quit, allows to start new processes
-	//Slave = accepts ps, quit
-	
-	public static void main(String[] args) {	
-		if (args.length == 0) {
-			hostname = null;
-			System.out.println("I'm a MASTER");
-			isSlave = false;	
-		} else if (args.length == 2 && args[0].equals("-c")) {
-			hostname = args[1];
-			System.out.println("I'm a SLAVE. Master is :" + hostname);
-			isSlave = true;
-		} else {
-			System.out.println("Invalid input to startup ProcessManager");
-			System.exit(0);
-		}
-		
+
+//	private static Socket clientSocket;
+//	private static Thread listenThread;
+
+	public static InetAddress getIp() {
+		return ip;
+	}
+
+	public static void setIp() {
 		for (int i = 0; i<3; i++) {
 			try {
 				ip = InetAddress.getLocalHost();
@@ -58,6 +48,60 @@ public class ProcessManager {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	
+	//Master = start the new processes
+	//Slave = does not start new processes
+	//Master = accepts ps, quit, allows to start new processes
+	//Slave = accepts ps, quit
+
+	
+	public static void main(String[] args) {	
+		if (args.length == 0) {
+			hostname = null;
+			System.out.println("I'm a MASTER");
+			isSlave = false;	
+		} else if (args.length == 2 && args[0].equals("-c")) {
+			hostname = args[1];
+			System.out.println("I'm a SLAVE. Master is :" + hostname);
+			isSlave = true;
+		} else {
+			System.out.println("Invalid input to startup ProcessManager");
+			System.exit(0);
+		}
+		
+		setIp();
+		
+		Master m = null;
+		Slave s = null;
+		
+		if (!isSlave){
+			m = new Master(hostPortnum, getIp());
+			hostname = ip.getHostAddress();
+			m.startUp();
+		}
+		
+		s = new Slave(hostname, hostPortnum, getIp());
+		s.startUp();	
+		
+		/*
+		
+		if (!isSlave) {
+			//spawn a new thread to listen for incoming connections
+			//if we get a new connection, add it to the list of slaves
+			try {
+				ServerSocket server = new ServerSocket(hostPortnum);
+			} catch (IOException e) {
+				System.out.println("Couldn't listen on port: " + hostPortnum);
+				e.printStackTrace();
+			}
+			
+			//spawn a thread for heartbeats?
+			//every 5 seconds, for every second, check if it still exists. if it doesn't delete it from the list.
+		}
+		
+		
 		if (isSlave) {
 			try {
 				clientSocket = new Socket(hostname, hostPortnum);
@@ -83,6 +127,7 @@ public class ProcessManager {
 		}
 		
 		processes = new HashMap<MigratableProcess, String[]>();
+		
 		Scanner sc = new Scanner(System.in);
 		
 		while(true){
@@ -124,5 +169,6 @@ public class ProcessManager {
 				System.out.println("Slave: ps, quit");
 			}
 		}
+		*/
 	}
 }

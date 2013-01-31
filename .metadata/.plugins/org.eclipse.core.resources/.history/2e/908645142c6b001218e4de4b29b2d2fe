@@ -1,0 +1,39 @@
+package processManaging;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+
+public class Master {
+
+	Thread listen;
+	Thread heartbeat;
+	ServerSocket listenSocket;
+	public Master(final int hostPortnum) {
+		listen = new Thread("MasterListen") {
+			public void run() {
+				try {
+					listenSocket = new ServerSocket(hostPortnum);
+				} catch (IOException e) {
+					System.out.println("Couldn't listen on: " + hostPortnum);
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		heartbeat = new Thread("MasterHeartbeater") {
+		
+		};
+		
+		
+	}
+
+	public void startUp() {
+		listen.run();
+	}
+	
+	public void go(){
+		listenSocket.accept();
+		BufferedReader in = new PrintWriter(listenSocket.)
+	}
+	
+}

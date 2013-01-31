@@ -1,0 +1,47 @@
+package processManaging;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+public class Master {
+
+	Thread listen;
+	Thread heartbeat;
+	ServerSocket listenSocket;
+	BufferedReader in;
+	
+	ArrayList<Socket> allSockets;
+	
+	public Master(final int hostPortnum, InetAddress selfIp) {
+		allSockets = new ArrayList<Socket>();
+		listen = new Thread("MasterListen") {
+			public void run() {
+				try {
+					listenSocket = new ServerSocket(hostPortnum);
+				} catch (IOException e) {
+					System.out.println("Couldn't listen on: " + hostPortnum);
+					e.printStackTrace();
+				}
+			}
+		};
+	}
+
+	public void startUp() {
+		listen.run();
+		while (true) {
+			
+		}
+		try {
+			Socket clientConn = listenSocket.accept();
+			allSockets.add(clientConn);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
+	
+}

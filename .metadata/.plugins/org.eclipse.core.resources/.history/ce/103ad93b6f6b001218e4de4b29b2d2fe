@@ -1,0 +1,23 @@
+package processManaging;
+
+import java.net.Socket;
+
+public class SocketRespondThread extends Thread{
+
+	Socket conn;
+	
+	SocketRespondThread(Socket conn){
+		this.conn = conn;
+	}
+	
+	public void run(){
+		//handle incoming messages from the client
+		
+		//new client coming in
+		
+		//heartbeat
+		
+		//request for 
+	}
+	
+}
