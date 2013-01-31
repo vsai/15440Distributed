@@ -1,7 +1,0 @@
-package processManaging;
-
-public class SocketRespondThread extends Thread{
-
-	
-	
-}
