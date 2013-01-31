@@ -31,7 +31,7 @@ public class Slave {
 		this.processes = new HashMap<MigratableProcess, String[]>();
 	}
 	
-	public String messageToMaster(String message){
+	public String sendMessageToMaster(String message){
 		String ipAddr = selfIp.getHostAddress();
 		return ipAddr + " " + message;
 	}
@@ -60,7 +60,7 @@ public class Slave {
     		
     		if (input.equals("ps")) {
     			try {
-					out.println(messageToMaster("ps"));
+					out.println(sendMessageToMaster("ps"));
 					String inputLine;
 					while ((inputLine = in.readLine()) != null) {   
 						System.out.println(inputLine);					    
@@ -76,7 +76,7 @@ public class Slave {
     			
     		} else if (input.equals("quit")){
     			try {
-    				out.println(messageToMaster("quit"));
+    				out.println(sendMessageToMaster("Yo master I'm done: quit"));
 					out.close();
 					in.close();
 	    			socketToMaster.close();
@@ -87,7 +87,7 @@ public class Slave {
     			System.exit(0);
     			
     		} else { //Process input with commands - only for master
-    			out.println(messageToMaster(input));
+    			out.println(selfIp.getHostAddress() + ": " + input);
     			//String in1[] = input.split(" ", 2);
     			//String processArgs[] = in1[1].split(" ");
     			
