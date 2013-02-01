@@ -56,3 +56,15 @@ Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.
 
 !ENTRY ch.ethz.inf.pm.jml.plugin 4 0 2013-02-01 02:18:09.169
 !MESSAGE Error building project, cannot launch.
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 2 0 2013-02-01 02:30:56.181
+!MESSAGE JML2 compiler: Slave.java had problems.
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 4 0 2013-02-01 02:30:56.182
+!MESSAGE Error building project, cannot launch.
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 2 0 2013-02-01 02:30:59.695
+!MESSAGE JML2 compiler: Slave.java had problems.
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 4 0 2013-02-01 02:30:59.696
+!MESSAGE Error building project, cannot launch.

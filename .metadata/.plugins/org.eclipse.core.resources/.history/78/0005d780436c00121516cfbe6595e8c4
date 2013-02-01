@@ -39,12 +39,11 @@ public class SocketRespondThread extends Thread{
 				} else if (clientCommand.equals("quit")) {
 					
 				} else if (clientCommand.equals("heartbeat")) {
-					//IS THIS NECESSARY?
-				} else {
-					//new process
+					
 				}
 				
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -77,6 +77,7 @@ public class Slave extends Thread{
 					e.printStackTrace();
 				}
     			
+    			
     		} else if (input.equals("quit")){
     			try {
     				out.println(messageToMaster("quit"));
@@ -91,6 +92,8 @@ public class Slave extends Thread{
     			
     		} else { //Process input with commands - only for master
     			out.println(messageToMaster(input));
+    			//String in1[] = input.split(" ", 2);
+    			//String processArgs[] = in1[1].split(" ");
     			
     			/*
     			try {
@@ -110,6 +113,63 @@ public class Slave extends Thread{
     			}
     			*/
     		} 
-    	}	
-    }	
+    		/*else {
+    			System.out.println("Unsupported input");
+    			System.out.println("Master: ps, quit, and can start new processes");
+    			System.out.println("Slave: ps, quit");
+    		}
+    		*/
+    	}
+
+        /*
+        
+        try {
+        	out.close();
+        	in.close();
+  //      	stdIn.close();
+        	socketToMaster.close();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
+        */	
+    }
+	
+	
+	/*
+	public void sendMessageToServer(String message) {
+		PrintWriter out = null;
+        BufferedReader in = null;
+        
+        try {
+        	socketToHost = new Socket(hostname, hostPortnum);
+            out = new PrintWriter(socketToHost.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socketToHost.getInputStream()));
+            //socketToHost.connect(listenSocket.getLocalSocketAddress());
+        } catch (UnknownHostException e) {
+            System.err.println("Don't know about host: " + hostname);
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Couldn't get I/O for the connection to: " + hostname);
+            System.exit(1);
+        }
+        
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        String userInput;
+
+        out.println(message);
+        
+
+        out.close();
+        try {
+        	in.close();
+        	stdIn.close();
+        	socketToHost.close();
+        } catch (IOException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }	
+        
+	}
+	*/
+	
 }
