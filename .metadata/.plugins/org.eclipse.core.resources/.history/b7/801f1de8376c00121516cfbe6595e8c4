@@ -32,7 +32,7 @@ public class Master extends Thread{
 		};
 	}
 
-	public void run() {
+	public void startUp() {
 		listen.run();
 		while (true) {
 			try {
@@ -48,5 +48,5 @@ public class Master extends Thread{
 				e.printStackTrace();
 			}
 		}
-	}
+	}	
 }

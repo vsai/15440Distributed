@@ -4,20 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 
 
 public class SocketRespondThread extends Thread{
 
 	Socket conn;
-    PrintStream out; //what the socket writes to the client --from server
+    ObjectOutputStream out; //what the socket writes to the client --from server
     BufferedReader in; //what the socket (client) reads from the client --from server
 
 	SocketRespondThread(Socket conn){
 		this.conn = conn;
 		try {
-			out = new PrintStream(conn.getOutputStream());
+			out = new ObjectOutputStream(conn.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -32,7 +31,6 @@ public class SocketRespondThread extends Thread{
 				String mess[] = clientMessage.split(" ", 2);
 				//String ipAddr = mess[0];
 				System.out.println("Client sent: " + clientMessage);
-				out.println("Master received message");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

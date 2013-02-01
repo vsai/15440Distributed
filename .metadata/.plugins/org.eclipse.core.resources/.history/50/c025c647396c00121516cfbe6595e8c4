@@ -79,11 +79,11 @@ public class ProcessManager {
 		if (!isSlave){
 			m = new Master(hostPortnum, getIp());
 			hostname = ip.getHostAddress();
-			m.start();
+			m.startUp();
 		}
 		
 		s = new Slave(hostname, hostPortnum, getIp());
-		s.start();
+		s.startUp();	
 		
 		/*
 		

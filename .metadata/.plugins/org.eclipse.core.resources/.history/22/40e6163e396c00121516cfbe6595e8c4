@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 import processMigration.MigratableProcess;
 
-public class Slave extends Thread{
+public class Slave {
 
 	Socket socketToMaster;
 	String hostname;
@@ -36,7 +36,7 @@ public class Slave extends Thread{
 		return ipAddr + " " + message;
 	}
 	
-	public void run() {
+	public void startUp() {
         PrintStream out = null; //what you write to the master
         BufferedReader in = null; //what you read from master
         

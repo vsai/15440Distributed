@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 
 
@@ -32,7 +31,7 @@ public class SocketRespondThread extends Thread{
 				String mess[] = clientMessage.split(" ", 2);
 				//String ipAddr = mess[0];
 				System.out.println("Client sent: " + clientMessage);
-				out.println("Master received message");
+				out.
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

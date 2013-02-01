@@ -6,11 +6,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.lang.Thread;
 
-public class Master extends Thread{
+public class Master {
 
 	Thread listen;
+	Thread heartbeat;
 	ServerSocket listenSocket;
 	BufferedReader in;
 	
@@ -32,7 +32,7 @@ public class Master extends Thread{
 		};
 	}
 
-	public void run() {
+	public void startUp() {
 		listen.run();
 		while (true) {
 			try {
@@ -47,6 +47,9 @@ public class Master extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-	}
+		
+	}	
+	
 }

@@ -11,6 +11,7 @@ import java.lang.Thread;
 public class Master extends Thread{
 
 	Thread listen;
+	Thread heartbeat;
 	ServerSocket listenSocket;
 	BufferedReader in;
 	
@@ -32,14 +33,14 @@ public class Master extends Thread{
 		};
 	}
 
-	public void run() {
+	public void startUp() {
 		listen.run();
 		while (true) {
 			try {
 				Socket clientConn = listenSocket.accept();
 				SocketRespondThread srt = new SocketRespondThread(clientConn);
 				allSockets.add(clientConn);
-				String hostAdd = clientConn.getLocalAddress().getHostAddress();
+				//String hostAdd = clientConn.get
 				socketIps.add(hostAdd);
 				System.out.println("Connected to: " + hostAdd);
 				srt.run();
@@ -47,6 +48,9 @@ public class Master extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-	}
+		
+	}	
+	
 }
