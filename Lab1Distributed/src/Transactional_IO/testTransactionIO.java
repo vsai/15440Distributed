@@ -27,8 +27,8 @@ public class testTransactionIO {
 			String str = in.readLine();
 			
 			System.out.println(str);
-			 str = in.readLine();
-			 System.out.println(str);
+			str = in.readLine();
+			System.out.println(str);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,25 +1,26 @@
 package processManaging;
 
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+//import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.lang.Thread;
 
 public class Master extends Thread{
 
 	Thread listen;
 	ServerSocket listenSocket;
-	BufferedReader in;
-	
-	ArrayList<Socket> allSockets;
-	ArrayList<String> socketIps;
+	//BufferedReader in;
+
+	Map<Long, Map<String, String[]>> allProcess;
 	
 	public Master(final int hostPortnum, InetAddress selfIp) {
-		allSockets = new ArrayList<Socket>();
-		socketIps = new ArrayList<String>();
+		allProcess = Collections.synchronizedMap(new HashMap<Long, Map<String, String[]>>());
 		listen = new Thread("MasterListen") {
 			public void run() {
 				try {
@@ -37,14 +38,13 @@ public class Master extends Thread{
 		while (true) {
 			try {
 				Socket clientConn = listenSocket.accept();
-				SocketRespondThread srt = new SocketRespondThread(clientConn);
-				allSockets.add(clientConn);
+				Map<String, String[]> p = Collections.synchronizedMap(new HashMap<String, String[]>());
+				SocketRespondThread srt = new SocketRespondThread(clientConn, p);
+				allProcess.put(srt.getId(), p);
 				String hostAdd = clientConn.getLocalAddress().getHostAddress();
-				socketIps.add(hostAdd);
 				System.out.println("Connected to: " + hostAdd);
 				srt.start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

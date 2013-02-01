@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public class TransactionalFileOutputStream extends java.io.OutputStream implements java.io.Serializable {
 
+	private static final long serialVersionUID = 6522677712988099866L;
 	private String myFile;
 	private int seekLocation;
 	public static void main(String[] args) {

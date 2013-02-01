@@ -3,10 +3,13 @@ package processManaging;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 //import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 //import java.lang.reflect.Constructor;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,6 +17,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import processMigration.MigratableProcess;
+
+/*
+ * USE JOINS AROUND THE SUSPEND STUFF
+ */
+
 
 public class Slave extends Thread{
 
@@ -39,11 +47,13 @@ public class Slave extends Thread{
 	
 	public void run() {
         PrintWriter out = null; //what you write to the master
+        //ObjectOutputStream out = null;
         BufferedReader in = null; //what you read from master
         
         try {
         	socketToMaster = new Socket(hostname, hostPortnum);
             out = new PrintWriter(socketToMaster.getOutputStream(), true);
+            //out = new ObjectOutputStream(socketToMaster.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socketToMaster.getInputStream()));
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + hostname);
@@ -62,8 +72,11 @@ public class Slave extends Thread{
     		if (input.equals("ps")) {
     			try {
 					out.println(messageToMaster("ps"));
+					//out.writeChars(messageToMaster("ps"));
 					String inputLine = in.readLine();
 					System.out.println(inputLine);
+					
+					
 					
 					//while ((inputLine = in.readLine()) != null) {   
 					//	System.out.println(inputLine);					    
@@ -80,6 +93,7 @@ public class Slave extends Thread{
     		} else if (input.equals("quit")){
     			try {
     				out.println(messageToMaster("quit"));
+    				//out.writeChars(messageToMaster("quit"));
 					out.close();
 					in.close();
 	    			socketToMaster.close();
@@ -91,7 +105,51 @@ public class Slave extends Thread{
     			
     		} else { //Process input with commands - only for master
     			out.println(messageToMaster(input));
-    			
+    			/*
+    			try {
+					out.writeChars(messageToMaster(input));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				*/
+    			String inputLine = null;
+    			try {
+					inputLine = in.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			String[] inputLine2 = inputLine.split(" ", 2);
+    			String[] processDetails = inputLine2[1].split(" ",2);
+    			String[] processArgs = processDetails[1].split(" ");
+    			try {
+					Class<?> myClass = Class.forName(processDetails[0]);
+					Constructor<?> myCtor = myClass.getConstructor();
+    				myCtor.getClass().getConstructor();
+    				Thread t = new Thread((Runnable) myCtor.newInstance(processArgs));
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			/*
     			try {
     				Class<?> myClass = Class.forName(in1[0]);
@@ -108,7 +166,7 @@ public class Slave extends Thread{
     				System.out.println("This process does not have a constructor");
     				e.printStackTrace();
     			}
-    			*/
+    			*/ 
     		} 
     	}	
     }	

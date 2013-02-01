@@ -11,16 +11,13 @@ public class TransactionalFileInputStream extends java.io.InputStream implements
 	private int seekLocation;
 	//private ;
 	
-	public TransactionalFileInputStream(String file) throws FileNotFoundException
-	{
+	public TransactionalFileInputStream(String file) throws FileNotFoundException {
 		myFile=file;
 		seekLocation=0;
-		
 	}
 	
 	@Override
 	public int read() throws IOException {
-		
 		FileInputStream f= new FileInputStream(myFile);
 		f.skip(seekLocation);
 		int n= f.read();
@@ -28,6 +25,5 @@ public class TransactionalFileInputStream extends java.io.InputStream implements
 		f.close();
 		return n;
 	}
-
 
 }

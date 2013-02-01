@@ -27,5 +27,7 @@ public class TestingCode {
 				e.printStackTrace();
 			}
 		}
+		String[] ab = {"ABC", "def", "odojs"};
+		System.out.println(ab);
 	}
 }
