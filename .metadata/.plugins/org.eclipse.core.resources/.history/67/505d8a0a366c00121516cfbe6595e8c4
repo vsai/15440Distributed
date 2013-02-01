@@ -39,9 +39,7 @@ public class Master {
 				Socket clientConn = listenSocket.accept();
 				SocketRespondThread srt = new SocketRespondThread(clientConn);
 				allSockets.add(clientConn);
-				String hostAdd = clientConn.getLocalAddress().getHostAddress();
-				socketIps.add(hostAdd);
-				System.out.println("Connected to: " + hostAdd);
+				socketIps.add(clientConn.getLocalAddress().getHostAddress());
 				srt.run();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -26,17 +26,9 @@ public class SocketRespondThread extends Thread{
 	
 	public void run(){
 		while (true){
-			try {
-				String clientMessage = in.readLine();
-				String mess[] = clientMessage.split(" ", 2);
-				String ipAddr = mess[0];
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 		//handle incoming messages from the client
-		
 		
 		//new client coming in
 		
