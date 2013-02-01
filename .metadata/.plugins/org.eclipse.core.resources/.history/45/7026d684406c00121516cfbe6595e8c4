@@ -32,8 +32,8 @@ public class SocketRespondThread extends Thread{
 				String clientMessage = in.readLine();
 				String mess[] = clientMessage.split(" ", 2);
 				//String ipAddr = mess[0];
-				System.out.println("In Master: Client sent: " + clientMessage);
-				out.println("In Master: Master received message");
+				System.out.println("Client sent: " + clientMessage);
+				out.println("Master received message");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

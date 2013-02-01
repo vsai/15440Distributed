@@ -54,21 +54,19 @@ public class Slave extends Thread{
         }
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("In Slave: Connected to master");
+        System.out.println("Connected to master");
         while(true){
-    		System.out.println("In Slave: Prompt for input ==>");
+    		System.out.println("Prompt for input ==>");
     		String input = sc.nextLine();
     		
     		if (input.equals("ps")) {
     			try {
 					out.println(messageToMaster("ps"));
-					String inputLine = in.readLine();
-					System.out.println(inputLine);
-					
-					//while ((inputLine = in.readLine()) != null) {   
-					//	System.out.println(inputLine);					    
-					//}
-					System.out.println("In Slave: Read everything back");
+					String inputLine;
+					while ((inputLine = in.readLine()) != null) {   
+						System.out.println(inputLine);					    
+					}
+					System.out.println("Read everything back");
 				} catch (UnknownHostException e) {
 					System.err.println("Could not resolve selfIp host");
 					e.printStackTrace();

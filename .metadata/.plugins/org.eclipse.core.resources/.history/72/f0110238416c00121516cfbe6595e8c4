@@ -62,12 +62,10 @@ public class Slave extends Thread{
     		if (input.equals("ps")) {
     			try {
 					out.println(messageToMaster("ps"));
-					String inputLine = in.readLine();
-					System.out.println(inputLine);
-					
-					//while ((inputLine = in.readLine()) != null) {   
-					//	System.out.println(inputLine);					    
-					//}
+					String inputLine;
+					while ((inputLine = in.readLine()) != null) {   
+						System.out.println(inputLine);					    
+					}
 					System.out.println("In Slave: Read everything back");
 				} catch (UnknownHostException e) {
 					System.err.println("Could not resolve selfIp host");
