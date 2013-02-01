@@ -42,7 +42,7 @@ public class Master extends Thread{
 				String hostAdd = clientConn.getLocalAddress().getHostAddress();
 				socketIps.add(hostAdd);
 				System.out.println("Connected to: " + hostAdd);
-				srt.start();
+				srt.run();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

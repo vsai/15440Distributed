@@ -18,7 +18,7 @@ public class SocketRespondThread extends Thread{
 	SocketRespondThread(Socket conn){
 		this.conn = conn;
 		try {
-			out = new PrintWriter(conn.getOutputStream(), true);
+			out = new PrintWriter(conn.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
