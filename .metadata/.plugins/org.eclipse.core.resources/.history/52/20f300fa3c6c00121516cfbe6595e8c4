@@ -5,20 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 
 public class SocketRespondThread extends Thread{
 
 	Socket conn;
-    PrintWriter out; //what the socket writes to the client --from server
+    PrintStream out; //what the socket writes to the client --from server
     BufferedReader in; //what the socket (client) reads from the client --from server
 
 	SocketRespondThread(Socket conn){
 		this.conn = conn;
 		try {
-			out = new PrintWriter(conn.getOutputStream());
+			out = new PrintStream(conn.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

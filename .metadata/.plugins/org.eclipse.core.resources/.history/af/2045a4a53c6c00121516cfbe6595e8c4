@@ -43,7 +43,7 @@ public class Slave extends Thread{
         
         try {
         	socketToMaster = new Socket(hostname, hostPortnum);
-            out = new PrintWriter(socketToMaster.getOutputStream(), true);
+            out = new PrintWriter(socketToMaster.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socketToMaster.getInputStream()));
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + hostname);
@@ -66,7 +66,6 @@ public class Slave extends Thread{
 					while ((inputLine = in.readLine()) != null) {   
 						System.out.println(inputLine);					    
 					}
-					System.out.println("Read everything back");
 				} catch (UnknownHostException e) {
 					System.err.println("Could not resolve selfIp host");
 					e.printStackTrace();

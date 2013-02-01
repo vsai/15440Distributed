@@ -44,3 +44,9 @@ Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.
 
 !ENTRY com.google.gdt.eclipse.suite 1 0 2013-02-01 01:10:21.036
 !MESSAGE Registering: com.google.gwt.eclipse.sdkbundle_2.4.0.v201205091048-rel-r37
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 2 0 2013-02-01 01:55:20.032
+!MESSAGE JML2 compiler: Slave.java had problems.
+
+!ENTRY ch.ethz.inf.pm.jml.plugin 4 0 2013-02-01 01:55:20.035
+!MESSAGE Error building project, cannot launch.

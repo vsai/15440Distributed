@@ -50,10 +50,12 @@ public class ProcessManager {
 		}
 	}
 
+	
 	//Master = start the new processes
 	//Slave = does not start new processes
 	//Master = accepts ps, quit, allows to start new processes
 	//Slave = accepts ps, quit
+
 	
 	public static void main(String[] args) {	
 		if (args.length == 0) {
