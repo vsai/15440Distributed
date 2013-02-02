@@ -15,12 +15,10 @@ public class Master extends Thread{
 
 	Thread listen;
 	ServerSocket listenSocket;
-	//BufferedReader in;
-
-	Map<Long, Map<String, String[]>> allProcess;
+	Map<Long, SlaveInfo> allProcess;
 	
-	public Master(final int hostPortnum, InetAddress selfIp) {
-		allProcess = Collections.synchronizedMap(new HashMap<Long, Map<String, String[]>>());
+	public Master(final int hostPortnum) {
+		allProcess = Collections.synchronizedMap(new HashMap<Long, SlaveInfo>());
 		listen = new Thread("MasterListen") {
 			public void run() {
 				try {
@@ -38,11 +36,9 @@ public class Master extends Thread{
 		while (true) {
 			try {
 				Socket clientConn = listenSocket.accept();
-				Map<String, String[]> p = Collections.synchronizedMap(new HashMap<String, String[]>());
+				SlaveInfo p = new SlaveInfo();
 				SocketRespondThread srt = new SocketRespondThread(clientConn, p);
 				allProcess.put(srt.getId(), p);
-				String hostAdd = clientConn.getLocalAddress().getHostAddress();
-				System.out.println("Connected to: " + hostAdd);
 				srt.start();
 			} catch (IOException e) {
 				e.printStackTrace();
