@@ -1,0 +1,32 @@
+package Transactional_IO;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+
+public class TransactionalFileOutputStream extends java.io.OutputStream implements java.io.Serializable {
+
+
+	private static final long serialVersionUID = 6522677712988099866L;
+	private String myFile;
+	private int seekLocation;
+	private boolean myOverride;
+	
+	public TransactionalFileOutputStream(String file){
+		myFile=file;
+		seekLocation=0;
+		
+	}
+	@Override
+	public void write(int arg0) throws IOException {
+		RandomAccessFile raf = new RandomAccessFile(myFile, "rw");
+		raf.skipBytes(seekLocation);
+		raf.write(arg0);
+		seekLocation+=1;
+		raf.close();
+		
+	}
+	
+	
+}

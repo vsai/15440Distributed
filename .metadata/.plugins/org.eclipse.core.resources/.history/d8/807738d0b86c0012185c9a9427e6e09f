@@ -1,0 +1,21 @@
+package Transactional_IO;
+
+import java.io.IOException;
+
+public class TransactionalFileOutputStream extends java.io.OutputStream implements java.io.Serializable {
+
+
+	private static final long serialVersionUID = 6522677712988099866L;
+	private String myFile;
+	private int seekLocation;
+	
+	@Override
+	public void write(int arg0) throws IOException {
+		
+		
+	}
+	
+	public TransactionalFileOutputStream(){
+		
+	}
+}
