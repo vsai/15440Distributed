@@ -10,7 +10,7 @@ import java.net.Socket;
 //import java.util.HashMap;
 //import java.util.Map;
 
-public class SocketRespondThread extends Thread{
+public class SocketRespondThread extends SocketMessage{
 
 	Socket conn;
     PrintWriter out; //what the socket writes to the client --from server
@@ -29,15 +29,52 @@ public class SocketRespondThread extends Thread{
 	}
 	
 	public void run(){
-		System.out.println("Currently connected to slave: ");
+		System.out.println("Currently connected to slave");
 		while (true){
 			try {
 				String clientMessage = in.readLine();
 				String mess[] = clientMessage.split(" ", 2);
+				String i;
+				while ((i = in.readLine()) != messageTerminator){
+					//should only go in here for ALIVE processes
+					slaveInfo.removeProcess(i);
+				}
+				if (mess[0].equals(alive)){
+					//check if workload sent matches the workload in slave info???
+					//or not necessary?
+				} else if (mess[0].equals(suspended)) {
+					String suspendDetails[] = mess[1].split(" ", 2);
+					String filePath = suspendDetails[0];
+					String processSuspended = suspendDetails[1];
+				} else if (mess[0].equals(quit)) {
+					try {
+						this.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} else {
+					//this should be a newProcess
+					//TO SEND TO ANOTHER SOCKET POSSIBLY:
+					//out.println(startProcess + " " + clientMessage);
+					
+					out.println(receivedProcess + " " + mess[1]);
+				}
+				
+				//String mess[] = clientMessage.split(" ", 2);
 				//String ipAddr = mess[0];
-				String clientCommand = mess[1];
-				System.out.println("In Master: Client sent: " + clientMessage);
+				//String clientCommand = mess[1];
+				//System.out.println("In Master: Client sent: " + clientMessage);
 				//out.println("In Master: Master received message");
+				
+				/*
+				 * ALIVE <workload> \n deadProcesses list
+				 * SUSPENDED <filePath> <processName> <<processArgs>> 
+				 * quit
+				 * <newProcessName> <<processArgs>>
+				 */
+				
+				
+				/*
 				
 				if (clientCommand.equals("ps")) {
 					//find the processes for that client (ipAddr) and return back
@@ -49,14 +86,18 @@ public class SocketRespondThread extends Thread{
 					}
 					
 				} else if (clientCommand.equals("quit")) {
-					
+					try {
+						this.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				} else if (clientCommand.equals("heartbeat")) {
 					//IS THIS NECESSARY?
 				} else {
 					//clientCommand is a string of a new process with its arguments			
 					//slaveInfo.putProcess(clientCommand);
 				}
-				
+				*/
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

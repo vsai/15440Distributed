@@ -30,7 +30,8 @@ public class SlaveInfo {
 	}
 	
 	public boolean removeProcess(String p){
-		return false;
+		//removes first occurrence of that process
+		return processes.remove(p);
 	}
 
 }

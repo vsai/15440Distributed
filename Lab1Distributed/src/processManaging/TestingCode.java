@@ -18,8 +18,18 @@ public class TestingCode {
 	private static InetAddress ip;
 	
 	public static void main(String[] args) {
+		String a = "abcdef\nab\nac\n";
+		System.out.println(a);
+		System.out.println("ABC");
+		System.out.println(a.substring(0, a.length() -1));
+		System.out.println("ABC");
 		//Find out your own IP details
-		
+		/*
+		Master m = new Master(1);
+		System.out.println(m.getClass().getName());
+		System.out.println(m.getClass().getSimpleName());
+		*/
+		/*
 		String filePath = "t.txt";
 		BufferedReader in = null;
 		try {
@@ -39,7 +49,7 @@ public class TestingCode {
 			e.printStackTrace();
 		}
 		System.out.println("DONE");
-		
+		*/
 		/*
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
 	    Date now = new Date();
@@ -64,8 +74,18 @@ public class TestingCode {
 				e.printStackTrace();
 			}
 		}
+		*/
+		/*
 		String[] ab = {"ABC", "def", "odojs"};
 		System.out.println(ab);
+		System.out.println(ab.toString());
+		StringBuilder builder = new StringBuilder();
+		for(String s : ab) {
+		    builder.append(s + " ");
+		}
+		String a = builder.toString();
+		System.out.println(a);
+		System.out.println(a.substring(0, a.length() -1));
 		*/
 	}
 }

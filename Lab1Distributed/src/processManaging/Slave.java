@@ -8,13 +8,17 @@ import java.io.PrintWriter;
 //import java.io.ObjectOutputStream;
 //import java.io.PrintStream;
 //import java.lang.reflect.Constructor;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.Constructor;
+//import java.lang.reflect.InvocationTargetException;
 //import java.net.InetAddress;
+//import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import processMigration.MigratableProcess;
 
@@ -22,38 +26,74 @@ import processMigration.MigratableProcess;
  * USE JOINS AROUND THE SUSPEND STUFF
  */
 
-
-public class Slave extends Thread{
+public class Slave extends SocketMessage{
 
 	Socket socketToMaster;
 	String hostname;
 	final int hostPortnum;
 	String selfIp;
+	Map<MigratableProcess, String[]> processes;
+	PrintWriter out;
+	BufferedReader in;
+	ArrayList<String> lastDeadProcesses;
 	
-	HashMap<MigratableProcess, String[]> processes;
+	Thread heartbeat;
 	
 	public Slave(String hostname, final int hostPortnum, String selfIp) {
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		this.processes = new HashMap<MigratableProcess, String[]>();
+		this.processes = Collections.synchronizedMap(new HashMap<MigratableProcess, String[]>());
+		this.out = null; //write to the master
+		this.in = null; //read from master
+		this.lastDeadProcesses = new ArrayList<String>();
+		
+		this.heartbeat = new Thread("Heartbeat") {
+			Long sleepTime = (long) 5000;
+			public void run() {
+				while (true) {
+					String toSend = alive;
+					toSend += " " + getSlaveWorkload() + "\n";
+					StringBuilder builder1 = new StringBuilder();
+					for (String deadProcess : getLastDeadProcesses()) {
+						builder1.append(deadProcess + "\n");
+					}
+					String dProcesses = builder1.toString();
+					dProcesses = dProcesses.substring(0, dProcesses.length() -1);
+					toSend += dProcesses;
+					synchronized(out){
+						out.println(sendMessage(toSend));
+					}
+					try {
+						this.sleep(sleepTime);
+					} catch (InterruptedException e) {
+						System.err.println("Heartbeat sleeptime interrupted");
+						e.printStackTrace();
+					}
+					lastDeadProcesses = new ArrayList<String>();
+				}
+			}
+		};
 	}
 	
-	public String messageToMaster(String message){
-		String ipAddr = selfIp;
-		return ipAddr + " " + message;
+	public int getSlaveWorkload(){
+		return 0;
 	}
 	
+	public ArrayList<String> getLastDeadProcesses() {
+		return lastDeadProcesses;
+	}
+	
+	public String cleanUserInput(String str){
+		//trim trailing space characters from str
+		return str;
+	}
 	public void run() {
-        PrintWriter out = null; //what you write to the master
-        //ObjectOutputStream out = null;
-        BufferedReader in = null; //what you read from master
-        
         try {
         	socketToMaster = new Socket(hostname, hostPortnum);
             out = new PrintWriter(socketToMaster.getOutputStream(), true);
-            //out = new ObjectOutputStream(socketToMaster.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socketToMaster.getInputStream()));
+            System.out.println("In Slave: Connected to master");
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + hostname);
             System.exit(1);
@@ -61,45 +101,37 @@ public class Slave extends Thread{
             System.err.println("Couldn't get I/O for the connection to: " + hostname);
             System.exit(1);
         }
-
+        
+        heartbeat.start();
+        SlaveReadMaster readHandler = new SlaveReadMaster(in, out);
+        readHandler.start();
+        
         Scanner sc = new Scanner(System.in);
-        System.out.println("In Slave: Connected to master");
         while(true){
-        	
-        	
-        	//if there is stuff on the buffer
-        	
-        	
-    		System.out.println("In Slave: Prompt for input ==>");
-    		String input = sc.nextLine();
-    		
+    		System.out.println("Prompt for input ==>");
+    		String input = sc.nextLine(); //only 1-line inputs from user terminal
+    		input = cleanUserInput(input);
     		if (input.equals("ps")) {
+    			for (MigratableProcess m : processes.keySet()) {
+    				String className = m.getClass().getSimpleName();
+    				String pArgs[] = processes.get(m);
+    				StringBuilder builder = new StringBuilder();
+    				for(String s : pArgs) {
+    				    builder.append(s + " ");
+    				}
+    				String pArg = builder.toString();
+    				pArg = pArg.substring(0, pArg.length() - 1);;
+    				System.out.println(className + " " + pArg);
+    			}
+    		} else if (input.equals(quit)){
     			try {
-    				
-					out.println(messageToMaster("ps"));
-					//out.writeChars(messageToMaster("ps"));
-					String inputLine = in.readLine();
-					System.out.println(inputLine);
-					
-					
-					//while ((inputLine = in.readLine()) != null) {   
-					//	System.out.println(inputLine);					    
-					//}
-					System.out.println("In Slave: Read everything back");
-				} catch (UnknownHostException e) {
-					System.err.println("Could not resolve selfIp host");
-					e.printStackTrace();
-				} catch (IOException e) {
-					System.err.println("Could not read response from master");
-					e.printStackTrace();
-				}
-    			
-    		} else if (input.equals("quit")){
-    			try {
-    				out.println(messageToMaster("quit"));
-    				//out.writeChars(messageToMaster("quit"));
-					out.close();
-					in.close();
+    				synchronized(out){
+    					out.println(sendMessage(input));
+    					out.close();
+    				}
+    				synchronized(in){
+    					in.close();
+    				}
 	    			socketToMaster.close();
 				} catch (IOException e) {
 					System.out.println("Failed to close buffers/socket before exiting");
@@ -108,49 +140,10 @@ public class Slave extends Thread{
     			System.exit(0);
     			
     		} else { //Process input with commands - only for master
-    			out.println(messageToMaster(input));
-    			/*
-    			try {
-					out.writeChars(messageToMaster(input));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				*/
-    			String inputLine = null;
-    			try {
-					inputLine = in.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-    			String[] inputLine2 = inputLine.split(" ", 2);
-    			String[] processDetails = inputLine2[1].split(" ",2);
-    			String[] processArgs = processDetails[1].split(" ");
-    			try {
-					Class<?> myClass = Class.forName(processDetails[0]);
-					Constructor<?> myCtor = myClass.getConstructor();
-    				myCtor.getClass().getConstructor();
-    				Thread t = new Thread((MigratableProcess) myCtor.newInstance((Object[]) processArgs));
-    				t.start();
-				} catch (ClassNotFoundException e) {
-					System.out.println("You have inputted an invalid process. Try again");
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					System.out.println("You don't have access to the constructor of this class");
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					System.out.println("This process does not have a constructor");
-					e.printStackTrace();
-				}catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
+    			synchronized(out) {    				
+    				out.println(sendMessage(input));
+    			}
     		} 
-    	}	
+        }        
     }	
 }
