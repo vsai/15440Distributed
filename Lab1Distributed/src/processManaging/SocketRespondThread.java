@@ -37,13 +37,15 @@ public class SocketRespondThread extends Thread{
 				//String ipAddr = mess[0];
 				String clientCommand = mess[1];
 				System.out.println("In Master: Client sent: " + clientMessage);
-				out.println("In Master: Master received message");
+				//out.println("In Master: Master received message");
 				
 				if (clientCommand.equals("ps")) {
 					//find the processes for that client (ipAddr) and return back
 					System.out.println("Printing running processes;;;");
+					out.println("rpwork " + slaveInfo.getWorkload());
 					for (String s : slaveInfo.getProcesses()){
-						System.out.println(s);
+						out.println("rp " + s);
+						//System.out.println("rp " + s);
 					}
 					
 				} else if (clientCommand.equals("quit")) {
@@ -51,21 +53,14 @@ public class SocketRespondThread extends Thread{
 				} else if (clientCommand.equals("heartbeat")) {
 					//IS THIS NECESSARY?
 				} else {
-					//clientCommand is a string of a new process with its arguments
-					slaveInfo.putProcess(clientCommand);
+					//clientCommand is a string of a new process with its arguments			
+					//slaveInfo.putProcess(clientCommand);
 				}
 				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		//handle incoming messages from the client
-				
-		//new client coming in
-		
-		//heartbeat
-		
-		//request for 
 	}
 	
 }
