@@ -3,14 +3,14 @@ package processManaging;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
+//import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 //import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+//import java.io.PrintStream;
 //import java.lang.reflect.Constructor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
+//import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -65,11 +65,17 @@ public class Slave extends Thread{
         Scanner sc = new Scanner(System.in);
         System.out.println("In Slave: Connected to master");
         while(true){
+        	
+        	
+        	//if there is stuff on the buffer
+        	
+        	
     		System.out.println("In Slave: Prompt for input ==>");
     		String input = sc.nextLine();
     		
     		if (input.equals("ps")) {
     			try {
+    				
 					out.println(messageToMaster("ps"));
 					//out.writeChars(messageToMaster("ps"));
 					String inputLine = in.readLine();
@@ -124,7 +130,8 @@ public class Slave extends Thread{
 					Class<?> myClass = Class.forName(processDetails[0]);
 					Constructor<?> myCtor = myClass.getConstructor();
     				myCtor.getClass().getConstructor();
-    				Thread t = new Thread((Runnable) myCtor.newInstance(processArgs));
+    				Thread t = new Thread((MigratableProcess) myCtor.newInstance((Object[]) processArgs));
+    				t.start();
 				} catch (ClassNotFoundException e) {
 					System.out.println("You have inputted an invalid process. Try again");
 					e.printStackTrace();
@@ -143,7 +150,6 @@ public class Slave extends Thread{
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-
     		} 
     	}	
     }	

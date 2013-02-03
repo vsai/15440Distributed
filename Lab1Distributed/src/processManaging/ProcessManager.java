@@ -21,12 +21,7 @@ public class ProcessManager {
 	private static boolean isSlave;
 	private static String hostname;
 	private static int hostPortnum = 12121;
-//	private static HashMap<MigratableProcess, String[]> processes;
-//	private static HashMap<ProcessManager, HashMap<MigratableProcess, String[]>> a;
 	private static String ip;
-
-//	private static Socket clientSocket;
-//	private static Thread listenThread;
 
 	public static String getIp() {
 		return ip;
