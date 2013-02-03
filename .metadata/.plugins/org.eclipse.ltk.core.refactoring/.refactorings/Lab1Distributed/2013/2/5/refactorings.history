@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Move element &apos;t.txt&apos; to &apos;Lab1Distributed&apos;&#x0A;- Original project: &apos;Lab1Distributed&apos;&#x0A;- Destination element: &apos;Lab1Distributed&apos;&#x0A;- Original element: &apos;t.txt&apos;&#x0A;- Update references to refactored element" description="Move file" destination="=Lab1Distributed" element1="src/Transactional_IO/t.txt" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1359745262625" units="0" version="1.0"/>
-</session>

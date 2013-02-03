@@ -1,9 +1,0 @@
-package processManaging;
-
-public class SlaveInfo {
-
-	public SlaveInfo() {
-		// TODO Auto-generated constructor stub
-	}
-
-}
