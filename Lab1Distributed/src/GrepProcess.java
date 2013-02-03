@@ -1,4 +1,3 @@
-package Transactional_IO;
 
 import java.io.PrintStream;
 import java.io.EOFException;
@@ -10,6 +9,8 @@ import java.lang.Thread;
 import java.lang.InterruptedException;
 
 import processMigration.MigratableProcess;
+import Transactional_IO.TransactionalFileInputStream;
+import Transactional_IO.TransactionalFileOutputStream;
 
 public class GrepProcess implements MigratableProcess
 {
@@ -21,6 +22,7 @@ public class GrepProcess implements MigratableProcess
 
 	public GrepProcess(String args[]) throws Exception
 	{
+		System.out.println("DEFAULT PACKAGE GREP");
 		if (args.length != 3) {
 			System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
 			throw new Exception("Invalid Arguments");

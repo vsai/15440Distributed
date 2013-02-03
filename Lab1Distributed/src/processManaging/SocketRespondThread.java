@@ -24,20 +24,29 @@ public class SocketRespondThread extends SocketMessage{
 		}        
 	}
 	
+	// FOR LOAD BALANCER, MAKE SURE TO PUT IN RESUME
+	
 	public void run(){
 		System.out.println("Currently connected to slave");
 		while (true){
+			System.out.println("AAA");
 			try {
+				System.out.println("BB");
+				System.out.println(in);
 				String clientMessage = in.readLine();
+				System.out.println("In SocketResponder: " + clientMessage);
 				String mess[] = clientMessage.split(" ", 2);
 				String i;
 				while ((i = in.readLine()) != messageTerminator){
 					//should only go in here for ALIVE processes
 					slaveInfo.removeProcess(i);
 				}
+				System.out.println(mess[0]);
+				System.out.println(mess[1]);
 				if (mess[0].equals(alive)){
 					//check if workload sent matches the workload in slave info???
 					//or not necessary?
+					System.out.println("SLAVE is alive");
 				} else if (mess[0].equals(suspended)) {
 					String suspendDetails[] = mess[1].split(" ", 2);
 					String filePath = suspendDetails[0];
@@ -53,7 +62,7 @@ public class SocketRespondThread extends SocketMessage{
 					//TO SEND TO ANOTHER SOCKET POSSIBLY:
 					//out.println(startProcess + " " + clientMessage);
 					
-					out.println(receivedProcess + " " + mess[1]);
+					out.println(receivedProcess + " " + clientMessage);
 				}
 				
 				//String mess[] = clientMessage.split(" ", 2);
