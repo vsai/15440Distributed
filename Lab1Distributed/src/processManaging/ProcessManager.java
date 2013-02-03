@@ -1,15 +1,5 @@
 package processManaging;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
-//import java.lang.reflect.Constructor;
-//import java.util.HashMap;
-//import java.util.Scanner;
-
-//import processMigration.MigratableProcess;
-
-//import java.net.ServerSocket;
-//import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 

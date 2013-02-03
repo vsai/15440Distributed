@@ -2,6 +2,7 @@ package processManaging;
 
 import java.util.concurrent.Future;
 import processMigration.MigratableProcess;
+
 public class ProccessInfo {
 	
 	private Future<?> f;
