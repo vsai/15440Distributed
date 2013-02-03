@@ -18,7 +18,7 @@ public class SlaveReadMaster extends SocketMessage {
 		/*
 		 * messages to read:
 		 * "STARTProcess <processName> <<processArgs>>"
-		 * "SUSPENDProcess <processName> <<processArgs>>" | "SUSPENDED <processName> <<processArgs>>"
+		 * "SUSPENDProcess <processName> <<processArgs>>" | "SUSPENDED <filename> <processName> <<processArgs>>"
 		 * "RESUMEProcess <processName> <<processArgs>>"
 		 * "RECEIVEDNewProcess <processName> <<processArgs>>"
 		 */
@@ -31,7 +31,10 @@ public class SlaveReadMaster extends SocketMessage {
 					while((inputLine = in.readLine())!= messageTerminator) {
 						String[] input = inputLine.split(" ", 2);
 						if (input[0].equals(startProcess)) {
+							
 						} else if (input[0].equals(suspendProcess)) {
+							input = input[1].split(" ", 2);
+							filePath = input[0];
 							synchronized(out) {
 								out.println(sendMessage(suspended + filePath + " " + input[1]));
 							}

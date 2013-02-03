@@ -2,16 +2,16 @@ package processManaging;
 
 public abstract class SocketMessage extends Thread {
 
-	String messageTerminator = "\nENDMESSAGE";
+	final String messageTerminator = "\nENDMESSAGE";
 	
-	String startProcess = "STARTProcess";
-	String suspendProcess = "SUSPENDProcess";
-	String resumeProcess = "RESUMEProcess";
-	String receivedProcess = "RECEIVEDNewProcess";
+	final String startProcess = "STARTProcess";
+	final String suspendProcess = "SUSPENDProcess";
+	final String resumeProcess = "RESUMEProcess";
+	final String receivedProcess = "RECEIVEDNewProcess";
 	
-	String alive = "ALIVE";
-	String suspended = "SUSPENDED";
-	String quit = "quit";
+	final String alive = "ALIVE";
+	final String suspended = "SUSPENDED";
+	final String quit = "quit";
 	
 	public String sendMessage(String inputStr){
 		return inputStr + messageTerminator;
