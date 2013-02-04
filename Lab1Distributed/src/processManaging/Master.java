@@ -10,7 +10,7 @@ import java.lang.Thread;
 
 public class Master extends Thread{
 
-	Thread listen;
+	//Thread listen;
 	ServerSocket listenSocket;
 	Map<Long, SlaveInfo> allProcess;
 	final int hostPortnum;
@@ -37,22 +37,18 @@ public class Master extends Thread{
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			System.out.println("Couldn't listen on: " + hostPortnum);
 			e1.printStackTrace();
 		}
 		while (true) {
 			try {
-				System.out.println("MASTERA");
-				System.out.println(listenSocket);
-				Socket clientConn = listenSocket.accept();
-				System.out.println("MASTERB");
+				Socket clientConn = listenSocket.accept();				
 				System.out.println("In Master: socket connection established");
 				SlaveInfo p = new SlaveInfo();
 				SocketRespondThread srt = new SocketRespondThread(clientConn, p);
 				allProcess.put(srt.getId(), p);
 				System.out.println(allProcess);
-				srt.run();
+				srt.start();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

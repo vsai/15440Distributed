@@ -14,7 +14,9 @@ public class ProcessInfo {
 	}
 	public Future<?> getFuture(){
 		return f;
+		
 	}
+	
 	public MigratableProcess getProcess(){
 		return p;
 	}

@@ -3,6 +3,7 @@ package processManaging;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -24,9 +25,11 @@ public class Slave extends SocketMessage{
 	final int hostPortnum;
 	String selfIp;
 	//Map<MigratableProcess, String[]> processes;
-	PrintWriter out;
+	//PrintWriter out;
+	PrintStream out;
 	BufferedReader in;
-	ArrayList<String> lastDeadProcesses;
+	ArrayList<String> heartbeatLastDeadProcesses;
+	ArrayList<String> psLastDeadProcesses;
 	Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
 	
 	Thread heartbeat;
@@ -35,32 +38,44 @@ public class Slave extends SocketMessage{
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		//this.processes = Collections.synchronizedMap(new HashMap<MigratableProcess, String[]>());
 		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, ArrayList<ProcessInfo>>());
 		this.out = null; //write to the master
 		this.in = null; //read from master
-		this.lastDeadProcesses = new ArrayList<String>();
+		this.heartbeatLastDeadProcesses = new ArrayList<String>();
+		this.psLastDeadProcesses = new ArrayList<String>();
 		
 		this.heartbeat = new Thread("Heartbeat") {
 			Long sleepTime = (long) 5000;
 			public void run() {
 				while (true) {
-					//System.out.println("IN HEARTBEAT");
-					//System.out.println(in);
-					//System.out.println(out);
 					String toSend = alive;
-					toSend += " " + getSlaveWorkload() + "\n";
+					toSend += " " + getSlaveWorkload();
+					
+					/*
+					 * find everything that has died since last check and add it to
+					 * heartbeatLastDeadProcesses
+					 * psLastDeadProcesses
+					 */
+					for (String processName : hashOfProcesses.keySet()){
+						for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
+							if (pInfo.getFuture().isDone()){
+								hashOfProcesses.get(processName).remove(pInfo);
+								putHeartbeatLastDeadProcesses(processName);
+								putPSLastDeadProcesses(processName);
+							}
+						}
+					}
+					
 					StringBuilder builder1 = new StringBuilder();
-					for (String deadProcess : getLastDeadProcesses()) {
+					for (String deadProcess : getHeartbeatLastDeadProcesses()) {
 						builder1.append(deadProcess + "\n");
 					}
 					String dProcesses = builder1.toString();
-					//System.out.println(dProcesses);
-					//System.out.println(dProcesses.length());
 					if (dProcesses.length() > 0) {
-						dProcesses = dProcesses.substring(0, dProcesses.length() -1);						
+						dProcesses = dProcesses.substring(0, dProcesses.length() -1);
+						toSend += "\n" + dProcesses;
 					}
-					toSend += dProcesses;
+					
 					synchronized(out){
 						out.println(sendMessage(toSend));
 					}
@@ -70,7 +85,7 @@ public class Slave extends SocketMessage{
 						System.err.println("Heartbeat sleeptime interrupted");
 						e.printStackTrace();
 					}
-					lastDeadProcesses = new ArrayList<String>();
+					heartbeatLastDeadProcesses = new ArrayList<String>();
 				}
 			}
 		};
@@ -80,8 +95,19 @@ public class Slave extends SocketMessage{
 		return 0;
 	}
 	
-	public ArrayList<String> getLastDeadProcesses() {
-		return lastDeadProcesses;
+	public ArrayList<String> getHeartbeatLastDeadProcesses() {
+		return heartbeatLastDeadProcesses;
+	}
+	public boolean putHeartbeatLastDeadProcesses(String deadProcess){
+		return heartbeatLastDeadProcesses.add(deadProcess);
+	}
+	
+	public ArrayList<String> getPSLastDeadProcesses() {
+		return psLastDeadProcesses;
+	}
+	
+	public boolean putPSLastDeadProcesses(String deadProcess){
+		return psLastDeadProcesses.add(deadProcess);
 	}
 	
 	public String cleanUserInput(String str){
@@ -91,7 +117,8 @@ public class Slave extends SocketMessage{
 	public void run() {
         try {
         	socketToMaster = new Socket(hostname, hostPortnum);
-            out = new PrintWriter(socketToMaster.getOutputStream(), false);
+            //out = new PrintWriter(socketToMaster.getOutputStream(), false);
+            out = new PrintStream(socketToMaster.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socketToMaster.getInputStream()));
             System.out.println("In Slave: Connected to master");
         } catch (UnknownHostException e) {
@@ -102,9 +129,9 @@ public class Slave extends SocketMessage{
             System.exit(1);
         }
         
-        //heartbeat.start();
-        //SlaveReadMaster readHandler = new SlaveReadMaster(in, out, hashOfProcesses);
-        //readHandler.start();
+        heartbeat.start();
+        SlaveReadMaster readHandler = new SlaveReadMaster(in, out, hashOfProcesses);
+        readHandler.start();
         
         Scanner sc = new Scanner(System.in);
         while(true){
@@ -113,6 +140,21 @@ public class Slave extends SocketMessage{
     		input = cleanUserInput(input);
     		if (input.equals("ps")) {
     			
+    			for (String processName : hashOfProcesses.keySet()){
+    				for (int i=0; i<hashOfProcesses.get(processName).size(); i++) {
+    					System.out.println("Currently running: " + processName);
+    				}
+					for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
+						if (pInfo.getFuture().isDone()){
+							hashOfProcesses.get(processName).remove(pInfo);
+							putHeartbeatLastDeadProcesses(processName);
+							putPSLastDeadProcesses(processName);
+						}
+					}
+				}
+    			for (String termProcess : getHeartbeatLastDeadProcesses()){
+    				System.out.println("Terminated: " + termProcess);
+    			}
     			/*
     			for (MigratableProcess m : processes.keySet()) {
     				String className = m.getClass().getSimpleName();
@@ -126,6 +168,7 @@ public class Slave extends SocketMessage{
     				System.out.println(className + " " + pArg);
     			}
     			*/
+    			
     		} else if (input.equals(quit)){
     			try {
     				synchronized(out){
@@ -145,10 +188,8 @@ public class Slave extends SocketMessage{
     		} else { //Process input with commands - only for master
     			System.out.println("In Slave: In new process input terminal");
     			//out.println(sendMessage(startProcess + " " + input));
-    			System.out.println("You inputted: " + input);
-    			System.out.println(out.toString());
     			out.println(sendMessage(input));
-    			System.out.println("SENT Message");
+    			System.out.println("In Slave: SENT Message to Master");
     			//synchronized(out) {    				
     			//	out.println(sendMessage(input));
     			//}

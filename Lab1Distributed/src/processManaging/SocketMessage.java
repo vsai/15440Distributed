@@ -2,7 +2,7 @@ package processManaging;
 
 public abstract class SocketMessage extends Thread {
 
-	final String messageTerminator = "\nENDMESSAGE";
+	final String messageTerminator = "ENDMESSAGE";
 	//final String messageTerminator = "";
 	
 	final String startProcess = "STARTProcess";
@@ -15,7 +15,7 @@ public abstract class SocketMessage extends Thread {
 	final String quit = "quit";
 	
 	public String sendMessage(String inputStr){
-		return inputStr + messageTerminator;
+		return inputStr + "\n" + messageTerminator;
 	}
 	
 }

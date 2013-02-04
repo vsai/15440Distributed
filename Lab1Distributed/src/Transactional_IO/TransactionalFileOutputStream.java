@@ -19,6 +19,7 @@ public class TransactionalFileOutputStream extends java.io.OutputStream implemen
 		raf.seek(seekLocation);
 		raf.write(arg0);
 		raf.close();
+		seekLocation+=1;
 	}
 	
 }

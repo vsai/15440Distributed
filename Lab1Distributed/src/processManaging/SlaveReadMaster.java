@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,11 +22,12 @@ import processMigration.MigratableProcess;
 public class SlaveReadMaster extends SocketMessage {
 
 	BufferedReader in;
-	PrintWriter out;
+	//PrintWriter out;
+	PrintStream out;
 	static ExecutorService executor = Executors.newCachedThreadPool();
 	static Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
 	
-	SlaveReadMaster(BufferedReader in, PrintWriter out, Map<String,ArrayList<ProcessInfo>> hashOfProcesses) {
+	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,ArrayList<ProcessInfo>> hashOfProcesses) {
 		this.in = in;
 		this.out = out;
 		this.hashOfProcesses = hashOfProcesses;
@@ -46,8 +48,11 @@ public class SlaveReadMaster extends SocketMessage {
 		while (true) {
 			try {
 				synchronized(in){
-					while((inputLine = in.readLine())!= messageTerminator) {
+					while(!((inputLine = in.readLine()).equals(messageTerminator))) {
+						System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
+						System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
 						String[] input = inputLine.split(" ", 2);
+						System.out.println("YOLOSWAG");
 						if (input[0].equals(startProcess)) {
 							try {
 								start(input[1]);
@@ -71,6 +76,7 @@ public class SlaveReadMaster extends SocketMessage {
 							
 						} else if (input[0].equals(receivedProcess)) {
 							//coolstoryBro
+							System.out.println("IN CLIENT: The master received a process from me");
 						}
 					}
 				}
@@ -78,6 +84,7 @@ public class SlaveReadMaster extends SocketMessage {
 				System.out.println("Could not read from buffer");
 				e.printStackTrace();
 			}
+			System.out.println("DID AN ITERATION");
 		}
 	}
 	
@@ -140,7 +147,7 @@ public class SlaveReadMaster extends SocketMessage {
 		
 		return currentDir+"/"+name;
 	}
-	public static String Resume(String procAndArgs, String filename) throws IOException, ClassNotFoundException {
+	public String resume(String procAndArgs, String filename) throws IOException, ClassNotFoundException {
 		FileInputStream fis = new FileInputStream(filename); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 		MigratableProcess mp = (MigratableProcess)ois.readObject(); 
