@@ -110,7 +110,7 @@ public class SlaveReadMaster extends SocketMessage {
 		Future<?> future = executor.submit(mp);
 		System.out.println("added proccess to exectuor and running!");
 		ProcessInfo pi= new ProcessInfo(future,mp);
-		ArrayList<ProcessInfo> processes = new ArrayList<ProcessInfo>();
+		ArrayList<ProcessInfo> processes =new ArrayList<ProcessInfo>();
 		
 		if(hashOfProcesses.containsKey(str)) {
 			processes=hashOfProcesses.get(str);
