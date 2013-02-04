@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class Slave extends SocketMessage{
 	BufferedReader in;
 	ArrayList<String> heartbeatLastDeadProcesses;
 	ArrayList<String> psLastDeadProcesses;
-	Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
+	Map<String, List<ProcessInfo>> hashOfProcesses;
 	
 	Thread heartbeat;
 	
@@ -38,7 +39,7 @@ public class Slave extends SocketMessage{
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, ArrayList<ProcessInfo>>());
+		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, List<ProcessInfo>>());
 		this.out = null; //write to the master
 		this.in = null; //read from master
 		this.heartbeatLastDeadProcesses = new ArrayList<String>();
@@ -57,13 +58,17 @@ public class Slave extends SocketMessage{
 					 * psLastDeadProcesses
 					 */
 					for (String processName : hashOfProcesses.keySet()){
-						for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
-							if (pInfo.getFuture().isDone()){
-								hashOfProcesses.get(processName).remove(pInfo);
-								putHeartbeatLastDeadProcesses(processName);
-								putPSLastDeadProcesses(processName);
+						List<ProcessInfo> lpinfo = hashOfProcesses.get(processName);
+						synchronized(lpinfo) {
+							for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
+								if (pInfo.getFuture().isDone()){
+									hashOfProcesses.get(processName).remove(pInfo);
+									putHeartbeatLastDeadProcesses(processName);
+									putPSLastDeadProcesses(processName);
+								}
 							}
 						}
+						
 					}
 					
 					StringBuilder builder1 = new StringBuilder();
@@ -129,7 +134,7 @@ public class Slave extends SocketMessage{
             System.exit(1);
         }
         
-        heartbeat.start();
+        //heartbeat.start();
         SlaveReadMaster readHandler = new SlaveReadMaster(in, out, hashOfProcesses);
         readHandler.start();
         

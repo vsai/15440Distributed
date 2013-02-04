@@ -11,12 +11,13 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import processMigration.MigratableProcess;
 
 public class SlaveReadMaster extends SocketMessage {
@@ -25,9 +26,9 @@ public class SlaveReadMaster extends SocketMessage {
 	//PrintWriter out;
 	PrintStream out;
 	static ExecutorService executor = Executors.newCachedThreadPool();
-	static Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
+	static Map<String,List<ProcessInfo>> hashOfProcesses;
 	
-	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,ArrayList<ProcessInfo>> hashOfProcesses) {
+	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,List<ProcessInfo>> hashOfProcesses) {
 		this.in = in;
 		this.out = out;
 		this.hashOfProcesses = hashOfProcesses;
@@ -93,24 +94,42 @@ public class SlaveReadMaster extends SocketMessage {
 			InstantiationException, IllegalAccessException, InvocationTargetException
 	{
 		System.out.println("In Start func");
-		String [] p=str.split(" ");
+		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
-		String [] pArgs = new String [p.length-1];
-		for(int i=1;i<p.length;i++) {
-			pArgs[i-1]=p[i];
-		}
+		System.out.println(t.toString());
+		System.out.println(t.getConstructors());
+		String [] pArgs = p[1].split(" ");
+
 		Constructor<?>[] listOfConstructors = t.getConstructors();
 		int correctConstructor=0;
 		for(int i =0;i<listOfConstructors.length;i++)
 		{
-			if(listOfConstructors[i].getParameterTypes().length==pArgs.length)
-				correctConstructor=i;
+			
+			System.out.println(listOfConstructors[i]);
+			System.out.println(listOfConstructors[i].getGenericParameterTypes().length);
+				//System.out.println("hi");
 		}
-		MigratableProcess mp=(MigratableProcess) listOfConstructors[correctConstructor].newInstance(pArgs);
+		System.out.println(listOfConstructors[correctConstructor]);
+		//Class<?> t1 = Class.forName("GrepProcess");
+		//MigratableProcess mp=(MigratableProcess) t1.isInstance(pArgs);
+		/*for(String n: pArgs)
+			System.out.println(n);
+		System.out.println(pArgs);
+		Constructor<?> con = listOfConstructors[correctConstructor];
+		System.out.println(con.getName());
+		System.out.println(con.getClass());
+		System.out.println(con.getGenericParameterTypes());
+		System.out.println(con.getGenericParameterTypes().length);
+		System.out.println(con.getTypeParameters().toString());
+		*/
+		Object arg = pArgs;//new String[0];
+		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
+		
+		//MigratableProcess mp=(MigratableProcess) t;
 		Future<?> future = executor.submit(mp);
 		System.out.println("added proccess to exectuor and running!");
 		ProcessInfo pi= new ProcessInfo(future,mp);
-		ArrayList<ProcessInfo> processes = new ArrayList<ProcessInfo>();
+		List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(str)) {
 			processes=hashOfProcesses.get(str);
@@ -128,7 +147,7 @@ public class SlaveReadMaster extends SocketMessage {
 		if(!hashOfProcesses.containsKey(str)) {
 			return "No Process in the list";
 		}
-		ArrayList<ProcessInfo> processes = hashOfProcesses.get(str);
+		List<ProcessInfo> processes = hashOfProcesses.get(str);
 		ProcessInfo p = processes.get(0);
 		processes.remove(p);
 		hashOfProcesses.put(str,processes);
@@ -155,7 +174,7 @@ public class SlaveReadMaster extends SocketMessage {
 		Future<?> future = executor.submit(mp);
 		
 		ProcessInfo pi= new ProcessInfo(future,mp);
-		ArrayList<ProcessInfo> processes = new ArrayList<ProcessInfo>();
+		List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(procAndArgs)) {
 			processes=hashOfProcesses.get(procAndArgs);
