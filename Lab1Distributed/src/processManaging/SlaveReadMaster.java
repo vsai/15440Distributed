@@ -25,9 +25,9 @@ public class SlaveReadMaster extends SocketMessage {
 	//PrintWriter out;
 	PrintStream out;
 	ExecutorService executor = Executors.newCachedThreadPool();
-	Map<String,List<ProcessInfo>> hashOfProcesses;
+	Map<String, ProcessInfo> hashOfProcesses;
 	
-	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,List<ProcessInfo>> hashOfProcesses) {
+	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,ProcessInfo> hashOfProcesses) {
 		this.in = in;
 		this.out = out;
 		this.hashOfProcesses = hashOfProcesses;
@@ -90,6 +90,14 @@ public class SlaveReadMaster extends SocketMessage {
 		}
 	}
 	
+	private String getRandomString(int len){
+		StringBuffer sb = new StringBuffer();  
+	    for (int x = 0; x <len; x++)  
+	    {  
+	      sb.append((char)((int)(Math.random()*26)+97));  
+	    } 
+	    return sb.toString();
+	}
 	/*
 	 * input: str = <processName> <<processArgs>>
 	 * do: put into hash (key for process, input string)
@@ -123,8 +131,9 @@ public class SlaveReadMaster extends SocketMessage {
 		Future<?> future = executor.submit(mp);
 		ProcessInfo pi= new ProcessInfo(future,mp, p[0], p[1]);
 		
-		
-		List<ProcessInfo> processes = hashOfProcesses.get(str);
+		String key = getRandomString(30);
+		hashOfProcesses.put(key, pi);
+		/*List<ProcessInfo> processes = hashOfProcesses.get(str);
 		if(processes==null) {
 			 processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		}
@@ -134,8 +143,8 @@ public class SlaveReadMaster extends SocketMessage {
 				processes=hashOfProcesses.get(str);
 			}
 		hashOfProcesses.put(str, processes);
-		}
-		return str;
+		}*/
+		return key;
 		
 	}
 	public String suspend(String str) throws IOException {
@@ -143,13 +152,14 @@ public class SlaveReadMaster extends SocketMessage {
 		if(!hashOfProcesses.containsKey(str)) {
 			return "No Process in the list";
 		}
-		List<ProcessInfo> processes = hashOfProcesses.get(str);
-		ProcessInfo p = processes.get(0);
-		processes.remove(p);
-		hashOfProcesses.put(str,processes);
-		MigratableProcess mp=p.getProcess();
+		ProcessInfo process = hashOfProcesses.get(str);
+		//ProcessInfo p = processes.get(0);
+		//processes.remove(p);
+		hashOfProcesses.remove(str);
+		//hashOfProcesses.put(str,processes);
+		MigratableProcess mp=process.getProcess();
 		mp.suspend();
-		Future<?> f = p.getFuture();
+		Future<?> f = process.getFuture();
 		boolean b=false;
 		f.cancel(b);
 		String currentDir = System.getProperty("user.dir");
@@ -170,13 +180,16 @@ public class SlaveReadMaster extends SocketMessage {
 		Future<?> future = executor.submit(mp);
 		String[] in = procAndArgs.split(" ", 2);
 		ProcessInfo pi= new ProcessInfo(future,mp, in[0], in[1]);
-		List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
+		/*List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(procAndArgs)) {
 			processes=hashOfProcesses.get(procAndArgs);
 		}
 		processes.add(pi);
 		hashOfProcesses.put(procAndArgs, processes);
+		*/
+		String key=getRandomString(30);
+		hashOfProcesses.put(key, pi);
 		return "Resumed "+ procAndArgs;
 	}
 

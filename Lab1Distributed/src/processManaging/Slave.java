@@ -33,7 +33,7 @@ public class Slave extends SocketMessage{
 	BufferedReader in;
 	ArrayList<String> heartbeatLastDeadProcesses;
 	ArrayList<String> psLastDeadProcesses;
-	Map<String, List<ProcessInfo>> hashOfProcesses;
+	ConcurrentHashMap<String, ProcessInfo> hashOfProcesses;
 	//Map<String, ProcessInfo> hashOfProcesses;
 	
 	Thread heartbeat;
@@ -42,8 +42,8 @@ public class Slave extends SocketMessage{
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, List<ProcessInfo>>());
-		this.hashOfProcesses = new ConcurrentHashMap<String, List<ProcessInfo>>();
+		//this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, List<ProcessInfo>>());
+		this.hashOfProcesses = new ConcurrentHashMap<String, ProcessInfo>();
 		this.out = null; //write to the master
 		this.in = null; //read from master
 		this.heartbeatLastDeadProcesses = new ArrayList<String>();
@@ -61,18 +61,19 @@ public class Slave extends SocketMessage{
 					 * heartbeatLastDeadProcesses
 					 * psLastDeadProcesses
 					 */
+					ProcessInfo pInfo;
 					for (String processName : hashOfProcesses.keySet()){
-						List<ProcessInfo> a = Collections.synchronizedList(hashOfProcesses.get(processName));
-						synchronized(a) {
-							for (ProcessInfo pInfo : a){
-								if (pInfo.getFuture().isDone()){
-									a.remove(pInfo);
-									putHeartbeatLastDeadProcesses(processName);
-									putPSLastDeadProcesses(processName);
-								}
+						//List<ProcessInfo> a = Collections.synchronizedList(hashOfProcesses.get(processName));
+						//synchronized(a) {
+							//for (ProcessInfo pInfo : a){
+						pInfo=hashOfProcesses.get(processName);
+						if (pInfo.getFuture().isDone()){
+								putHeartbeatLastDeadProcesses(pInfo.getProcessName());
+								putPSLastDeadProcesses(pInfo.getProcessName());
 							}
-						}	
 					}
+						//}	
+					//}
 					
 					StringBuilder builder1 = new StringBuilder();
 					for (String deadProcess : getHeartbeatLastDeadProcesses()) {
@@ -98,6 +99,7 @@ public class Slave extends SocketMessage{
 			}
 		};
 	}
+
 	
 	public int getSlaveWorkload(){
 		return 0;
@@ -148,16 +150,8 @@ public class Slave extends SocketMessage{
     		if (input.equals("ps")) {
     			System.out.println("Shoould do ps now");
     			for (String processName : hashOfProcesses.keySet()){
-    				System.out.println(processName);
-    				List<ProcessInfo> a = hashOfProcesses.get(processName);
-    				System.out.println(a);
-    				System.out.println(a.isEmpty());
-    				synchronized(a) {
-    					System.out.println("In Slave Synchronized a");
-    					for (int i=0; i<a.size(); i++) {
-        					System.out.println("Currently running: " + processName);
-        				}
-    				}
+    				ProcessInfo a = hashOfProcesses.get(processName);
+    				System.out.println(a.getProcessName()+a.getProcessArgs());
 				}
     			for (String termProcess : getHeartbeatLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);

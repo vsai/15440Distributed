@@ -8,6 +8,7 @@ import java.util.List;
 
 public class SlaveInfo {
 
+	//the key to the process which is a randomly generated string of length 30
 	List<String> processes;
 	//Long lastHeard;
 	Date lastHeard;
