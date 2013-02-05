@@ -56,7 +56,9 @@ public class SocketRespondThread extends SocketMessage{
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				} else if (!mess[0].equals(messageTerminator)){
+				} else if (mess[0].equals(started)){
+					slaveInfo.putProcess(mess[1]);
+				} else {
 					//this should be a newProcess
 					//TO SEND TO ANOTHER SOCKET POSSIBLY:
 					System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");

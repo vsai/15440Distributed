@@ -36,7 +36,7 @@ public class SlaveReadMaster extends SocketMessage {
 	public void run(){
 		/*
 		 * messages to read:
-		 * "STARTProcess <processName> <<processArgs>>"
+		 * "STARTProcess <processName> <<processArgs>>" | "STARTED <processNameKey>
 		 * "SUSPENDProcess <processName> <<processArgs>>" | "SUSPENDED <filename> <processName> <<processArgs>>"
 		 * "RESUMEProcess <filename> <processName> <<processArgs>>"
 		 * "RECEIVEDNewProcess <processName> <<processArgs>>"
@@ -57,7 +57,7 @@ public class SlaveReadMaster extends SocketMessage {
 						if (input[0].equals(startProcess)) {
 							try {
 								System.out.println(input[1]);
-								start(input[1]);
+								out.println(sendMessage(started + " " + start(input[1])));
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							} catch (ClassNotFoundException e) {
@@ -72,7 +72,7 @@ public class SlaveReadMaster extends SocketMessage {
 						} else if (input[0].equals(suspendProcess)) {
 							filePath = suspend(input[1]);
 							synchronized(out) {
-								out.println(sendMessage(suspended + filePath + " " + input[1]));
+								out.println(sendMessage(suspended + " " + filePath + " " + input[1]));
 							}
 						} else if (input[0].equals(resumeProcess)) {
 							
@@ -90,10 +90,21 @@ public class SlaveReadMaster extends SocketMessage {
 		}
 	}
 	
+	/*
+	 * input: str = <processName> <<processArgs>>
+	 * do: put into hash (key for process, input string)
+	 * return: key for the process
+	 */
 	public String start(String str) 
 			throws ClassNotFoundException, IllegalArgumentException, 
 			InstantiationException, IllegalAccessException, InvocationTargetException
 	{
+		
+		/*
+		 * GENERATE A KEY AND RETURN IT
+		 * STORE IT INTO PROCESSINFO
+		 */
+		
 		//System.out.println("In SlaveReadMaster: In Start func");
 		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
@@ -110,12 +121,14 @@ public class SlaveReadMaster extends SocketMessage {
 		Object arg = pArgs;//new String[0];
 		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
 		Future<?> future = executor.submit(mp);
-		ProcessInfo pi= new ProcessInfo(future,mp);
+		ProcessInfo pi= new ProcessInfo(future,mp, p[0], p[1]);
 		
 		
 		List<ProcessInfo> processes = hashOfProcesses.get(str);
-		if(processes==null)
+		if(processes==null) {
 			 processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
+		}
+		
 		synchronized(processes){
 		if(hashOfProcesses.containsKey(str)) {
 				processes=hashOfProcesses.get(str);
@@ -155,8 +168,8 @@ public class SlaveReadMaster extends SocketMessage {
 		MigratableProcess mp = (MigratableProcess)ois.readObject(); 
 		ois.close(); 
 		Future<?> future = executor.submit(mp);
-		
-		ProcessInfo pi= new ProcessInfo(future,mp);
+		String[] in = procAndArgs.split(" ", 2);
+		ProcessInfo pi= new ProcessInfo(future,mp, in[0], in[1]);
 		List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(procAndArgs)) {
