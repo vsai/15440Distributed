@@ -48,7 +48,6 @@ public class SlaveReadMaster extends SocketMessage {
 		String filePath = null;
 		
 		while (true) {
-			//System.out.println("IN is: " + in);
 			try {
 				synchronized(in){
 					while(!((inputLine = in.readLine()).equals(messageTerminator))) {
@@ -110,13 +109,11 @@ public class SlaveReadMaster extends SocketMessage {
 	public String start(String str) 
 			throws ClassNotFoundException, IllegalArgumentException, 
 			InstantiationException, IllegalAccessException, InvocationTargetException
-	{
-		
+	{		
 		/*
 		 * GENERATE A KEY AND RETURN IT
 		 * STORE IT INTO PROCESSINFO
 		 */
-		
 		//System.out.println("In SlaveReadMaster: In Start func");
 		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
@@ -129,7 +126,7 @@ public class SlaveReadMaster extends SocketMessage {
 				correctConstructor = i;
 			}
 		}
-
+		
 		Object arg = pArgs;//new String[0];
 		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
 		Future<?> future = executor.submit(mp);

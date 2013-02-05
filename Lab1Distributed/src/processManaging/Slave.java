@@ -148,7 +148,7 @@ public class Slave extends SocketMessage{
     				ProcessInfo a = hashOfProcesses.get(processName);
     				System.out.println(a.getProcessName()+a.getProcessArgs());
 				}
-    			for (String termProcess : getHeartbeatLastDeadProcesses()){
+    			for (String termProcess : getPSLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);
     			}
     			psLastDeadProcesses = Collections.synchronizedList(new ArrayList<String>());
