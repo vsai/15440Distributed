@@ -114,7 +114,6 @@ public class SlaveReadMaster extends SocketMessage {
 		 * GENERATE A KEY AND RETURN IT
 		 * STORE IT INTO PROCESSINFO
 		 */
-		//System.out.println("In SlaveReadMaster: In Start func");
 		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
 		String [] pArgs = p[1].split(" ");
@@ -134,17 +133,6 @@ public class SlaveReadMaster extends SocketMessage {
 		
 		String key = getRandomString(30);
 		hashOfProcesses.put(key, pi);
-		/*List<ProcessInfo> processes = hashOfProcesses.get(str);
-		if(processes==null) {
-			 processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
-		}
-		
-		synchronized(processes){
-		if(hashOfProcesses.containsKey(str)) {
-				processes=hashOfProcesses.get(str);
-			}
-		hashOfProcesses.put(str, processes);
-		}*/
 		return key;
 		
 	}

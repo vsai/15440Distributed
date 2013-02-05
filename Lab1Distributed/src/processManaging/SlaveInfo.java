@@ -10,7 +10,7 @@ public class SlaveInfo {
 
 	//the key to the process which is a randomly generated string of length 30
 	List<String> processes;
-	//Long lastHeard;
+	boolean alive;
 	Date lastHeard;
 	
 	public SlaveInfo() {
@@ -33,6 +33,14 @@ public class SlaveInfo {
 	public boolean removeProcess(String p){
 		//removes first occurrence of that process
 		return processes.remove(p);
+	}
+	
+	public boolean isAlive(){
+		return alive;
+	}
+	
+	public void setAlive(boolean alive){
+		this.alive = alive;
 	}
 
 }

@@ -36,7 +36,7 @@ public class SocketRespondThread extends SocketMessage{
 				String mess[] = clientMessage.split(" ", 2);
 				String i;
 				while (!((i = in.readLine()).equals(messageTerminator))){
-					//should only go in here for ALIVE processes
+					//should only go in here for ALIVE, so these are the process that have died since then
 					System.out.println("THE MESSAGE I GOT WAS NOT A MESSAGE TERMINATOR");
 					slaveInfo.removeProcess(i);
 				}
@@ -45,6 +45,7 @@ public class SocketRespondThread extends SocketMessage{
 				if (mess[0].equals(alive)){
 					//check if workload sent matches the workload in slave info???
 					//or not necessary?
+					slaveInfo.setAlive(true);
 					System.out.println("SLAVE is alive");
 				} else if (mess[0].equals(suspended)) {
 					String suspendDetails[] = mess[1].split(" ", 2);

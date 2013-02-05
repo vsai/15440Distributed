@@ -10,6 +10,8 @@ import java.lang.Thread;
 
 public class Master extends SocketMessage {
 
+	
+	Thread redistributeWorkload;
 	ServerSocket listenSocket;
 	static Map<SocketRespondThread, SlaveInfo> allProcess;
 	final int hostPortnum;
@@ -17,6 +19,29 @@ public class Master extends SocketMessage {
 	public Master(final int hostPortnum) {
 		allProcess = Collections.synchronizedMap(new HashMap<SocketRespondThread, SlaveInfo>());
 		this.hostPortnum = hostPortnum;
+		
+		redistributeWorkload = new Thread("WorkloadRedistributer") {
+			Long sleepTime = (long) 20000;
+			public void run(){
+				while (true) {
+					for (SocketRespondThread sl : allProcess.keySet()) {
+						SlaveInfo sInfo = allProcess.get(sl);
+						if (sInfo.isAlive()) {
+							sInfo.setAlive(false);
+						} else{
+							//that process has died
+							allProcess.remove(sl);
+						}
+					}
+					try {
+						Thread.sleep(sleepTime);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		};
 	}
 
 	public static void sendProcessToSlave(String clientMessage)
