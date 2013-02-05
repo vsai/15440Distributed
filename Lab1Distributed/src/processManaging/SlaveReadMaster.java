@@ -46,7 +46,7 @@ public class SlaveReadMaster extends SocketMessage {
 		String filePath = null;
 		
 		while (true) {
-			System.out.println("IN is: " + in);
+			//System.out.println("IN is: " + in);
 			try {
 				synchronized(in){
 					while(!((inputLine = in.readLine()).equals(messageTerminator))) {
@@ -111,37 +111,17 @@ public class SlaveReadMaster extends SocketMessage {
 		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
 		Future<?> future = executor.submit(mp);
 		ProcessInfo pi= new ProcessInfo(future,mp);
+		
+		
 		List<ProcessInfo> processes = hashOfProcesses.get(str);
-		//List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
-		/*
-		synchronized(processes) {
-			if (processes != null) {
-				processes.add(pi);
-			} else {
-				processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
-				processes.add(pi);
-			}
-		}
-		*/
-		/*
-		synchronized(processes) {
+		if(processes==null)
+			 processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
+		synchronized(processes){
 		if(hashOfProcesses.containsKey(str)) {
 				processes=hashOfProcesses.get(str);
 			}
-		}
-		*/
 		hashOfProcesses.put(str, processes);
-		//synchronized(processes) {
-		//	
-		//}
-		
-		
-		//synchronized(hashOfProcesses){
-		//	List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());	
-		//}
-		
-		//System.out.println(hashOfProcesses.size());
-		//System.out.println("Updated hash table");
+		}
 		return str;
 		
 	}

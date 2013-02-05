@@ -3,8 +3,7 @@ package processManaging;
 public abstract class SocketMessage extends Thread {
 
 	final String messageTerminator = "ENDMESSAGE";
-	
-	final String died = "DIED";
+	//final String messageTerminator = "";
 	
 	final String startProcess = "STARTProcess";
 	final String suspendProcess = "SUSPENDProcess";

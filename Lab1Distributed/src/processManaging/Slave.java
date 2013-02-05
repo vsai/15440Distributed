@@ -75,7 +75,7 @@ public class Slave extends SocketMessage{
 					
 					StringBuilder builder1 = new StringBuilder();
 					for (String deadProcess : getHeartbeatLastDeadProcesses()) {
-						builder1.append(died + " " + deadProcess + "\n");
+						builder1.append(deadProcess + "\n");
 					}
 					String dProcesses = builder1.toString();
 					if (dProcesses.length() > 0) {
@@ -158,10 +158,22 @@ public class Slave extends SocketMessage{
         				}
     				}
 				}
-    			for (String termProcess : getPSLastDeadProcesses()){
+    			for (String termProcess : getHeartbeatLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);
     			}
-    			psLastDeadProcesses = new ArrayList<String>();
+    			/*
+    			for (MigratableProcess m : processes.keySet()) {
+    				String className = m.getClass().getSimpleName();
+    				String pArgs[] = processes.get(m);
+    				StringBuilder builder = new StringBuilder();
+    				for(String s : pArgs) {
+    				    builder.append(s + " ");
+    				}
+    				String pArg = builder.toString();
+    				pArg = pArg.substring(0, pArg.length() - 1);;
+    				System.out.println(className + " " + pArg);
+    			}
+    			*/
     			
     		} else if (input.equals(quit)){
     			try {
