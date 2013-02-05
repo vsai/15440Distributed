@@ -34,6 +34,7 @@ public class Slave extends SocketMessage{
 	ArrayList<String> heartbeatLastDeadProcesses;
 	ArrayList<String> psLastDeadProcesses;
 	Map<String, List<ProcessInfo>> hashOfProcesses;
+	//Map<String, ProcessInfo> hashOfProcesses;
 	
 	Thread heartbeat;
 	
