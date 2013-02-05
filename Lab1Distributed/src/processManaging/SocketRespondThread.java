@@ -66,13 +66,7 @@ public class SocketRespondThread extends SocketMessage{
 					Master.sendProcessToSlave(clientMessage);
 					//out.println(sendMessage(startProcess + " " + clientMessage));
 				}
-				
-				//String mess[] = clientMessage.split(" ", 2);
-				//String ipAddr = mess[0];
-				//String clientCommand = mess[1];
-				//System.out.println("In Master: Client sent: " + clientMessage);
-				//out.println("In Master: Master received message");
-				
+
 				/*
 				 * ALIVE <workload> \n deadProcesses list
 				 * SUSPENDED <filePath> <processName> <<processArgs>> 

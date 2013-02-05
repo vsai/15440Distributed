@@ -25,7 +25,6 @@ import processMigration.MigratableProcess;
 public class SlaveReadMaster extends SocketMessage {
 
 	BufferedReader in;
-	//PrintWriter out;
 	PrintStream out;
 	ExecutorService executor = Executors.newCachedThreadPool();
 	Map<String, ProcessInfo> hashOfProcesses;

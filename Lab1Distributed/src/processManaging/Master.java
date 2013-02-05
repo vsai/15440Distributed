@@ -29,7 +29,8 @@ public class Master extends SocketMessage {
 		
 		for(SocketRespondThread socket : allProcess.keySet()){
 			s=allProcess.get(socket);
-			size= s.getProcesses().size();
+			//size= s.getProcesses().size();
+			size = s.getWorkload();
 			if(s.getProcesses().size()<count){
 				count =size;
 				bestSocket=socket;
