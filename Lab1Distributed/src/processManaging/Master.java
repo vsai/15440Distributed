@@ -38,6 +38,15 @@ public class Master extends SocketMessage {
 		}
 		bestSocket.out.println(sendMessage(startProcess + " " + clientMessage));
 	}
+	public int getAvgProcessNumber()
+	{
+		int total=0,count=0;
+		for(SlaveInfo s: allProcess.values()){
+			total+=s.getProcesses().size();
+			count++;
+		}
+		
+	}
 	public void run() {
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
