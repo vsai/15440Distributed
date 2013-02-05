@@ -8,10 +8,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
+
 import processMigration.MigratableProcess;
 
 /*
@@ -30,7 +33,7 @@ public class Slave extends SocketMessage{
 	BufferedReader in;
 	ArrayList<String> heartbeatLastDeadProcesses;
 	ArrayList<String> psLastDeadProcesses;
-	Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
+	Map<String, List<ProcessInfo>> hashOfProcesses;
 	
 	Thread heartbeat;
 	
@@ -38,7 +41,8 @@ public class Slave extends SocketMessage{
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, ArrayList<ProcessInfo>>());
+		this.hashOfProcesses = Collections.synchronizedMap(new HashMap<String, List<ProcessInfo>>());
+		this.hashOfProcesses = new ConcurrentHashMap<String, List<ProcessInfo>>();
 		this.out = null; //write to the master
 		this.in = null; //read from master
 		this.heartbeatLastDeadProcesses = new ArrayList<String>();
@@ -57,14 +61,16 @@ public class Slave extends SocketMessage{
 					 * psLastDeadProcesses
 					 */
 					for (String processName : hashOfProcesses.keySet()){
-						
-						for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
-							if (pInfo.getFuture().isDone()){
-								hashOfProcesses.get(processName).remove(pInfo);
-								putHeartbeatLastDeadProcesses(processName);
-								putPSLastDeadProcesses(processName);
+						List<ProcessInfo> a = Collections.synchronizedList(hashOfProcesses.get(processName));
+						synchronized(a) {
+							for (ProcessInfo pInfo : a){
+								if (pInfo.getFuture().isDone()){
+									a.remove(pInfo);
+									putHeartbeatLastDeadProcesses(processName);
+									putPSLastDeadProcesses(processName);
+								}
 							}
-						}
+						}	
 					}
 					
 					StringBuilder builder1 = new StringBuilder();
@@ -99,7 +105,7 @@ public class Slave extends SocketMessage{
 	public ArrayList<String> getHeartbeatLastDeadProcesses() {
 		return heartbeatLastDeadProcesses;
 	}
-	public boolean putHeartbeatLastDeadProcesses(String deadProcess){
+	public synchronized boolean putHeartbeatLastDeadProcesses(String deadProcess){
 		return heartbeatLastDeadProcesses.add(deadProcess);
 	}
 	
@@ -107,7 +113,7 @@ public class Slave extends SocketMessage{
 		return psLastDeadProcesses;
 	}
 	
-	public boolean putPSLastDeadProcesses(String deadProcess){
+	public synchronized boolean putPSLastDeadProcesses(String deadProcess){
 		return psLastDeadProcesses.add(deadProcess);
 	}
 	
@@ -118,7 +124,6 @@ public class Slave extends SocketMessage{
 	public void run() {
         try {
         	socketToMaster = new Socket(hostname, hostPortnum);
-            //out = new PrintWriter(socketToMaster.getOutputStream(), false);
             out = new PrintStream(socketToMaster.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socketToMaster.getInputStream()));
             System.out.println("In Slave: Connected to master");
@@ -140,18 +145,18 @@ public class Slave extends SocketMessage{
     		String input = sc.nextLine(); //only 1-line inputs from user terminal
     		input = cleanUserInput(input);
     		if (input.equals("ps")) {
-    			
+    			System.out.println("Shoould do ps now");
     			for (String processName : hashOfProcesses.keySet()){
-    				for (int i=0; i<hashOfProcesses.get(processName).size(); i++) {
-    					System.out.println("Currently running: " + processName);
+    				System.out.println(processName);
+    				List<ProcessInfo> a = hashOfProcesses.get(processName);
+    				System.out.println(a);
+    				System.out.println(a.isEmpty());
+    				synchronized(a) {
+    					System.out.println("In Slave Synchronized a");
+    					for (int i=0; i<a.size(); i++) {
+        					System.out.println("Currently running: " + processName);
+        				}
     				}
-					for (ProcessInfo pInfo : hashOfProcesses.get(processName)){
-						if (pInfo.getFuture().isDone()){
-							hashOfProcesses.get(processName).remove(pInfo);
-							putHeartbeatLastDeadProcesses(processName);
-							putPSLastDeadProcesses(processName);
-						}
-					}
 				}
     			for (String termProcess : getPSLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);

@@ -11,23 +11,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import Transactional_IO.GrepProcess;
+
 
 public class Reflection_test {
 
-	public static void main(String [] args)
+	public static void main(String [] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InterruptedException
 	{
-		try {
-			Class<?> t = Class.forName("TestShitzzz.Test1");
-
-			 Test1 o =  (Test1) t.newInstance();
+	
+			Class<?> t = Class.forName("GrepProcess");
+			Constructor<?>[] listOfConstructors = t.getConstructors();
+			String [] inputArgs = {"li","t.txt","q.txt"};
+			 GrepProcess o =  (GrepProcess) t.newInstance();
 			//Object o = (flower.getConstructor(new Class[0])).newInstance(new Object[0]);
-			 ExecutorService executor = Executors.newCachedThreadPool();
+			 /*ExecutorService executor = Executors.newCachedThreadPool();
 			Future<?> future = executor.submit(o);
 			Thread.sleep(1000L);
 			o.suspend();
 			System.out.println(o);
 			System.out.println("after");
-			FileOutputStream fos = new FileOutputStream("seria"); 
+			/FileOutputStream fos = new FileOutputStream("seria"); 
 			ObjectOutputStream oos = new ObjectOutputStream(fos); 
 			oos.writeObject(o); 
 			oos.flush(); 
@@ -58,13 +61,10 @@ public class Reflection_test {
 			}*/
 
 
-			//o.run();
-		} catch (Exception e) {
-			System.out.println("problem!");
-			e.printStackTrace();
-		}
-
+			
+	
 	}
+	
 }
 
 

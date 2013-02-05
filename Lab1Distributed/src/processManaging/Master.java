@@ -10,7 +10,6 @@ import java.lang.Thread;
 
 public class Master extends Thread{
 
-	//Thread listen;
 	ServerSocket listenSocket;
 	Map<Long, SlaveInfo> allProcess;
 	final int hostPortnum;
@@ -18,22 +17,9 @@ public class Master extends Thread{
 	public Master(final int hostPortnum) {
 		allProcess = Collections.synchronizedMap(new HashMap<Long, SlaveInfo>());
 		this.hostPortnum = hostPortnum;
-		/*
-		listen = new Thread("MasterListen") {
-			public void run() {
-				try {
-					listenSocket = new ServerSocket(hostPortnum);
-				} catch (IOException e) {
-					System.out.println("Couldn't listen on: " + hostPortnum);
-					e.printStackTrace();
-				}
-			}
-		};
-		*/
 	}
 
 	public void run() {
-		//listen.run();
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
 		} catch (IOException e1) {

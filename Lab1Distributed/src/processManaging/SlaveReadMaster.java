@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import processMigration.MigratableProcess;
 
 public class SlaveReadMaster extends SocketMessage {
@@ -24,14 +24,13 @@ public class SlaveReadMaster extends SocketMessage {
 	BufferedReader in;
 	//PrintWriter out;
 	PrintStream out;
-	static ExecutorService executor = Executors.newCachedThreadPool();
-	static Map<String,ArrayList<ProcessInfo>> hashOfProcesses;
+	ExecutorService executor = Executors.newCachedThreadPool();
+	Map<String,List<ProcessInfo>> hashOfProcesses;
 	
-	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,ArrayList<ProcessInfo>> hashOfProcesses) {
+	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,List<ProcessInfo>> hashOfProcesses) {
 		this.in = in;
 		this.out = out;
 		this.hashOfProcesses = hashOfProcesses;
-		
 	}
 	
 	public void run(){
@@ -45,16 +44,19 @@ public class SlaveReadMaster extends SocketMessage {
 		
 		String inputLine;
 		String filePath = null;
+		
 		while (true) {
+			System.out.println("IN is: " + in);
 			try {
 				synchronized(in){
 					while(!((inputLine = in.readLine()).equals(messageTerminator))) {
-						System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
-						System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
+						//System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
+						//System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
 						String[] input = inputLine.split(" ", 2);
-						System.out.println("YOLOSWAG");
+						//System.out.println("YOLOSWAG");
 						if (input[0].equals(startProcess)) {
 							try {
+								System.out.println(input[1]);
 								start(input[1]);
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -76,7 +78,7 @@ public class SlaveReadMaster extends SocketMessage {
 							
 						} else if (input[0].equals(receivedProcess)) {
 							//coolstoryBro
-							System.out.println("IN CLIENT: The master received a process from me");
+							//System.out.println("IN CLIENT: The master received a process from me");
 						}
 					}
 				}
@@ -84,7 +86,7 @@ public class SlaveReadMaster extends SocketMessage {
 				System.out.println("Could not read from buffer");
 				e.printStackTrace();
 			}
-			System.out.println("DID AN ITERATION");
+			//System.out.println("DID AN ITERATION");
 		}
 	}
 	
@@ -92,34 +94,54 @@ public class SlaveReadMaster extends SocketMessage {
 			throws ClassNotFoundException, IllegalArgumentException, 
 			InstantiationException, IllegalAccessException, InvocationTargetException
 	{
-		System.out.println("In Start func");
-		String [] p=str.split(" ");
+		//System.out.println("In SlaveReadMaster: In Start func");
+		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
-		String [] pArgs = new String [p.length-1];
-		for(int i=1;i<p.length;i++) {
-			pArgs[i-1]=p[i];
-		}
+		String [] pArgs = p[1].split(" ");
+
 		Constructor<?>[] listOfConstructors = t.getConstructors();
 		int correctConstructor=0;
-		for(int i =0;i<listOfConstructors.length;i++)
-		{
-			if(listOfConstructors[i].getParameterTypes().length==pArgs.length)
-				correctConstructor=i;
-		}
-		MigratableProcess mp=(MigratableProcess) listOfConstructors[correctConstructor].newInstance(pArgs);
-		Future<?> future = executor.submit(mp);
-		System.out.println("added proccess to exectuor and running!");
-		ProcessInfo pi= new ProcessInfo(future,mp);
-		ArrayList<ProcessInfo> processes =new ArrayList<ProcessInfo>();
-		
-		if(hashOfProcesses.containsKey(str)) {
-			processes=hashOfProcesses.get(str);
+		for(int i =0;i<listOfConstructors.length;i++) {
+			if (listOfConstructors[i].getGenericParameterTypes().length == 1) {
+				correctConstructor = i;
+			}
 		}
 
-		processes.add(pi);
+		Object arg = pArgs;//new String[0];
+		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
+		Future<?> future = executor.submit(mp);
+		ProcessInfo pi= new ProcessInfo(future,mp);
+		List<ProcessInfo> processes = hashOfProcesses.get(str);
+		//List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
+		/*
+		synchronized(processes) {
+			if (processes != null) {
+				processes.add(pi);
+			} else {
+				processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
+				processes.add(pi);
+			}
+		}
+		*/
+		/*
+		synchronized(processes) {
+		if(hashOfProcesses.containsKey(str)) {
+				processes=hashOfProcesses.get(str);
+			}
+		}
+		*/
 		hashOfProcesses.put(str, processes);
-		System.out.println(hashOfProcesses.size());
-		System.out.println("Updated hash table");
+		//synchronized(processes) {
+		//	
+		//}
+		
+		
+		//synchronized(hashOfProcesses){
+		//	List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());	
+		//}
+		
+		//System.out.println(hashOfProcesses.size());
+		//System.out.println("Updated hash table");
 		return str;
 		
 	}
@@ -128,7 +150,7 @@ public class SlaveReadMaster extends SocketMessage {
 		if(!hashOfProcesses.containsKey(str)) {
 			return "No Process in the list";
 		}
-		ArrayList<ProcessInfo> processes = hashOfProcesses.get(str);
+		List<ProcessInfo> processes = hashOfProcesses.get(str);
 		ProcessInfo p = processes.get(0);
 		processes.remove(p);
 		hashOfProcesses.put(str,processes);
@@ -155,7 +177,7 @@ public class SlaveReadMaster extends SocketMessage {
 		Future<?> future = executor.submit(mp);
 		
 		ProcessInfo pi= new ProcessInfo(future,mp);
-		ArrayList<ProcessInfo> processes = new ArrayList<ProcessInfo>();
+		List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(procAndArgs)) {
 			processes=hashOfProcesses.get(procAndArgs);
