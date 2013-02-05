@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import Transactional_IO.TransactionalFileInputStream;
+import Transactional_IO.TransactionalFileOutputStream;
 import processMigration.MigratableProcess;
 
 public class SlaveReadMaster extends SocketMessage {
@@ -59,8 +62,10 @@ public class SlaveReadMaster extends SocketMessage {
 								System.out.println(input[1]);
 								out.println(sendMessage(started + " " + start(input[1])));
 							} catch (IllegalArgumentException e) {
+								System.out.println("Bad arguemnts for that process");
 								e.printStackTrace();
 							} catch (ClassNotFoundException e) {
+								System.out.println("No Process by that name");
 								e.printStackTrace();
 							} catch (InstantiationException e) {
 								e.printStackTrace();
@@ -164,7 +169,7 @@ public class SlaveReadMaster extends SocketMessage {
 		f.cancel(b);
 		String currentDir = System.getProperty("user.dir");
 		String name=str.split(" ")[0];
-		FileOutputStream fos = new FileOutputStream(name); 
+		TransactionalFileOutputStream fos = new TransactionalFileOutputStream(name); 
 		ObjectOutputStream oos = new ObjectOutputStream(fos); 
 		oos.writeObject(mp); 
 		oos.flush(); 
@@ -173,7 +178,7 @@ public class SlaveReadMaster extends SocketMessage {
 		return currentDir+"/"+name;
 	}
 	public String resume(String procAndArgs, String filename) throws IOException, ClassNotFoundException {
-		FileInputStream fis = new FileInputStream(filename); 
+		TransactionalFileInputStream fis = new TransactionalFileInputStream(filename); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 		MigratableProcess mp = (MigratableProcess)ois.readObject(); 
 		ois.close(); 

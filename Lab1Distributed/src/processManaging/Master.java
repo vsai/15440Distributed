@@ -8,17 +8,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.lang.Thread;
 
-public class Master extends Thread{
+public class Master extends SocketMessage {
 
 	ServerSocket listenSocket;
-	Map<Long, SlaveInfo> allProcess;
+	static Map<SocketRespondThread, SlaveInfo> allProcess;
 	final int hostPortnum;
 	
 	public Master(final int hostPortnum) {
-		allProcess = Collections.synchronizedMap(new HashMap<Long, SlaveInfo>());
+		allProcess = Collections.synchronizedMap(new HashMap<SocketRespondThread, SlaveInfo>());
 		this.hostPortnum = hostPortnum;
 	}
 
+	public static void sendProcessToSlave(String clientMessage)
+	{
+		SlaveInfo s;
+		SocketRespondThread bestSocket = null;
+		
+		int count = 100000;
+		int size;
+		
+		for(SocketRespondThread socket : allProcess.keySet()){
+			s=allProcess.get(socket);
+			size= s.getProcesses().size();
+			if(s.getProcesses().size()<count){
+				count =size;
+				bestSocket=socket;
+			}		
+		}
+		bestSocket.out.println(sendMessage(startProcess + " " + clientMessage));
+	}
 	public void run() {
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
@@ -32,7 +50,7 @@ public class Master extends Thread{
 				System.out.println("In Master: socket connection established");
 				SlaveInfo p = new SlaveInfo();
 				SocketRespondThread srt = new SocketRespondThread(clientConn, p);
-				allProcess.put(srt.getId(), p);
+				allProcess.put(srt, p);
 				System.out.println(allProcess);
 				srt.start();
 			} catch (IOException e) {

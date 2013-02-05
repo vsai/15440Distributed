@@ -68,8 +68,9 @@ public class Slave extends SocketMessage{
 							//for (ProcessInfo pInfo : a){
 						pInfo=hashOfProcesses.get(processName);
 						if (pInfo.getFuture().isDone()){
-								putHeartbeatLastDeadProcesses(pInfo.getProcessName());
-								putPSLastDeadProcesses(pInfo.getProcessName());
+								hashOfProcesses.remove(processName);
+								putHeartbeatLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
+								putPSLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 							}
 					}
 						//}	
@@ -144,11 +145,12 @@ public class Slave extends SocketMessage{
         
         Scanner sc = new Scanner(System.in);
         while(true){
-    		System.out.println("Prompt for input ==>");
+    		System.out.print("Prompt for input ==>");
     		String input = sc.nextLine(); //only 1-line inputs from user terminal
     		input = cleanUserInput(input);
     		if (input.equals("ps")) {
-    			System.out.println("Shoould do ps now");
+    			//System.out.println("Shoould do ps now");
+    			System.out.println("Currently Running:");
     			for (String processName : hashOfProcesses.keySet()){
     				ProcessInfo a = hashOfProcesses.get(processName);
     				System.out.println(a.getProcessName()+a.getProcessArgs());

@@ -63,7 +63,8 @@ public class SocketRespondThread extends SocketMessage{
 					//TO SEND TO ANOTHER SOCKET POSSIBLY:
 					System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");
 					out.println(sendMessage(receivedProcess + " " + clientMessage));
-					out.println(sendMessage(startProcess + " " + clientMessage));
+					Master.sendProcessToSlave(clientMessage);
+					//out.println(sendMessage(startProcess + " " + clientMessage));
 				}
 				
 				//String mess[] = clientMessage.split(" ", 2);
