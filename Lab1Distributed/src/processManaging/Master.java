@@ -33,6 +33,7 @@ public class Master extends SocketMessage {
 							//that process has died
 							allProcess.remove(sl);
 						}
+						reDistribute();
 					}
 					try {
 						Thread.sleep(sleepTime);
