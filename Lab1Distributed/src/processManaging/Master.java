@@ -43,26 +43,39 @@ public class Master extends SocketMessage {
 			
 		};
 	}
-
-	public static void sendProcessToSlave(String clientMessage)
-	{
+	
+	public static void messageToSlave(String messageType, String clientMessage, SocketRespondThread srt) {
+		if (messageType.equals(startProcess) || messageType.equals(suspendProcess) || messageType.equals(resumeProcess)) {
+			synchronized (srt.out) {
+				srt.out.println(messageType + " " + clientMessage);
+			}
+		} else {
+			System.out.println("Not a valid message");
+		}
+	}
+	
+	public static SocketRespondThread getLeastWorkloadSlave(){
 		SlaveInfo s;
 		SocketRespondThread bestSocket = null;
-		
-		int count = 100000;
 		int size;
+		int count = 100000;
 		
 		for(SocketRespondThread socket : allProcess.keySet()){
 			s=allProcess.get(socket);
-			//size= s.getProcesses().size();
 			size = s.getWorkload();
 			if(s.getProcesses().size()<count){
 				count =size;
 				bestSocket=socket;
 			}		
 		}
-		bestSocket.out.println(sendMessage(startProcess + " " + clientMessage));
+		return bestSocket;
 	}
+	
+	public static void startProcessWithBestSlave(String clientMessage){
+		SocketRespondThread bestSocket = getLeastWorkloadSlave();
+		messageToSlave(startProcess, clientMessage, bestSocket);
+	}
+	
 	public void run() {
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
@@ -70,6 +83,7 @@ public class Master extends SocketMessage {
 			System.out.println("Couldn't listen on: " + hostPortnum);
 			e1.printStackTrace();
 		}
+		redistributeWorkload.run();
 		while (true) {
 			try {
 				Socket clientConn = listenSocket.accept();				

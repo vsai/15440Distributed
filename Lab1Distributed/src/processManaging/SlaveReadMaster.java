@@ -54,23 +54,19 @@ public class SlaveReadMaster extends SocketMessage {
 						//System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
 						//System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
 						String[] input = inputLine.split(" ", 2);
-						//System.out.println("YOLOSWAG");
 						if (input[0].equals(startProcess)) {
 							try {
-								System.out.println(input[1]);
 								out.println(sendMessage(started + " " + start(input[1])));
 							} catch (IllegalArgumentException e) {
-								System.out.println("Bad arguemnts for that process");
-								e.printStackTrace();
+								System.err.println("Bad arguemnts for that process");
 							} catch (ClassNotFoundException e) {
-								System.out.println("No Process by that name");
-								e.printStackTrace();
+								System.err.println("No Process by that name");
 							} catch (InstantiationException e) {
-								e.printStackTrace();
+								System.err.println("Could not initialize the class");
 							} catch (IllegalAccessException e) {
-								e.printStackTrace();
+								System.err.println("Did not have access to that class");
 							} catch (InvocationTargetException e) {
-								e.printStackTrace();
+								System.err.println("Could not invoke the target");
 							}
 						} else if (input[0].equals(suspendProcess)) {
 							filePath = suspend(input[1]);
@@ -80,7 +76,6 @@ public class SlaveReadMaster extends SocketMessage {
 						} else if (input[0].equals(resumeProcess)) {
 							
 						} else if (input[0].equals(receivedProcess)) {
-							//coolstoryBro
 							//System.out.println("IN CLIENT: The master received a process from me");
 						}
 					}
@@ -89,7 +84,6 @@ public class SlaveReadMaster extends SocketMessage {
 				System.out.println("Could not read from buffer");
 				e.printStackTrace();
 			}
-			//System.out.println("DID AN ITERATION");
 		}
 	}
 	
@@ -108,12 +102,7 @@ public class SlaveReadMaster extends SocketMessage {
 	 */
 	public String start(String str) 
 			throws ClassNotFoundException, IllegalArgumentException, 
-			InstantiationException, IllegalAccessException, InvocationTargetException
-	{		
-		/*
-		 * GENERATE A KEY AND RETURN IT
-		 * STORE IT INTO PROCESSINFO
-		 */
+			InstantiationException, IllegalAccessException, InvocationTargetException {		
 		String [] p=str.split(" ", 2);
 		Class<?> t = Class.forName(p[0]);
 		String [] pArgs = p[1].split(" ");

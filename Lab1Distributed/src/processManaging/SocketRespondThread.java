@@ -32,19 +32,14 @@ public class SocketRespondThread extends SocketMessage{
 		while (true){
 			try {
 				String clientMessage = in.readLine();
-				System.out.println("In Master SocketResponder: " + clientMessage);
 				String mess[] = clientMessage.split(" ", 2);
 				String i;
 				while (!((i = in.readLine()).equals(messageTerminator))){
 					//should only go in here for ALIVE, so these are the process that have died since then
-					System.out.println("THE MESSAGE I GOT WAS NOT A MESSAGE TERMINATOR");
 					slaveInfo.removeProcess(i);
 				}
-				System.out.println("In Master: GOT AN END MESSAGE");
 				
 				if (mess[0].equals(alive)){
-					//check if workload sent matches the workload in slave info???
-					//or not necessary?
 					slaveInfo.setAlive(true);
 					System.out.println("SLAVE is alive");
 				} else if (mess[0].equals(suspended)) {
@@ -60,22 +55,12 @@ public class SocketRespondThread extends SocketMessage{
 				} else if (mess[0].equals(started)){
 					slaveInfo.putProcess(mess[1]);
 				} else {
-					//this should be a newProcess
 					//TO SEND TO ANOTHER SOCKET POSSIBLY:
-					System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");
+					//System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");
 					out.println(sendMessage(receivedProcess + " " + clientMessage));
-					Master.sendProcessToSlave(clientMessage);
-					//out.println(sendMessage(startProcess + " " + clientMessage));
+					Master.startProcessWithBestSlave(clientMessage);
 				}
 
-				/*
-				 * ALIVE <workload> \n deadProcesses list
-				 * SUSPENDED <filePath> <processName> <<processArgs>> 
-				 * quit
-				 * <newProcessName> <<processArgs>>
-				 */
-				
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
