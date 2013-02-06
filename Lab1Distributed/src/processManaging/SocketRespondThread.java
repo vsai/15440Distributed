@@ -46,6 +46,10 @@ public class SocketRespondThread extends SocketMessage{
 					String suspendDetails[] = mess[1].split(" ", 2);
 					String filePath = suspendDetails[0];
 					String processSuspended = suspendDetails[1];
+					System.out.println("Process was suspended. Details:");
+					System.out.println("filePath: " + filePath);
+					System.out.println("processSuspended: " + processSuspended);
+					//CALL MASTER.SEND OVER SUSPENDED PROCESS;
 				} else if (mess[0].equals(quit)) {
 					try {
 						this.join();

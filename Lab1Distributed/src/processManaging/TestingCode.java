@@ -18,11 +18,53 @@ public class TestingCode {
 	private static InetAddress ip;
 	
 	public static void main(String[] args) {
+		
+		
+		
+		
+		
+		String a = "abcdefghijklmn";
+		StringBuffer sb = new StringBuffer(a);
+		
+		assert(a.length() == sb.length());
+		for (int index = 0; index<sb.length(); index++){
+			char c = a.charAt(index);
+			if       (c >= 'a' && c <= 'm') c += 13;
+            else if  (c >= 'A' && c <= 'M') c += 13;
+            else if  (c >= 'n' && c <= 'z') c -= 13;
+            else if  (c >= 'N' && c <= 'Z') c -= 13;
+			sb.setCharAt(index, c);
+		}
+		System.out.println(sb);
+		System.out.println(a);
+		
+		/*for (int index = 0; index<a.length(); index++) {
+			char aChar = a.charAt(index);
+			System.out.println(aChar);
+			a.charAt(index) = '1';
+		}
+		*/
+		
+		System.out.println("DONE WITH 1");
+		
+		
+		
+		
+		char[] charArr = a.toCharArray();
+		
+		for (char b : charArr){
+			//System.out.println(b);
+			b = '1';
+		}
+		System.out.println(a);
+		System.out.println(charArr);
+		/*
 		String a = "abcdef\nab\nac\n";
 		System.out.println(a);
 		System.out.println("ABC");
 		System.out.println(a.substring(0, a.length() -1));
 		System.out.println("ABC");
+		*/
 		//Find out your own IP details
 		/*
 		Master m = new Master(1);

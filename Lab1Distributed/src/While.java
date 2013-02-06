@@ -32,7 +32,7 @@ public class While implements MigratableProcess
 
 			while (!suspending) {
 
-				
+				System.out.println("YOYOYO");
 				// Make grep take longer so that we don't require extremely large files for interesting results
 				try {
 					Thread.sleep(10000);

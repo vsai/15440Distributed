@@ -142,6 +142,9 @@ public class SlaveReadMaster extends SocketMessage {
 		f.cancel(b);
 		String currentDir = System.getProperty("user.dir");
 		String name=process.getProcessName();
+		System.out.println("About to serialze");
+		System.out.println("My current dir is"+currentDir);
+		System.out.println("Process name is "+name);
 		TransactionalFileOutputStream fos = new TransactionalFileOutputStream(name); 
 		ObjectOutputStream oos = new ObjectOutputStream(fos); 
 		oos.writeObject(mp); 

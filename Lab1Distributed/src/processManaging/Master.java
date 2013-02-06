@@ -6,11 +6,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.lang.Thread;
 
 public class Master extends SocketMessage {
-
 	
 	Thread redistributeWorkload;
 	ServerSocket listenSocket;
@@ -33,7 +33,7 @@ public class Master extends SocketMessage {
 							//that process has died
 							allProcess.remove(sl);
 						}
-						reDistribute();
+						redistribute();
 					}
 					try {
 						Thread.sleep(sleepTime);
@@ -48,36 +48,61 @@ public class Master extends SocketMessage {
 	
 	public static void messageToSlave(String messageType, String clientMessage, SocketRespondThread srt) {
 		if (messageType.equals(startProcess) || messageType.equals(suspendProcess) || messageType.equals(resumeProcess)) {
-			synchronized (srt.out) {
-				srt.out.println(messageType + " " + clientMessage);
-			}
+			srt.out.println(sendMessage(messageType + " " + clientMessage));
 		} else {
 			System.out.println("Not a valid message");
 		}
 	}
 	
-	public static SocketRespondThread getLeastWorkloadSlave(){
+	public static SocketRespondThread getExtremeWorkloadSlave(boolean mostWorkload) {
 		SlaveInfo s;
 		SocketRespondThread bestSocket = null;
-		int size;
-		int count = 100000;
+		int work;
 		
 		for(SocketRespondThread socket : allProcess.keySet()){
 			s=allProcess.get(socket);
-			size = s.getWorkload();
-			if(s.getProcesses().size()<count){
-				count =size;
-				bestSocket=socket;
-			}		
+			work = s.getWorkload();
+			if (!mostWorkload) {
+				int count = 100000;
+				if (work<count) {
+					count = work;
+					bestSocket = socket;
+				}
+			} else {
+				int count = 0;
+				if (work > count) {
+					count = work;
+					bestSocket = socket;
+				}
+			}
 		}
 		return bestSocket;
+		
+	}
+		
+	public static SocketRespondThread getMinWorkloadSlave(){
+		return getExtremeWorkloadSlave(false);
+	}
+	
+	public static SocketRespondThread getMaxWorkloadSlave() {
+		return getExtremeWorkloadSlave(true);
 	}
 	
 	public static void startProcessWithBestSlave(String clientMessage){
-		SocketRespondThread bestSocket = getLeastWorkloadSlave();
+		SocketRespondThread bestSocket = getMinWorkloadSlave();
 		messageToSlave(startProcess, clientMessage, bestSocket);
 	}
 
+	public void redistribute(){
+		SocketRespondThread worst = getMaxWorkloadSlave();
+		SocketRespondThread best = getMinWorkloadSlave();
+		List<String> a = worst.slaveInfo.getProcesses();
+		String key = a.remove(0);
+		messageToSlave(suspendProcess, key, worst);
+		//messageToSlave(resumeProcess, key, best);
+	}
+	
+	/*
 	public int getAvgProcessNumber()
 	{
 		int total=0,count=0;
@@ -111,6 +136,7 @@ public class Master extends SocketMessage {
 				}
 			}
 	}
+	*/
 	public void run() {
 		try {
 			listenSocket = new ServerSocket(hostPortnum);

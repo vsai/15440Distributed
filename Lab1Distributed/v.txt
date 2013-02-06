@@ -1,6 +1,6 @@
-line1
-line2
-line3
-line4
-line5
-line6
+yvar1
+yvar2
+yvar3
+yvar4
+yvar5
+yvar6

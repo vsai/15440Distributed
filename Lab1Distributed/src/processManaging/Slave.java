@@ -146,7 +146,7 @@ public class Slave extends SocketMessage{
     			System.out.println("Currently Running:");
     			for (String processName : hashOfProcesses.keySet()){
     				ProcessInfo a = hashOfProcesses.get(processName);
-    				System.out.println(a.getProcessName()+a.getProcessArgs());
+    				System.out.println(a.getProcessName() + " " + a.getProcessArgs());
 				}
     			for (String termProcess : getPSLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);
