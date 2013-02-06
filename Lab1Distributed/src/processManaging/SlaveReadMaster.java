@@ -141,7 +141,7 @@ public class SlaveReadMaster extends SocketMessage {
 		boolean b=false;
 		f.cancel(b);
 		String currentDir = System.getProperty("user.dir");
-		String name=str.split(" ")[0];
+		String name=process.getProcessName();
 		TransactionalFileOutputStream fos = new TransactionalFileOutputStream(name); 
 		ObjectOutputStream oos = new ObjectOutputStream(fos); 
 		oos.writeObject(mp); 

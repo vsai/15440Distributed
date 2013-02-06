@@ -3,6 +3,7 @@ package processManaging;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class Master extends SocketMessage {
 							//that process has died
 							allProcess.remove(sl);
 						}
+						reDistribute();
 					}
 					try {
 						Thread.sleep(sleepTime);
@@ -75,7 +77,40 @@ public class Master extends SocketMessage {
 		SocketRespondThread bestSocket = getLeastWorkloadSlave();
 		messageToSlave(startProcess, clientMessage, bestSocket);
 	}
-	
+
+	public int getAvgProcessNumber()
+	{
+		int total=0,count=0;
+		for(SlaveInfo s: allProcess.values()){
+			total+=s.getProcesses().size();
+			count++;
+		}
+		return (int)Math.floor(total/count);
+	}
+	public void reDistribute(){
+		SlaveInfo s;
+		int avgNum=getAvgProcessNumber();
+		//ArrayList<SocketRespondThread> underAvgList=new ArrayList<SocketRespondThread>();
+		ArrayList<SocketRespondThread> overAvgList=new ArrayList<SocketRespondThread>();
+		for(SocketRespondThread socket: allProcess.keySet()){
+			s= allProcess.get(socket);
+			//if(s.getProcesses().size()< avgNum)
+				//underAvgList.add(socket);
+			if(s.getProcesses().size() > avgNum)
+				overAvgList.add(socket);
+		}
+		SlaveInfo slaveOver;
+		String keyForProcess;
+		for(SocketRespondThread socketOfSlaveOver : overAvgList){
+			 slaveOver = allProcess.get(socketOfSlaveOver);
+			while(slaveOver.getProcesses().size()>avgNum){
+				keyForProcess=slaveOver.getProcesses().remove(0);
+				//suspend this key in this slave
+				socketOfSlaveOver.out.println(sendMessage(suspendProcess + " " + keyForProcess));
+				//
+				}
+			}
+	}
 	public void run() {
 		try {
 			listenSocket = new ServerSocket(hostPortnum);
@@ -83,7 +118,7 @@ public class Master extends SocketMessage {
 			System.out.println("Couldn't listen on: " + hostPortnum);
 			e1.printStackTrace();
 		}
-		redistributeWorkload.run();
+		redistributeWorkload.start();
 		while (true) {
 			try {
 				Socket clientConn = listenSocket.accept();				
