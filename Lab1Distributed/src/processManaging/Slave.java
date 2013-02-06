@@ -39,9 +39,11 @@ public class Slave extends SocketMessage{
 		this.hostname = hostname;
 		this.hostPortnum = hostPortnum;
 		this.selfIp = selfIp;
-		this.hashOfProcesses = new ConcurrentHashMap<String, ProcessInfo>();
+		this.hashOfProcesses = new ConcurrentHashMap<String, ProcessInfo>(); //filePath -> processInfo (future, obj, pname, pargs)
+		
 		this.out = null; //write to the master
 		this.in = null; //read from master
+		
 		this.heartbeatLastDeadProcesses = Collections.synchronizedList(new ArrayList<String>());
 		this.psLastDeadProcesses = Collections.synchronizedList(new ArrayList<String>());
 		
@@ -50,7 +52,6 @@ public class Slave extends SocketMessage{
 			public void run() {
 				while (true) {
 					String toSend = alive;
-					toSend += " " + getSlaveWorkload();
 					
 					/*
 					 * find everything that has died since last check and add it to
@@ -66,9 +67,8 @@ public class Slave extends SocketMessage{
 								putPSLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 							}
 					}
-						//}	
-					//}
 					
+						
 					StringBuilder builder1 = new StringBuilder();
 					for (String deadProcess : getHeartbeatLastDeadProcesses()) {
 						builder1.append(deadProcess + "\n");
@@ -92,11 +92,6 @@ public class Slave extends SocketMessage{
 				}
 			}
 		};
-	}
-
-	
-	public int getSlaveWorkload(){
-		return 0;
 	}
 	
 	public List<String> getHeartbeatLastDeadProcesses() {
@@ -142,11 +137,10 @@ public class Slave extends SocketMessage{
     		String input = sc.nextLine(); //only 1-line inputs from user terminal
     		input = cleanUserInput(input);
     		if (input.equals("ps")) {
-    			//System.out.println("Should do ps now");
     			System.out.println("Currently Running:");
     			for (String processName : hashOfProcesses.keySet()){
     				ProcessInfo a = hashOfProcesses.get(processName);
-    				System.out.println(a.getProcessName() + " " + a.getProcessArgs());
+    				System.out.println(a.getProcessName() + " " + 	a.getProcessArgs());
 				}
     			for (String termProcess : getPSLastDeadProcesses()){
     				System.out.println("Terminated: " + termProcess);

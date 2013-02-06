@@ -54,6 +54,19 @@ public class SlaveReadMaster extends SocketMessage {
 						//System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
 						//System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
 						String[] input = inputLine.split(" ", 2);
+						
+						if (input[0].equals(resumeProcess)){
+							
+						} else if (input[0].equals(suspendProcess)){
+							
+						}
+						
+						
+						
+						
+						
+						
+						
 						if (input[0].equals(startProcess)) {
 							try {
 								out.println(sendMessage(started + " " + start(input[1])));
