@@ -26,8 +26,6 @@ public class SocketRespondThread extends SocketMessage{
 		}        
 	}
 	
-	// FOR LOAD BALANCER, MAKE SURE TO PUT IN RESUME
-	
 	public void run(){
 		try {
 			while (true){
@@ -36,34 +34,30 @@ public class SocketRespondThread extends SocketMessage{
 				String i;
 				while (!((i = in.readLine()).equals(messageTerminator))){
 					//should only go in here for ALIVE, so these are the process that have died since then
-					slaveInfo.removeProcess(i);
+					System.out.println("MASTER SRT: I'm removing a process");
+					System.out.println(i);
+					System.out.println("RemoveSuccess:? --- " + slaveInfo.removeProcess(i));
 				}
 				if (mess[0].equals(alive)){
 					slaveInfo.setAlive(true);
-					//System.out.println("SLAVE is alive");
-//				} else if (mess[0].equals(suspended)) {
-//					String suspendDetails[] = mess[1].split(" ", 2);
-//					String filePath = suspendDetails[0];
-//					String processSuspended = suspendDetails[1];
-//					System.out.println("Process was suspended. Details:");
-//					System.out.println("filePath: " + filePath);
-//					System.out.println("processSuspended: " + processSuspended);
-
+					System.out.println(clientMessage);
 				} else if (mess[0].equals(quit)) {
 					Master.allProcess.remove(this);
 					break;
-//				} else if (mess[0].equals(started)){
-//					slaveInfo.putProcess(mess[1]);
-				} else {
+				} else if (mess[0].equals(startProcess)){
 					System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");
-//					out.println(sendMessage(receivedProcess + " " + clientMessage));
-//					Master.startProcessWithBestSlave(clientMessage);
+					
+					
+					Master.addNewProcess(mess[1]);
+					
 					
 					/*
+					 * mess[1] will be a string of processname and process args
 					 * START PROCESS IN MASTER
 					 * SERIALIZE PROCESS
 					 * STORE TO HASHMAP
-					 */
+					 */					
+				} else {
 					
 				}
 			}

@@ -63,7 +63,8 @@ public class Slave extends SocketMessage{
 						pInfo=hashOfProcesses.get(processName);
 						if (pInfo.getFuture().isDone()){
 								hashOfProcesses.remove(processName);
-								putHeartbeatLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
+								putHeartbeatLastDeadProcesses(pInfo.getFilePath());
+								//putHeartbeatLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 								putPSLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 							}
 					}
@@ -165,12 +166,9 @@ public class Slave extends SocketMessage{
     			
     		} else { //Process input with commands - only for master
     			System.out.println("In Slave: In new process input terminal");
-    			//out.println(sendMessage(startProcess + " " + input));
-    			out.println(sendMessage(input));
-    			System.out.println("In Slave: SENT Message to Master");
-    			//synchronized(out) {    				
-    			//	out.println(sendMessage(input));
-    			//}
+    			synchronized(out) {
+    				out.println(sendMessage(startProcess + " " + input));
+    			}
     		} 
         }        
     }	

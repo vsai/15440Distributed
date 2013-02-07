@@ -2,6 +2,7 @@ package processManaging;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -51,46 +52,49 @@ public class SlaveReadMaster extends SocketMessage {
 			try {
 				synchronized(in){
 					while(!((inputLine = in.readLine()).equals(messageTerminator))) {
-						//System.out.println("IN SLAVE: LISTENING TO MESSAGES FROM MASTER");
-						//System.out.println("IN SLAVE: GOT THE MESSAGE: " + inputLine);
+						System.out.println("SLAVE input:"+inputLine);
 						String[] input = inputLine.split(" ", 2);
-						
 						if (input[0].equals(resumeProcess)){
+							String [] processInfo = input[1].split(" ", 2);
+							//call a function resume
+							try {
+								resume(processInfo[0], processInfo[1]);
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							
 						} else if (input[0].equals(suspendProcess)){
 							
-						}
-						
-						
-						
-						
-						
-						
-						
-						if (input[0].equals(startProcess)) {
-							try {
-								out.println(sendMessage(started + " " + start(input[1])));
-							} catch (IllegalArgumentException e) {
-								System.err.println("Bad arguemnts for that process");
-							} catch (ClassNotFoundException e) {
-								System.err.println("No Process by that name");
-							} catch (InstantiationException e) {
-								System.err.println("Could not initialize the class");
-							} catch (IllegalAccessException e) {
-								System.err.println("Did not have access to that class");
-							} catch (InvocationTargetException e) {
-								System.err.println("Could not invoke the target");
-							}
-						} else if (input[0].equals(suspendProcess)) {
-							filePath = suspend(input[1]);
-							synchronized(out) {
-								out.println(sendMessage(suspended + " " + filePath + " " + input[1]));
-							}
-						} else if (input[0].equals(resumeProcess)) {
+						} else if (input[0].equals(suspendALL)){
 							
-						} else if (input[0].equals(receivedProcess)) {
-							//System.out.println("IN CLIENT: The master received a process from me");
 						}
+						
+						
+//						if (input[0].equals(startProcess)) {
+//							try {
+//								out.println(sendMessage(started + " " + start(input[1])));
+//							} catch (IllegalArgumentException e) {
+//								System.err.println("Bad arguemnts for that process");
+//							} catch (ClassNotFoundException e) {
+//								System.err.println("No Process by that name");
+//							} catch (InstantiationException e) {
+//								System.err.println("Could not initialize the class");
+//							} catch (IllegalAccessException e) {
+//								System.err.println("Did not have access to that class");
+//							} catch (InvocationTargetException e) {
+//								System.err.println("Could not invoke the target");
+//							}
+//						} else if (input[0].equals(suspendProcess)) {
+//							filePath = suspend(input[1]);
+//							synchronized(out) {
+//								out.println(sendMessage(suspended + " " + filePath + " " + input[1]));
+//							}
+//						} else if (input[0].equals(resumeProcess)) {
+//							
+//						} else if (input[0].equals(receivedProcess)) {
+//							//System.out.println("IN CLIENT: The master received a process from me");
+//						}
 					}
 				}
 			} catch (IOException e) {
@@ -100,20 +104,20 @@ public class SlaveReadMaster extends SocketMessage {
 		}
 	}
 	
-	private String getRandomString(int len){
-		StringBuffer sb = new StringBuffer();  
-	    for (int x = 0; x <len; x++)  
-	    {  
-	      sb.append((char)((int)(Math.random()*26)+97));  
-	    } 
-	    return sb.toString();
-	}
+//	private String getRandomString(int len){
+//		StringBuffer sb = new StringBuffer();  
+//	    for (int x = 0; x <len; x++)  
+//	    {  
+//	      sb.append((char)((int)(Math.random()*26)+97));  
+//	    } 
+//	    return sb.toString();
+//	}
 	/*
 	 * input: str = <processName> <<processArgs>>
 	 * do: put into hash (key for process, input string)
 	 * return: key for the process
 	 */
-	public String start(String str) 
+	/*public String start(String str) 
 			throws ClassNotFoundException, IllegalArgumentException, 
 			InstantiationException, IllegalAccessException, InvocationTargetException {		
 		String [] p=str.split(" ", 2);
@@ -136,7 +140,6 @@ public class SlaveReadMaster extends SocketMessage {
 		String key = getRandomString(30);
 		hashOfProcesses.put(key, pi);
 		return key;
-		
 	}
 	public String suspend(String str) throws IOException {
 		//Error message if the master sends a process to suspend that does not exists
@@ -166,14 +169,18 @@ public class SlaveReadMaster extends SocketMessage {
 		
 		return currentDir+"/"+name;
 	}
-	public String resume(String procAndArgs, String filename) throws IOException, ClassNotFoundException {
+	*/
+	public void resume(String filename, String procAndArgs) throws IOException, ClassNotFoundException {
+		System.out.println("I am resuming:"+filename);
 		TransactionalFileInputStream fis = new TransactionalFileInputStream(filename); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 		MigratableProcess mp = (MigratableProcess)ois.readObject(); 
 		ois.close(); 
 		Future<?> future = executor.submit(mp);
 		String[] in = procAndArgs.split(" ", 2);
-		ProcessInfo pi= new ProcessInfo(future,mp, in[0], in[1]);
+		ProcessInfo pi= new ProcessInfo(future,mp, in[0], in[1],filename);
+		hashOfProcesses.put(filename, pi);
+	}
 		/*List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
 		
 		if(hashOfProcesses.containsKey(procAndArgs)) {
@@ -181,12 +188,12 @@ public class SlaveReadMaster extends SocketMessage {
 		}
 		processes.add(pi);
 		hashOfProcesses.put(procAndArgs, processes);
-		*/
+		
 		String key=getRandomString(30);
 		hashOfProcesses.put(key, pi);
 		return "Resumed "+ procAndArgs;
 	}
+*/
 
-	
 
 }

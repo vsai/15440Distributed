@@ -10,6 +10,8 @@ public abstract class SocketMessage extends Thread {
 	final static String resumeProcess = "RESUMEProcess";
 	final static String receivedProcess = "RECEIVEDNewProcess";
 	
+	final static String suspendALL = "SUSPENDALL";
+	
 	final static String messageFrom = "MESSAGEFROM";
 	
 	final String alive = "ALIVE";
