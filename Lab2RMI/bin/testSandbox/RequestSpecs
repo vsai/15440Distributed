@@ -1,0 +1,15 @@
+From Client to Server:
+
+REQUEST
+ClientIPAddr
+ClientPortnumber
+ServiceToConnect
+MethodToCall
+ENDREQUEST
+
+
+
+From Server to Client:
+
+
+
