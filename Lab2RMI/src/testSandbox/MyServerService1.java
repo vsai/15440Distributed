@@ -1,6 +1,6 @@
 package testSandbox;
 
-public class MyServerService1 implements MyRmiServerIntf{
+public class MyServerService1 implements MyService1{
 
 	private final String message = "HELLO World";
 	

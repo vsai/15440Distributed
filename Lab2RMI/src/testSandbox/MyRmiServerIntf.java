@@ -1,7 +1,5 @@
 package testSandbox;
 
-public interface MyRmiServerIntf {
-	
-	public String getMessage();
+public interface MyRmiServerIntf extends MyService1, MyService2{
 
 }

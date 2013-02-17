@@ -21,6 +21,7 @@ public class MyClientServerStub implements MyRmiServerIntf{
 	
 	@Override
 	public String getMessage() {
+//		Class<?>[] a = this.getClass().getInterfaces();
 		Socket socket;
 		String selfIPAddr = "localhost";
 		int selfPortnum = 1233;
@@ -29,7 +30,8 @@ public class MyClientServerStub implements MyRmiServerIntf{
 			socket = new Socket(hostname, portnum);
 			out = new PrintStream(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out.println(selfIPAddr + selfPortnum + serverKey + "getMessage()");
+            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName() + "()";
+            out.println(selfIPAddr + selfPortnum + serverKey + methodName);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,6 +41,12 @@ public class MyClientServerStub implements MyRmiServerIntf{
 		}
 		//create socket connection
 		return null;
+	}
+
+	@Override
+	public int getAge() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
