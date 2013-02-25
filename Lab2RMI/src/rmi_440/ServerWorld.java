@@ -1,18 +1,17 @@
 package rmi_440;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import messageProtocol.Message;
 import messageProtocol.RMIMessage;
+import messageProtocol.RMIMessageReturn;
 
 public class ServerWorld extends ServerObjects implements ServerObjIntf{
 
@@ -95,9 +94,6 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		ObjectInputStream in;
 		ObjectOutputStream out;
 		
-//		BufferedReader in;
-//		PrintStream out;
-		
 		while (true) {
 			try {
 				clientConn = listen.accept();
@@ -107,25 +103,35 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 				
 				RMIMessage rmiMess;
 				Remote440 objInvoke;
+				RMIMessageReturn rmiRet;
 				try {
 					rmiMess = (RMIMessage) in.readObject();
 					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
 					
-					//call objInvoke with rmiMess.getMethod() and getArguments()
-					//take the return values and encapsulate it in RMIMessageReturn
-					//write RMIMessageReturn to objectoutputstream
+					Method m = rmiMess.getMethod();
+					Object[] argus = rmiMess.getArguments();
+					boolean completed = false;
+					Object result = null;
+					Exception ex = null;
+					try {
+						result = m.invoke(objInvoke, argus);
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						ex = e;
+					}
+					rmiRet = new RMIMessageReturn(completed, result, ex);
+					out.writeObject(rmiRet);
+					out.flush();
 					
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				
-//				out = new PrintStream(clientConn.getOutputStream(), true);
-//	            in = new BufferedReader(new InputStreamReader(clientConn.getInputStream()));
-//	            String readline;
-//	            while (!(readline = in.readLine()).equals(Message.TERMINATOR)) {
-//	            }
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 		
