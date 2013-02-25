@@ -6,6 +6,10 @@ public class RMIMessageReturn extends Message {
 		INT, CHAR, BOOLEAN, OBJECT, BYTE, SHORT, LONG, FLOAT, DOUBLE 
 	}
 	
+	/*
+	 * TODO: What if the return object itself is not-serializable?
+	 */
+	
 	boolean completed;
 	ReturnType retType;
 	Exception exceptionThrown;
