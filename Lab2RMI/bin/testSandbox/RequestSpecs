@@ -8,13 +8,9 @@ MethodToCall
 ENDREQUEST
 
 
-
 From Server to Client:
 
-
-
 Client ->>> Client_ServerStub (marshalling & unmarshalling) -> Messaging -> Server ->>> Service
-
 
 
 __Classes__
@@ -26,6 +22,32 @@ ServiceIntf3
 Service1 implement ServiceIntf1
 Service2 implement ServiceIntf2
 Service3 implement ServiceIntf3
+
+
+Class Registry:
+HashMap<String, SerializableObject> registryStore;
+//ObjectName, SerializedObject
+
+
+
+
+
+ServerService1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Server
 	/* 1-1 mapping */
