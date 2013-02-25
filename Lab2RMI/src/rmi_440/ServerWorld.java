@@ -52,6 +52,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 	}
 
 	public static void storeObjToRegistry(ServerObjects obj) {
+		//TODO: Generically get the interface name rather than hardcode it in
 		RemoteObjectReference objRor = new RemoteObjectReference(getIp(), hostPortnum, "ServerObjIntf", obj.getObjectName());
 		Socket toRegistry;
 		ObjectOutputStream out;

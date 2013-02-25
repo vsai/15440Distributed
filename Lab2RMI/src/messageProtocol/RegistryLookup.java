@@ -11,10 +11,6 @@ import java.net.UnknownHostException;
 
 import rmi_440.RemoteObjectReference;
 
-/*
- * NOT NEEDED ANYMORE - it has been simplified into a 1-line message:
- * 			RegistryLookup objName
- */
 
 public class RegistryLookup extends Message {
 	
@@ -53,12 +49,12 @@ public class RegistryLookup extends Message {
 		return null;
 	}
 	
-	public String lookup(String objName){
-		/*
-		 * Create socket connection with registry. Send message via sockets
-		 * Receive serialized object
-		 */
-		String[] messageArgs = objName.split("\n");
-		return createMessage(messageArgs);
-	}
+//	public String lookup(String objName){
+//		/*
+//		 * Create socket connection with registry. Send message via sockets
+//		 * Receive serialized object
+//		 */
+//		String[] messageArgs = objName.split("\n");
+//		return createMessage(messageArgs);
+//	}
 }
