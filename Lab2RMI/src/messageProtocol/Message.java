@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public abstract class Message implements Serializable {
 
-	String messageType;
+	protected String messageType;
 	public static String TERMINATOR = "ENDMESSAGE";
 	public static String messageTypeRegLookup = "RegistryLookup";
 	

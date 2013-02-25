@@ -16,19 +16,19 @@ public class RemoteObjectReference implements Serializable {
 		this.objectName = objectName;
 	}
 	
-	protected String getServerIp() {
+	public String getServerIp() {
 		return serverIp;
 	}
 	
-	protected int getPortnum() {
+	public int getPortnum() {
 		return portnum;
 	}
 	
-	protected String getInterfaceName() {
+	public String getInterfaceName() {
 		return interfaceName;
 	}
 	
-	protected String getObjectName() {
+	public String getObjectName() {
 		return objectName;
 	}
 }

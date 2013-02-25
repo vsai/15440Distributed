@@ -3,6 +3,7 @@ package rmi_440;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
@@ -11,6 +12,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.Message;
+import messageProtocol.RMIMessage;
 
 public class ServerWorld extends ServerObjects implements ServerObjIntf{
 
@@ -87,23 +89,43 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 			System.out.println("Couldn't listen on: " + registryPortnum);
 			e1.printStackTrace();
 		}
-		
-		
+
 		/* Listen to requests from clients to perform actions on the server */
 		Socket clientConn;
-		BufferedReader in;
-		PrintStream out;
+		ObjectInputStream in;
+		ObjectOutputStream out;
+		
+//		BufferedReader in;
+//		PrintStream out;
 		
 		while (true) {
 			try {
 				clientConn = listen.accept();
 				System.out.println("In Master: socket connection established");
-				out = new PrintStream(clientConn.getOutputStream(), true);
-	            in = new BufferedReader(new InputStreamReader(clientConn.getInputStream()));
-	            String readline;
-	            while (!(readline = in.readLine()).equals(Message.TERMINATOR)) {
-	            	
-	            }
+				in = new ObjectInputStream(clientConn.getInputStream());
+				out = new ObjectOutputStream(clientConn.getOutputStream());
+				
+				RMIMessage rmiMess;
+				Remote440 objInvoke;
+				try {
+					rmiMess = (RMIMessage) in.readObject();
+					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
+					
+					//call objInvoke with rmiMess.getMethod() and getArguments()
+					//take the return values and encapsulate it in RMIMessageReturn
+					//write RMIMessageReturn to objectoutputstream
+					
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+//				out = new PrintStream(clientConn.getOutputStream(), true);
+//	            in = new BufferedReader(new InputStreamReader(clientConn.getInputStream()));
+//	            String readline;
+//	            while (!(readline = in.readLine()).equals(Message.TERMINATOR)) {
+//	            }
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 		
