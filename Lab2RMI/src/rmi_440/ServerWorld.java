@@ -108,7 +108,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					rmiMess = (RMIMessage) in.readObject();
 					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
 					
-					Method m = rmiMess.getMethod();
+					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
 					boolean completed = false;
 					Object result = null;

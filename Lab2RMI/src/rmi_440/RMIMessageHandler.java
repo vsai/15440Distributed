@@ -16,8 +16,8 @@ public class RMIMessageHandler extends Message {
 	public RMIMessageHandler() {
 		messageType = "RMIMessage";
 	}
-	
-	public RMIMessageReturn sendInvocation(RemoteObjectReference ror, Method m, Object[] args) {
+		
+		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
 		Socket toServer;
 		ObjectOutputStream out;
 		ObjectInputStream in;
