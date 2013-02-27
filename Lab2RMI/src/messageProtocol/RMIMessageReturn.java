@@ -15,5 +15,17 @@ public class RMIMessageReturn extends Message {
 		this.completed = completed;
 		this.returnObject = returnObject;
 		this.exceptionThrown = exceptionThrown;
-	}	
+	}
+	
+	public boolean getIsCompleted(){
+		return completed;
+	}
+	
+	public Object getReturnObject(){
+		return returnObject;
+	}
+	
+	public Exception getExceptionThrown(){
+		return exceptionThrown;
+	}
 }

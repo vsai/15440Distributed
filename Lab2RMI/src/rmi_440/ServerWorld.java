@@ -115,8 +115,12 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
-					
+
 					//Method meth= objInvoke.getClass().getMethod(m, Object[].class);
+//					Method[] a = objInvoke.getClass().getDeclaredMethods();
+//					for(Method q:a)
+//						System.out.println(q.getName());
+
 					Method meth= objInvoke.getClass().getMethod(m, argus.getClass());
 					try {
 						result = meth.invoke(objInvoke, argus);

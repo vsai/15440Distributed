@@ -10,7 +10,6 @@ import messageProtocol.RMIMessage;
 import messageProtocol.RMIMessageReturn;
 
 public class RMIMessageHandler { //extends message?
-
 		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
 		Socket toServer;
 		ObjectOutputStream out;
@@ -35,5 +34,4 @@ public class RMIMessageHandler { //extends message?
 		}
 		return null;
 	}
-	
 }

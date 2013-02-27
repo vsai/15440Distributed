@@ -9,7 +9,7 @@ public class Test {
 		
 	}
 	
-	public String methName(){
+	public String getCurrentMethodName(){
 		return Thread.currentThread().getStackTrace()[2].getMethodName();
 	}
 	
@@ -23,7 +23,7 @@ public class Test {
 	}
 	
 	public int getAge(){
-		System.out.println(methName());
+		System.out.println(getCurrentMethodName());
 		System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName());
 		return 0;
 	}
@@ -39,6 +39,9 @@ public class Test {
 		a.getA();
 		
 		System.out.println("Test dynamically invoking a method");
+		
+		
+		
 		try {
 			Class <?> cl = a.getClass();
 			Method meth = cl.getMethod("getHigher", new Class[] {int.class});
@@ -46,15 +49,11 @@ public class Test {
 			System.out.println("d: " + d);
 			System.out.println("R1");
 			
-			
 			Class <?> cl2 = a.getClass();
 			Method meth2 = cl.getMethod("getA", null);
 			int d2 = (Integer) meth2.invoke(a, null);
 			System.out.println("d2: " + d2);
 			System.out.println("R2");
-			
-			
-			
 			
 //			int c = (Integer) a.getClass().getMethod("getHigher").invoke(a, 5);
 //			System.out.println("WOHOO " + c);
