@@ -13,11 +13,7 @@ import messageProtocol.RMIMessageReturn;
 
 public class RMIMessageHandler { //extends message?
 
-//	public RMIMessageHandler() {
-//		messageType = "RMIMessage";
-//	}
-	
-	public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
+		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
 		Socket toServer;
 		ObjectOutputStream out;
 		ObjectInputStream in;

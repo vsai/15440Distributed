@@ -108,16 +108,19 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 				try {
 					rmiMess = (RMIMessage) in.readObject();
 					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
+
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
 					
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
+					
+					Method meth= objInvoke.getClass().getMethod(m, Object[].class);
 					try {
-						result = objInvoke.getClass().getMethod(m).invoke(argus);
-//						result = method.invoke(objInvoke, argus);
+						result = meth.invoke(objInvoke, argus);
 						completed = true;
+
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
@@ -133,6 +136,10 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					in.close();
 					out.close();
 				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
 					e.printStackTrace();
 				}
 				clientConn.close();
