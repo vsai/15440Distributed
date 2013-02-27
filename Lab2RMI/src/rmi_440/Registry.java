@@ -9,8 +9,8 @@ public class Registry {
 	static RegistryServerListener serverListen;
 	
 	public static void main(String args[]){
-		int clientLPortnum = 12344;
-		int serverLPortnum = 12345;
+		int clientLPortnum = Settings.registry_listeningToClientPortnum;
+		int serverLPortnum = Settings.registry_listeningToServerPortnum;
 		
 		clientListen = new RegistryClientListener(clientLPortnum, registryStore);
 		serverListen = new RegistryServerListener(serverLPortnum, registryStore);

@@ -3,11 +3,9 @@ package rmi_440;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-//import java.lang.reflect.Method;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-//import messageProtocol.Message;
 import messageProtocol.RMIMessage;
 import messageProtocol.RMIMessageReturn;
 

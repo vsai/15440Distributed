@@ -48,13 +48,4 @@ public class RegistryLookup extends Message {
 		}
 		return null;
 	}
-	
-//	public String lookup(String objName){
-//		/*
-//		 * Create socket connection with registry. Send message via sockets
-//		 * Receive serialized object
-//		 */
-//		String[] messageArgs = objName.split("\n");
-//		return createMessage(messageArgs);
-//	}
 }

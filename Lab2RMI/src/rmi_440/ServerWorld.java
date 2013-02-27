@@ -20,9 +20,9 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 	 */
 	static ConcurrentHashMap<String, Remote440> serverObjectStore; //ConcurrentHashMap?
 	static ServerSocket listen;
-	static int hostPortnum = 12321;
-	static String registryHostname = "localhost";
-	static int registryPortnum = 12322;
+	static int hostPortnum = Settings.server_listeningToClientPortnum;
+	static String registryHostname = Settings.registry_ipAddress;
+	static int registryPortnum = Settings.registry_listeningToServerPortnum;
 	
 	String message;
 	int score;
