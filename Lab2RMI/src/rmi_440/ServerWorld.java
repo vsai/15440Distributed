@@ -113,8 +113,9 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
+					Method meth= objInvoke.getClass().getMethod(m, Object[].class);
 					try {
-						result = m.invoke(objInvoke, argus);
+						result = meth.invoke(objInvoke, (Object)argus);
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
@@ -129,6 +130,12 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					out.flush();
 					
 				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
