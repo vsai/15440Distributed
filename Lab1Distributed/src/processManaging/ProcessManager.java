@@ -49,6 +49,6 @@ public class ProcessManager {
 			m.start();
 		}
 		s = new Slave(hostname, hostPortnum, getIp());
-		s.start();		
+		s.start();
 	}
 }

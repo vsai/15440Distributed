@@ -1,19 +1,10 @@
 package processManaging;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +19,7 @@ public class SlaveReadMaster extends SocketMessage {
 	BufferedReader in;
 	PrintStream out;
 	ExecutorService executor = Executors.newCachedThreadPool();
-	Map<String, ProcessInfo> hashOfProcesses;
+	Map<String, ProcessInfo> hashOfProcesses; //FilePath -> ProcessInfo
 	
 	SlaveReadMaster(BufferedReader in, PrintStream out, Map<String,ProcessInfo> hashOfProcesses) {
 		this.in = in;
@@ -46,7 +37,7 @@ public class SlaveReadMaster extends SocketMessage {
 		 */
 		
 		String inputLine;
-		String filePath = null;
+//		String filePath = null;
 		
 		while (true) {
 			try {
@@ -56,45 +47,20 @@ public class SlaveReadMaster extends SocketMessage {
 						String[] input = inputLine.split(" ", 2);
 						if (input[0].equals(resumeProcess)){
 							String [] processInfo = input[1].split(" ", 2);
-							//call a function resume
+							System.out.println("IN SLAVEREADMASTER: processInfo[0]: " + processInfo[0]);
+							System.out.println("IN SLAVEREADMASTER: processInfo[1]: " + processInfo[1]);
 							try {
 								resume(processInfo[0], processInfo[1]);
 							} catch (ClassNotFoundException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							
 						} else if (input[0].equals(suspendProcess)){
 							
 						} else if (input[0].equals(suspendALL)){
-							
+							System.out.println("SUSPENDING ALL");
+							suspendAll();
 						}
-						
-						
-//						if (input[0].equals(startProcess)) {
-//							try {
-//								out.println(sendMessage(started + " " + start(input[1])));
-//							} catch (IllegalArgumentException e) {
-//								System.err.println("Bad arguemnts for that process");
-//							} catch (ClassNotFoundException e) {
-//								System.err.println("No Process by that name");
-//							} catch (InstantiationException e) {
-//								System.err.println("Could not initialize the class");
-//							} catch (IllegalAccessException e) {
-//								System.err.println("Did not have access to that class");
-//							} catch (InvocationTargetException e) {
-//								System.err.println("Could not invoke the target");
-//							}
-//						} else if (input[0].equals(suspendProcess)) {
-//							filePath = suspend(input[1]);
-//							synchronized(out) {
-//								out.println(sendMessage(suspended + " " + filePath + " " + input[1]));
-//							}
-//						} else if (input[0].equals(resumeProcess)) {
-//							
-//						} else if (input[0].equals(receivedProcess)) {
-//							//System.out.println("IN CLIENT: The master received a process from me");
-//						}
 					}
 				}
 			} catch (IOException e) {
@@ -104,74 +70,53 @@ public class SlaveReadMaster extends SocketMessage {
 		}
 	}
 	
-//	private String getRandomString(int len){
-//		StringBuffer sb = new StringBuffer();  
-//	    for (int x = 0; x <len; x++)  
-//	    {  
-//	      sb.append((char)((int)(Math.random()*26)+97));  
-//	    } 
-//	    return sb.toString();
-//	}
-	/*
-	 * input: str = <processName> <<processArgs>>
-	 * do: put into hash (key for process, input string)
-	 * return: key for the process
-	 */
-	/*public String start(String str) 
-			throws ClassNotFoundException, IllegalArgumentException, 
-			InstantiationException, IllegalAccessException, InvocationTargetException {		
-		String [] p=str.split(" ", 2);
-		Class<?> t = Class.forName(p[0]);
-		String [] pArgs = p[1].split(" ");
-
-		Constructor<?>[] listOfConstructors = t.getConstructors();
-		int correctConstructor=0;
-		for(int i =0;i<listOfConstructors.length;i++) {
-			if (listOfConstructors[i].getGenericParameterTypes().length == 1) {
-				correctConstructor = i;
-			}
+	public void suspendAll() throws IOException{
+		System.out.println("RUNNING SUSPEND ALL METHOD");
+		for (String fileName : hashOfProcesses.keySet()){
+			suspend(fileName);
+			hashOfProcesses.remove(fileName);
 		}
-		
-		Object arg = pArgs;//new String[0];
-		MigratableProcess mp = (MigratableProcess) listOfConstructors[correctConstructor].newInstance(arg);
-		Future<?> future = executor.submit(mp);
-		ProcessInfo pi= new ProcessInfo(future,mp, p[0], p[1]);
-		
-		String key = getRandomString(30);
-		hashOfProcesses.put(key, pi);
-		return key;
 	}
-	public String suspend(String str) throws IOException {
-		//Error message if the master sends a process to suspend that does not exists
-		if(!hashOfProcesses.containsKey(str)) {
-			return "No Process in the list";
+	
+	/*
+	 * Input: key (filepath)
+	 */
+	public void suspend(String fileName) throws IOException {
+		System.out.println("SUSPENDING IN SUPEND: " + fileName);
+		for (String fname : hashOfProcesses.keySet()){
+			System.out.println("HAVE " + fname);
 		}
-		ProcessInfo process = hashOfProcesses.get(str);
-		//ProcessInfo p = processes.get(0);
-		//processes.remove(p);
-		hashOfProcesses.remove(str);
-		//hashOfProcesses.put(str,processes);
-		MigratableProcess mp=process.getProcess();
+		if(!hashOfProcesses.containsKey(fileName)) {
+			System.out.println("NOT GOING TO DELETE IN SUSPEND");			
+			return;
+		}	
+		System.out.println("Hash is contained in hashOfProcesses");
+		
+		ProcessInfo process = hashOfProcesses.get(fileName);
+		MigratableProcess mp = process.getProcess();
+		System.out.println("SUCCESSFULLY REMOVED SLAVE READ MASTER: " + hashOfProcesses.remove(fileName));
 		mp.suspend();
-		Future<?> f = process.getFuture();
-		boolean b=false;
-		f.cancel(b);
-		String currentDir = System.getProperty("user.dir");
-		String name=process.getProcessName();
-		System.out.println("About to serialze");
-		System.out.println("My current dir is"+currentDir);
-		System.out.println("Process name is "+name);
-		TransactionalFileOutputStream fos = new TransactionalFileOutputStream(name); 
+		System.out.println("SLAVE READ MASTER: JUST SUSPENDED");
+		boolean b = true;
+		process.getFuture().cancel(b);
+		System.out.println("Did it cancel?" +process.getFuture().isCancelled());
+		
+		//String currentDir = System.getProperty("user.dir");
+//		String filePath = process.getFilePath();
+		System.out.println("About to serialize");
+		TransactionalFileOutputStream fos = new TransactionalFileOutputStream(fileName);
 		ObjectOutputStream oos = new ObjectOutputStream(fos); 
 		oos.writeObject(mp); 
-		oos.flush(); 
+		oos.flush();
 		oos.close(); 
-		
-		return currentDir+"/"+name;
+		System.out.println("SUCCESSFULLY SUSPENDED");
 	}
-	*/
+
 	public void resume(String filename, String procAndArgs) throws IOException, ClassNotFoundException {
-		System.out.println("I am resuming:"+filename);
+		System.out.println("IN SLAVEREADMASTER: IN RESUME");
+		System.out.println("filename: " + filename);
+		System.out.println("procAndArgs: " + procAndArgs);
+		System.out.println("I am resuming: " + filename);
 		TransactionalFileInputStream fis = new TransactionalFileInputStream(filename); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 		MigratableProcess mp = (MigratableProcess)ois.readObject(); 
@@ -181,19 +126,4 @@ public class SlaveReadMaster extends SocketMessage {
 		ProcessInfo pi= new ProcessInfo(future,mp, in[0], in[1],filename);
 		hashOfProcesses.put(filename, pi);
 	}
-		/*List<ProcessInfo> processes = Collections.synchronizedList(new ArrayList<ProcessInfo>());
-		
-		if(hashOfProcesses.containsKey(procAndArgs)) {
-			processes=hashOfProcesses.get(procAndArgs);
-		}
-		processes.add(pi);
-		hashOfProcesses.put(procAndArgs, processes);
-		
-		String key=getRandomString(30);
-		hashOfProcesses.put(key, pi);
-		return "Resumed "+ procAndArgs;
-	}
-*/
-
-
 }

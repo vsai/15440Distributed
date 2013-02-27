@@ -94,6 +94,10 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		ObjectInputStream in;
 		ObjectOutputStream out;
 		
+		RMIMessage rmiMess;
+		Remote440 objInvoke;
+		RMIMessageReturn rmiRet;
+		
 		while (true) {
 			try {
 				clientConn = listen.accept();
@@ -101,20 +105,19 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 				in = new ObjectInputStream(clientConn.getInputStream());
 				out = new ObjectOutputStream(clientConn.getOutputStream());
 				
-				RMIMessage rmiMess;
-				Remote440 objInvoke;
-				RMIMessageReturn rmiRet;
 				try {
 					rmiMess = (RMIMessage) in.readObject();
 					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
-					
-					Method m = rmiMess.getMethod();
+					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
+					
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
 					try {
-						result = m.invoke(objInvoke, argus);
+						result = objInvoke.getClass().getMethod(m).invoke(argus);
+//						result = method.invoke(objInvoke, argus);
+						completed = true;
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
@@ -127,11 +130,12 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					rmiRet = new RMIMessageReturn(completed, result, ex);
 					out.writeObject(rmiRet);
 					out.flush();
-					
+					in.close();
+					out.close();
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
-				
+				clientConn.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 		

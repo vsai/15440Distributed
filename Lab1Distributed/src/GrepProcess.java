@@ -17,7 +17,7 @@ public class GrepProcess implements MigratableProcess
 	private TransactionalFileInputStream  inFile;
 	private TransactionalFileOutputStream outFile;
 	private String query;
-
+	int x=0;
 	private volatile boolean suspending;
 
 	public GrepProcess(String args[]) throws Exception
@@ -31,6 +31,7 @@ public class GrepProcess implements MigratableProcess
 		query = args[0];
 		inFile = new TransactionalFileInputStream(args[1]);
 		outFile = new TransactionalFileOutputStream(args[2]);
+	
 	}
 
 	public void run()
@@ -40,6 +41,7 @@ public class GrepProcess implements MigratableProcess
 
 		try {
 			while (!suspending) {
+				x++;
 				String line = in.readLine();
 
 				if (line == null) break;
@@ -61,14 +63,18 @@ public class GrepProcess implements MigratableProcess
 			System.out.println ("GrepProcess: Error: " + e);
 		}
 
-
 		suspending = false;
+		while (true){
+			
+		}
 	}
 
 	public void suspend()
 	{
 		suspending = true;
-		while (suspending);
+		while (suspending){
+			//System.out.println("Value of x:"+x);
+		}
 	}
 
 }

@@ -4,15 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class SocketRespondThread extends SocketMessage{
 
 	Socket conn;
-    //PrintWriter out; //what the socket writes to the client --from server
 	PrintStream out;
-    BufferedReader in; //what the socket (client) reads from the client --from server
+    BufferedReader in;
     SlaveInfo slaveInfo;
 
 	SocketRespondThread(Socket conn, SlaveInfo slaveInfo){
@@ -30,6 +28,7 @@ public class SocketRespondThread extends SocketMessage{
 		try {
 			while (true){
 				String clientMessage = in.readLine();
+				System.out.println("IN SocketRespondThread clientMessage: " + clientMessage);
 				String mess[] = clientMessage.split(" ", 2);
 				String i;
 				while (!((i = in.readLine()).equals(messageTerminator))){
@@ -46,19 +45,9 @@ public class SocketRespondThread extends SocketMessage{
 					break;
 				} else if (mess[0].equals(startProcess)){
 					System.out.println("IN MASTER: RECEIVED A NEW PROCESS FROM CLIENT");
-					
-					
 					Master.addNewProcess(mess[1]);
-					
-					
-					/*
-					 * mess[1] will be a string of processname and process args
-					 * START PROCESS IN MASTER
-					 * SERIALIZE PROCESS
-					 * STORE TO HASHMAP
-					 */					
 				} else {
-					
+					System.out.println("SHOULDN'T GO THERE");
 				}
 			}
 		} catch (IOException e) {

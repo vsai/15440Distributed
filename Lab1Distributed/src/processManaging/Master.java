@@ -68,8 +68,10 @@ public class Master extends SocketMessage {
 	public void redistribute(){
 		//Key=filepath
 		//value =Process and process args
-		
-		//TODO Need to add code to suspend
+		System.out.println("In Master:redistribute()");
+		for (SocketRespondThread socket : allProcess.keySet()){
+			socket.out.println(sendMessage(suspendALL));
+		}
 		
 		//Code to resume processes
 		Map<String,String> processes = new HashMap<String,String>();
@@ -82,7 +84,7 @@ public class Master extends SocketMessage {
 			}
 			s.clearProcessInfoList();
 		}
-		//Add the new processes that we have recieved
+		//Add the new processes that we have received
 		for(String filePath :newProcessesToAdd.keySet()){
 			String pAndArgs=newProcessesToAdd.get(filePath);
 			processes.put(filePath, pAndArgs);
@@ -91,11 +93,6 @@ public class Master extends SocketMessage {
 		//processes = <String filepath, String pAndArgs> ------> SlaveInfo->ProcessInfo
 		int numPr = processes.size();
 		int avgNumPr = numPr / allProcess.size() +1;
-		
-		//String [] mappingForKeys = new String [numPr];
-			
-		//iterate over each socket
-		//giving it one process at a time
 		int count;
 		ProcessInfo x;
 		for(SocketRespondThread socket :allProcess.keySet()){
@@ -105,20 +102,21 @@ public class Master extends SocketMessage {
 				if(count >avgNumPr)
 					break;
 				String pAndArgs=processes.get(fileName);
+				System.out.println("In Master:redistribute: " + pAndArgs);
 				String [] info = pAndArgs.split(" ", 2);
+				System.out.println("INFO[0]: " + info[0]);
+				System.out.println("INFO[1]: " + info[1]);
 				x = new ProcessInfo(null, null, info[0],info[1],fileName);
 				s.putProcess(x);
 				count ++;
 				processes.remove(fileName);
-				System.out.println("MASTER: Sendiong process :"+fileName+" "+pAndArgs);
-				socket.out.println(sendMessage(resumeProcess+" "+fileName+" "+pAndArgs));
+				System.out.println("In Master: redistribute: SENDING PROCESS " + fileName + " " + pAndArgs);
+				socket.out.println(sendMessage(resumeProcess + " " + fileName + " " + pAndArgs));
 			}
-						
 		}
-			
 	}
 	
-	private static String getRandomString(int len){
+	private static String getRandomString(int len) {
 		StringBuffer sb = new StringBuffer();  
 	    for (int x = 0; x <len; x++)  
 	    {  
@@ -129,6 +127,7 @@ public class Master extends SocketMessage {
 	
 	public static void addNewProcess(String str){
 		System.out.println("Master going to add the new process");
+		System.out.println("Input for Master:addNewProcess: " + str);
 		String [] p=str.split(" ", 2);
 		Class<?> t;
 		try {
@@ -149,7 +148,7 @@ public class Master extends SocketMessage {
 			
 			String currentDir = System.getProperty("user.dir");
 			System.out.println("About to serialze");
-			System.out.println("My current dir is"+currentDir);
+			System.out.println("My current dir is: " + currentDir);
 			String randomString = getRandomString(30);
 			String key= currentDir + "/" + randomString;
 			TransactionalFileOutputStream fos = new TransactionalFileOutputStream(randomString); 
@@ -161,11 +160,9 @@ public class Master extends SocketMessage {
 				oos.close(); 
 				newProcessesToAdd.put(key,str);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			System.out.println("Succesffuly serialized it with name:"+key);
-			//System.out.println(newProcessesT)
+			System.out.println("Successfully serialized it with name: " + key);
 			
 		} catch (ClassNotFoundException e) {
 			//we should remove this eventually
@@ -183,7 +180,6 @@ public class Master extends SocketMessage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 		
 		

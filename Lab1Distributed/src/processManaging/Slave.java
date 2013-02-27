@@ -4,22 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
-
-import processMigration.MigratableProcess;
-
-/*
- * USE JOINS AROUND THE SUSPEND STUFF
- */
 
 public class Slave extends SocketMessage{
 
@@ -52,19 +43,13 @@ public class Slave extends SocketMessage{
 			public void run() {
 				while (true) {
 					String toSend = alive;
-					
-					/*
-					 * find everything that has died since last check and add it to
-					 * heartbeatLastDeadProcesses
-					 * psLastDeadProcesses
-					 */
+
 					ProcessInfo pInfo;
 					for (String processName : hashOfProcesses.keySet()){
 						pInfo=hashOfProcesses.get(processName);
 						if (pInfo.getFuture().isDone()){
 								hashOfProcesses.remove(processName);
 								putHeartbeatLastDeadProcesses(pInfo.getFilePath());
-								//putHeartbeatLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 								putPSLastDeadProcesses(pInfo.getProcessName()+" "+pInfo.getProcessArgs());
 							}
 					}
@@ -163,7 +148,6 @@ public class Slave extends SocketMessage{
 					e.printStackTrace();
 				}
     			System.exit(0);
-    			
     		} else { //Process input with commands - only for master
     			System.out.println("In Slave: In new process input terminal");
     			synchronized(out) {

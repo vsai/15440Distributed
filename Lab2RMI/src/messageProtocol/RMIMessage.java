@@ -1,14 +1,14 @@
 package messageProtocol;
 
-import java.lang.reflect.Method;
+//import java.lang.reflect.Method;
 
 public class RMIMessage extends Message{
 
 	String objectName;
-	Method method;
+	String method;
 	Object[] args;
 	
-	public RMIMessage(String objectName, Method method, Object[] args) {
+	public RMIMessage(String objectName, String method, Object[] args) {
 		messageType = "RMIMessage";
 		
 		this.objectName = objectName;
@@ -20,13 +20,11 @@ public class RMIMessage extends Message{
 		return objectName;
 	}
 	
-	public Method getMethod() {
+	public String getMethod() {
 		return method;
 	}
 	
 	public Object[] getArguments() {
 		return args;
 	}
-	
-	
 }

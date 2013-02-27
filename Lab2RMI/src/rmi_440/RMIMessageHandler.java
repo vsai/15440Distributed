@@ -3,21 +3,21 @@ package rmi_440;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
+//import java.lang.reflect.Method;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import messageProtocol.Message;
+//import messageProtocol.Message;
 import messageProtocol.RMIMessage;
 import messageProtocol.RMIMessageReturn;
 
-public class RMIMessageHandler extends Message {
+public class RMIMessageHandler { //extends message?
 
-	public RMIMessageHandler() {
-		messageType = "RMIMessage";
-	}
+//	public RMIMessageHandler() {
+//		messageType = "RMIMessage";
+//	}
 	
-	public RMIMessageReturn sendInvocation(RemoteObjectReference ror, Method m, Object[] args) {
+	public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
 		Socket toServer;
 		ObjectOutputStream out;
 		ObjectInputStream in;
