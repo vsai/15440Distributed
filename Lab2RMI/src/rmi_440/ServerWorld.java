@@ -116,7 +116,8 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					Object result = null;
 					Exception ex = null;
 					
-					Method meth= objInvoke.getClass().getMethod(m, Object[].class);
+					//Method meth= objInvoke.getClass().getMethod(m, Object[].class);
+					Method meth= objInvoke.getClass().getMethod(m, argus.getClass());
 					try {
 						result = meth.invoke(objInvoke, argus);
 						completed = true;
