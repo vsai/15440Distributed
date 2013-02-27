@@ -31,6 +31,9 @@ public class RegistryServerListener extends RegistryListener{
 				in = new ObjectInputStream(listener.getInputStream());
 				try {
 					ror = (RemoteObjectReference)in.readObject();
+					System.out.println(ror);
+					System.out.println(ror.getObjectName());
+					System.out.println(regStore);
 					regStore.put(ror.getObjectName(), ror);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();

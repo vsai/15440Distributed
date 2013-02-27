@@ -12,6 +12,8 @@ public class Registry {
 		int clientLPortnum = Settings.registry_listeningToClientPortnum;
 		int serverLPortnum = Settings.registry_listeningToServerPortnum;
 		
+		registryStore = new ConcurrentHashMap<String, RemoteObjectReference>();
+		
 		clientListen = new RegistryClientListener(clientLPortnum, registryStore);
 		serverListen = new RegistryServerListener(serverLPortnum, registryStore);
 		
