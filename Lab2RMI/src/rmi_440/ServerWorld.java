@@ -34,7 +34,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		}
 
 		this.message = "Leggo";
-		this.score = 0;
+		this.score = 10;
 	}
 	
 	@Override
@@ -50,6 +50,12 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 	@Override
 	public void increment() {
 		score++;
+	}
+	
+	@Override
+	public String returnSameString(String str) {
+		
+		return str;
 	}
 
 	public static void storeObjToRegistry(ServerObjects obj) {
@@ -111,19 +117,28 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
+					Class arguments[]= new Class[argus.length];
+					
 					
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
-
-					//Method meth= objInvoke.getClass().getMethod(m, Object[].class);
-//					Method[] a = objInvoke.getClass().getDeclaredMethods();
-//					for(Method q:a)
-//						System.out.println(q.getName());
-
-					Method meth= objInvoke.getClass().getMethod(m, argus.getClass());
+					Method[] a = objInvoke.getClass().getDeclaredMethods();
+					Method meth = null;
+					for(Method q:a)
+						if (q.getName().equals(m))
+							meth=q;
+						
+					
+					/*if(argus == null){
+						 meth= objInvoke.getClass().getMethod(m,null);
+					}
+					else{
+						 meth= objInvoke.getClass().getMethod(m,argus.getClass());
+					}*/
 					try {
-						result = meth.invoke(objInvoke, argus);
+						result = meth.invoke(objInvoke,argus);
+						System.out.println("result is:"+result);
 						completed = true;
 
 					} catch (IllegalArgumentException e) {
@@ -144,8 +159,6 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					e.printStackTrace();
 				} catch (SecurityException e) {
 					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
 				}
 				clientConn.close();
 			} catch (IOException e) {
@@ -153,4 +166,6 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 			} 		
 		}
 	}
+
+	
 }
