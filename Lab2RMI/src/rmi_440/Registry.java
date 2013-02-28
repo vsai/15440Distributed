@@ -14,6 +14,9 @@ public class Registry {
 		
 		registryStore = new ConcurrentHashMap<String, RemoteObjectReference>();
 		
+		System.out.println("Registry listening to client on : " + clientLPortnum);
+		System.out.println("Registry listening to server on : " + serverLPortnum);
+		
 		clientListen = new RegistryClientListener(clientLPortnum, registryStore);
 		serverListen = new RegistryServerListener(serverLPortnum, registryStore);
 		

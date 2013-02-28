@@ -52,11 +52,11 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		score++;
 	}
 	
-	@Override
-	public String returnSameString(String str) {
-		
-		return str;
-	}
+//	@Override
+//	public String returnSameString(String str) {
+//		
+//		return str;
+//	}
 
 	public static void storeObjToRegistry(ServerObjects obj) {
 		//TODO: Generically get the interface name rather than hardcode it in
@@ -90,6 +90,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		/* Prepare the server to listen to requests from clients */
 		try {
 			listen = new ServerSocket(hostPortnum);
+			System.out.println("ServerRunning on: " + getIp() + " : " + hostPortnum);
 		} catch (IOException e1) {
 			System.out.println("Couldn't listen on: " + registryPortnum);
 			e1.printStackTrace();
@@ -115,27 +116,37 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					rmiMess = (RMIMessage) in.readObject();
 					objInvoke = serverObjectStore.get(rmiMess.getObjectName());
 
+					System.out.println("In ServerWorld");
+					System.out.println("RMIMessage: " + rmiMess);
+					System.out.println("ObjectToInvoke: " + objInvoke);
+					
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
-					Class arguments[]= new Class[argus.length];
+					System.out.println("RMIMessage objname:" + rmiMess.getObjectName());
+					System.out.println("RMIMessage methodname:" + m);
+					System.out.println("RMIMessage objargs:" + argus);
 					
+					Class[] arguments;
+					if (argus == null) {
+						arguments = null;
+					} else {
+						arguments = new Class[argus.length];
+					}
 					
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
-					Method[] a = objInvoke.getClass().getDeclaredMethods();
+
+//					Method meth = null;
+					Class cl = objInvoke.getClass();
 					Method meth = null;
-					for(Method q:a)
-						if (q.getName().equals(m))
-							meth=q;
-						
-					
-					/*if(argus == null){
-						 meth= objInvoke.getClass().getMethod(m,null);
+					try {
+						meth = cl.getMethod(m, arguments);
+					} catch (NoSuchMethodException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-					else{
-						 meth= objInvoke.getClass().getMethod(m,argus.getClass());
-					}*/
+
 					try {
 						result = meth.invoke(objInvoke,argus);
 						System.out.println("result is:"+result);
@@ -151,6 +162,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						ex = e;
 					}
 					rmiRet = new RMIMessageReturn(completed, result, ex);
+					System.out.println(rmiRet);
 					out.writeObject(rmiRet);
 					out.flush();
 					in.close();

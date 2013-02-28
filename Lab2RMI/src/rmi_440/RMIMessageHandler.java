@@ -11,27 +11,36 @@ import messageProtocol.RMIMessageReturn;
 
 public class RMIMessageHandler { //extends message?
 		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
-		Socket toServer;
-		ObjectOutputStream out;
-		ObjectInputStream in;
-		RMIMessage message = new RMIMessage(ror.getObjectName(), m, args);
-		try {
-			toServer = new Socket(ror.getServerIp(), ror.getPortnum());
-			out = new ObjectOutputStream(toServer.getOutputStream());
-			in = new ObjectInputStream(toServer.getInputStream());
-			out.writeObject(message);
-			out.flush();
+			if (ror == null) {
+				System.err.println("In sendInvocation: ror is NULL");
+			}
+			
+			Socket toServer;
+			ObjectOutputStream out;
+			ObjectInputStream in;
+			RMIMessage message = new RMIMessage(ror.getObjectName(), m, args);
 			try {
-				Object ret = in.readObject();
-				return (RMIMessageReturn) ret;
-			} catch (ClassNotFoundException e) {
+				toServer = new Socket(ror.getServerIp(), ror.getPortnum());
+				out = new ObjectOutputStream(toServer.getOutputStream());
+				in = new ObjectInputStream(toServer.getInputStream());
+				out.writeObject(message);
+				out.flush();
+//				System.out.println("In RMIMessageHandler");
+//				System.out.println(toServer);
+//				System.out.println(out);
+//				System.out.println(in);
+				Object ret;
+				try {
+					ret = in.readObject();
+					return (RMIMessageReturn) ret;
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}
-		return null;
-	}
 }

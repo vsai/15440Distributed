@@ -3,13 +3,9 @@ package rmi_440;
 import messageProtocol.RMIMessageReturn;
 
 public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjIntf{
-
-	RemoteObjectReference ror;
-	RMIMessageHandler rmiMessageHandler;
 	
 	public ClientStub_ServerObjIntf(RemoteObjectReference ror) {
-		this.ror = ror;
-		this.rmiMessageHandler = new RMIMessageHandler();
+		super(ror);
 	}
 	
 	public String getCurrentMethodName(){
@@ -19,20 +15,59 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 	@Override
 	public String getMessage() {
 		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
-		if (returnObject.getIsCompleted()) {
-			return (String)returnObject.getReturnObject();
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		
+//		System.out.println(returnObject.getIsCompleted());
+//		System.out.println(returnObject.getReturnObject());
+//		System.out.println(returnObject.getExceptionThrown());
+		
+		if (c) {
+			return (String)o;
+		} else if (e != null) {
+//			throw e;			
 		}
 		return null;
 	}
 
 	@Override
 	public int getScore() {
-		return 0;
+		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		
+//		System.out.println(returnObject.getIsCompleted());
+//		System.out.println(returnObject.getReturnObject());
+//		System.out.println(returnObject.getExceptionThrown());
+		
+		if (c) {
+			return (Integer)o;
+		} else if (e != null) {
+//			throw e;			
+		}
+		return -1;
 	}
 
 	@Override
 	public void increment() {
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
 		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		
+//		System.out.println(returnObject.getIsCompleted());
+//		System.out.println(returnObject.getReturnObject());
+//		System.out.println(returnObject.getExceptionThrown());
+		if (c){
+			return;
+		} else if (e != null) {
+//			throw e;
+		}
+		return;
 	}
-
 }

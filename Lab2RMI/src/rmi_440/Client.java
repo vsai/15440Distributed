@@ -9,12 +9,15 @@ public class Client {
 		int registry_port=Settings.registry_listeningToClientPortnum;
 		RegistryLookup registry = new RegistryLookup(registry_ip,registry_port);
 		
-//		RemoteObjectReference testObj= registry.sendLookupMessage("obj1");
 		ServerObjIntf soi = (ServerObjIntf) registry.lookup("obj1");
-		soi.getScore();
 		
-//		RMIMessageHandler rmiMessageHandler = new RMIMessageHandler();
-//		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(testObj, "getScore", null);
+		int score = soi.getScore();
+		String mess = soi.getMessage();
+		soi.increment();
+		int finalScore = soi.getScore();
+		
+		System.out.printf("Init score: %d, Final score: %d, Message: %s\n", score, finalScore, mess);
+		
 	}
 
 }
