@@ -137,7 +137,6 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					Object result = null;
 					Exception ex = null;
 
-//					Method meth = null;
 					Class cl = objInvoke.getClass();
 					Method meth = null;
 					try {
@@ -153,16 +152,19 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						completed = true;
 
 					} catch (IllegalArgumentException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (Exception e) {
 						ex = e;
 					}
 					rmiRet = new RMIMessageReturn(completed, result, ex);
-					System.out.println(rmiRet);
+
 					out.writeObject(rmiRet);
 					out.flush();
 					in.close();
