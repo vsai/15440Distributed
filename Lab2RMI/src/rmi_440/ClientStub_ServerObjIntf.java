@@ -70,4 +70,22 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 		}
 		return;
 	}
+
+	@Override
+	public String returnSameString(String str, String secondStr, int num) {
+		Object [] args={str,secondStr,num};
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args);
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		if (c){
+			return (String)o;
+		} else if (e != null) {
+//			throw e;
+		}
+		return "";
+	}
+	
+	
 }

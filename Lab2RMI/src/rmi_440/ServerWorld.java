@@ -52,11 +52,10 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 		score++;
 	}
 	
-//	@Override
-//	public String returnSameString(String str) {
-//		
-//		return str;
-//	}
+	@Override
+	public String returnSameString(String str, String secondStr,int num) {
+		return str+secondStr+" with num: " +num;
+	}
 
 	public static void storeObjToRegistry(ServerObjects obj) {
 		//TODO: Generically get the interface name rather than hardcode it in
@@ -126,25 +125,30 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					System.out.println("RMIMessage methodname:" + m);
 					System.out.println("RMIMessage objargs:" + argus);
 					
-					Class[] arguments;
+					/*Class[] arguments;
 					if (argus == null) {
 						arguments = null;
 					} else {
 						arguments = new Class[argus.length];
 					}
-					
+					*/
 					boolean completed = false;
 					Object result = null;
 					Exception ex = null;
 
-//					Method meth = null;
-					Class cl = objInvoke.getClass();
 					Method meth = null;
-					try {
-						meth = cl.getMethod(m, arguments);
-					} catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					Class cl = objInvoke.getClass();
+					Method[] methodList = objInvoke.getClass().getDeclaredMethods();
+					for(Method method: methodList)
+					{
+						if(method.getName().equals(m)){
+							meth=method;
+						}
+							
+					}
+					if(meth == null){
+						//throw an exception for no function with that name
+						
 					}
 
 					try {
