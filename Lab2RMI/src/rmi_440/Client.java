@@ -10,12 +10,13 @@ public class Client {
 		RegistryLookup registry = new RegistryLookup(registry_ip,registry_port);
 		
 		ServerObjIntf soi = (ServerObjIntf) registry.lookup("obj1");
-		
+
 		int score = soi.getScore();
 		String mess = soi.getMessage();
 		soi.increment();
 		int finalScore = soi.getScore();
-		String str = soi.returnSameString("it worked", " with multiple args",5);
+		int [] ar = {1,2,3};
+		String str = soi.returnSameString("it worked",ar ,5);
 		System.out.println(str);
 		System.out.printf("Init score: %d, Final score: %d, Message: %s\n", score, finalScore, mess);
 		

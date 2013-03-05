@@ -10,7 +10,7 @@ import messageProtocol.RMIMessage;
 import messageProtocol.RMIMessageReturn;
 
 public class RMIMessageHandler { //extends message?
-		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args) {
+		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args, Class[] classArgs) {
 			if (ror == null) {
 				System.err.println("In sendInvocation: ror is NULL");
 			}
@@ -18,7 +18,7 @@ public class RMIMessageHandler { //extends message?
 			Socket toServer;
 			ObjectOutputStream out;
 			ObjectInputStream in;
-			RMIMessage message = new RMIMessage(ror.getObjectName(), m, args);
+			RMIMessage message = new RMIMessage(ror.getObjectName(), m, args,classArgs);
 			try {
 				toServer = new Socket(ror.getServerIp(), ror.getPortnum());
 				out = new ObjectOutputStream(toServer.getOutputStream());

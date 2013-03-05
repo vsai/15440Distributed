@@ -9,5 +9,4 @@ public abstract class ClientStub {
 		this.ror = ror;
 		this.rmiMessageHandler = new RMIMessageHandler();
 	}
-	
 }
