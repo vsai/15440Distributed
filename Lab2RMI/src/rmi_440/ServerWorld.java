@@ -137,7 +137,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					Object result = null;
 					Exception ex = null;
 
-					Method meth = null;
+					/*Method meth = null;
 					Class cl = objInvoke.getClass();
 					Method[] methodList = objInvoke.getClass().getDeclaredMethods();
 					for(Method method: methodList)
@@ -151,8 +151,8 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						//throw an exception for no function with that name
 						
 					}
-					
-					//Method meth = null;
+					*/
+					Method meth = null;
 					try {
 						meth=objInvoke.getClass().getDeclaredMethod(m, classArgs);
 						result = meth.invoke(objInvoke,argus);
