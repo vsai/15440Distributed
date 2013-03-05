@@ -15,7 +15,8 @@ public class Client {
 		String mess = soi.getMessage();
 		soi.increment();
 		int finalScore = soi.getScore();
-		
+		String str = soi.returnSameString("it worked", " with multiple args",5);
+		System.out.println(str);
 		System.out.printf("Init score: %d, Final score: %d, Message: %s\n", score, finalScore, mess);
 		
 	}
