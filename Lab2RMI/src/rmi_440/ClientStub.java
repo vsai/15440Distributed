@@ -10,4 +10,7 @@ public abstract class ClientStub {
 		this.rmiMessageHandler = new RMIMessageHandler();
 	}
 	
+	public RemoteObjectReference getRemoteObjectReference() {
+		return ror;
+	}
 }

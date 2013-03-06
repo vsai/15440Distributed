@@ -14,7 +14,7 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 	
 	@Override
 	public String getMessage() {
-		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
+		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null,null);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
@@ -30,7 +30,7 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 
 	@Override
 	public int getScore() {
-		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
+		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null,null);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
@@ -46,7 +46,7 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 
 	@Override
 	public void increment() {
-		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null);
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null,null);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
@@ -61,13 +61,16 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 	}
 
 	@Override
-	public String returnSameString(String str, String secondStr, int num) {
-		Object [] args={str,secondStr,num};
-		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args);
+	public String returnSameString(String str, int [] ar, int num) {
+		Object [] args={str,ar,num};
+		
+		Class [] classArgs= {String.class,int[].class,int.class};
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args,classArgs);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
+		System.out.println(c);
 		if (c){
 			return (String)o;
 		} else if (e != null) {

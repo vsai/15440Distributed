@@ -8,6 +8,6 @@ public interface ServerObjIntf extends Remote440{
 	
 	void increment();
 	
-	String returnSameString(String str, String string,int num);
+	String returnSameString(String str, int [] ar,int num);
 	
 }

@@ -53,8 +53,8 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 	}
 	
 	@Override
-	public String returnSameString(String str, String secondStr,int num) {
-		return str+secondStr+" with num: " +num;
+	public String returnSameString(String str, int [] ar,int num) {
+		return str+" with num: " +num;
 	}
 
 	public static void storeObjToRegistry(ServerObjects obj) {
@@ -121,6 +121,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
+					Class [] classArgs = rmiMess.getClassArguments();
 					System.out.println("RMIMessage objname:" + rmiMess.getObjectName());
 					System.out.println("RMIMessage methodname:" + m);
 					System.out.println("RMIMessage objargs:" + argus);
@@ -136,8 +137,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					Object result = null;
 					Exception ex = null;
 
-
-					Method meth = null;
+					/*Method meth = null;
 					Class cl = objInvoke.getClass();
 					Method[] methodList = objInvoke.getClass().getDeclaredMethods();
 					for(Method method: methodList) {
@@ -148,8 +148,10 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					if(meth == null){
 						//throw an exception for no function with that name	
 					}
-
+					*/
+					Method meth = null;
 					try {
+						meth=objInvoke.getClass().getDeclaredMethod(m, classArgs);
 						result = meth.invoke(objInvoke,argus);
 						System.out.println("result is:"+result);
 						completed = true;
@@ -165,6 +167,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						e.printStackTrace();
 					} catch (Exception e) {
 						ex = e;
+						e.printStackTrace();
 					}
 					rmiRet = new RMIMessageReturn(completed, result, ex);
 
@@ -182,7 +185,5 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 				e.printStackTrace();
 			} 		
 		}
-	}
-
-	
+	}	
 }
