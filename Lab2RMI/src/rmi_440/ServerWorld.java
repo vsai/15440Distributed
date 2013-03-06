@@ -121,7 +121,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
-					//Class [] classArgs = rmiMess.getClassArguments();
+					Class [] classArgs = rmiMess.getClassArguments();
 					System.out.println("RMIMessage objname:" + rmiMess.getObjectName());
 					System.out.println("RMIMessage methodname:" + m);
 					System.out.println("RMIMessage objargs:" + argus);
@@ -137,28 +137,17 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					Object result = null;
 					Exception ex = null;
 
-					/*Method meth = null;
-					Class cl = objInvoke.getClass();
-					Method[] methodList = objInvoke.getClass().getDeclaredMethods();
-					for(Method method: methodList)
-					{
-						if(method.getName().equals(m)){
-							meth=method;
-						}
-							
-					}
-					if(meth == null){
-						//throw an exception for no function with that name
-						
-					}
-					*/
-					if(argus==null)
-					Class [] classArgs= new Class[argus.length];
+					/*Class [] classArgs = null;
+					if(argus !=null){
+						System.out.println("got int here1111");
+						classArgs= new Class[argus.length];
 					
-					for(int i=0;i<argus.length;i++)
-					{
-						classArgs[i]=argus[i].getClass();
-					}
+						for(int i=0;i<argus.length;i++)
+						{
+							System.out.println(argus[i].getClass());
+							classArgs[i]=argus[i].getClass();
+						}
+					}*/
 					Method meth = null;
 					try {
 						meth=objInvoke.getClass().getDeclaredMethod(m, classArgs);
@@ -167,17 +156,20 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						completed = true;
 
 					} catch (IllegalArgumentException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
+						ex = e;
 						e.printStackTrace();
 					} catch (Exception e) {
 						ex = e;
 						e.printStackTrace();
 					}
 					rmiRet = new RMIMessageReturn(completed, result, ex);
-					System.out.println(rmiRet);
+
 					out.writeObject(rmiRet);
 					out.flush();
 					in.close();
@@ -192,7 +184,5 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 				e.printStackTrace();
 			} 		
 		}
-	}
-
-	
+	}	
 }

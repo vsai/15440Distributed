@@ -20,10 +20,6 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 		
-//		System.out.println(returnObject.getIsCompleted());
-//		System.out.println(returnObject.getReturnObject());
-//		System.out.println(returnObject.getExceptionThrown());
-		
 		if (c) {
 			return (String)o;
 		} else if (e != null) {
@@ -39,11 +35,7 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
-		
-//		System.out.println(returnObject.getIsCompleted());
-//		System.out.println(returnObject.getReturnObject());
-//		System.out.println(returnObject.getExceptionThrown());
-		
+
 		if (c) {
 			return (Integer)o;
 		} else if (e != null) {
@@ -60,9 +52,6 @@ public class ClientStub_ServerObjIntf extends ClientStub implements ServerObjInt
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 		
-//		System.out.println(returnObject.getIsCompleted());
-//		System.out.println(returnObject.getReturnObject());
-//		System.out.println(returnObject.getExceptionThrown());
 		if (c){
 			return;
 		} else if (e != null) {
