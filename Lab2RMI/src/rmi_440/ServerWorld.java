@@ -121,7 +121,7 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 					
 					String m = rmiMess.getMethod();
 					Object[] argus = rmiMess.getArguments();
-					Class [] classArgs = rmiMess.getClassArguments();
+					//Class [] classArgs = rmiMess.getClassArguments();
 					System.out.println("RMIMessage objname:" + rmiMess.getObjectName());
 					System.out.println("RMIMessage methodname:" + m);
 					System.out.println("RMIMessage objargs:" + argus);
@@ -152,6 +152,13 @@ public class ServerWorld extends ServerObjects implements ServerObjIntf{
 						
 					}
 					*/
+					if(argus==null)
+					Class [] classArgs= new Class[argus.length];
+					
+					for(int i=0;i<argus.length;i++)
+					{
+						classArgs[i]=argus[i].getClass();
+					}
 					Method meth = null;
 					try {
 						meth=objInvoke.getClass().getDeclaredMethod(m, classArgs);

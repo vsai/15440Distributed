@@ -18,6 +18,8 @@ public class RMIMessageHandler { //extends message?
 			Socket toServer;
 			ObjectOutputStream out;
 			ObjectInputStream in;
+			//check if any args are a ServerObjIntf
+			
 			RMIMessage message = new RMIMessage(ror.getObjectName(), m, args,classArgs);
 			try {
 				toServer = new Socket(ror.getServerIp(), ror.getPortnum());
