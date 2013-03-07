@@ -1,5 +1,6 @@
 package rmi_440.server;
 
+
 class ServerObj2 extends ServerObjects implements ServerObj2Intf{
 
 	int value2;

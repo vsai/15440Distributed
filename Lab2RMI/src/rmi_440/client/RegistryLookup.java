@@ -61,19 +61,4 @@ public class RegistryLookup { //extends Message {
 			return stubGenerator.createStub(ror);
 		}
 	}
-	
-//	public ClientStub lookup(String objName) {
-//		RemoteObjectReference ror = sendLookupMessage(objName);
-//		if (ror == null) {
-//			System.err.println("Registry Lookup from client returned null");
-//			return null;
-//		} else if (ror.getInterfaceName().equals("ServerObj1Intf")){
-//			//TODO: EXTEND FOR MORE OBJECT INTERFACES
-//			return new ClientStub_ServerObj1Intf(ror);
-//		} else if (ror.getInterfaceName().equals("ServerObj2Intf")){
-//			return new ClientStub_ServerObj2Intf(ror);
-//		}
-//		return null;
-//	}
-
 }

@@ -52,8 +52,9 @@ public class Stub_ServerObj1Intf extends Stub implements ServerObj1Intf{
 		Exception e = returnObject.getExceptionThrown();
 		
 		if (c){
+			assert (o==null); //TODO: throw an exception instead?
 			return;
-		} else if (e != null) {
+		} else if (e != null) { 
 //			throw e;
 		}
 		return;
@@ -62,8 +63,7 @@ public class Stub_ServerObj1Intf extends Stub implements ServerObj1Intf{
 	@Override
 	public String returnSameString(String str, int [] ar, int num) {
 		Object [] args={str,ar,num};
-		
-		Class [] classArgs= {String.class,int[].class,int.class};
+		Class<?>[] classArgs= {String.class,int[].class,int.class};
 		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args,classArgs);
 		
 		boolean c = returnObject.getIsCompleted();

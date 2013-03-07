@@ -14,16 +14,13 @@ import messageProtocol.RMIMessageReturn;
 /*
  * Creates a RMI Message, and receives back and RMIMessageReturn
  */
-
-
 public class RMIMessageHandlerProxy { //extends message?
 		public RMIMessageReturn sendInvocation(RemoteObjectReference ror, String m, Object[] args, Class<?>[] classArgs) {
 			if (ror == null) {
 				System.err.println("In sendInvocation: ror is NULL");
 			}
-			/*
-			 * Converts stubs into their RemoteObjectReferences when sending the request
-			 */
+			
+			//Converts stubs into their RemoteObjectReferences when sending the request
 			if(args != null){
 				for (int i = 0; i < args.length; i++) {
 					Object argument = args[i];

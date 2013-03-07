@@ -13,8 +13,20 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 
 	@Override
 	public int getStubScore(ServerObj1Intf a) {
-		return a.getScore();
-//		return 0;
+		Object [] args={a};
+		Class<?>[] classArgs= {ServerObj1Intf.class};
+		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args, classArgs);
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+
+		if (c) {
+			return (Integer)o;
+		} else if (e != null) {
+//			throw e;			
+		}
+		return -1;
 	}
 
 	@Override
@@ -42,6 +54,7 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 		Exception e = returnObject.getExceptionThrown();
 		
 		if (c){
+			assert(o== null); //TODO throw an exception instead?
 			return;
 		} else if (e != null) {
 //			throw e;
