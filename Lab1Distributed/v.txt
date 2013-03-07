@@ -1,6 +1,0 @@
-yvar1
-yvar2
-yvar3
-yvar4
-yvar5
-yvar6
