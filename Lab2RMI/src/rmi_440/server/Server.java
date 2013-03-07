@@ -50,13 +50,12 @@ public class Server {
 		ServerObj1 obj1 = new ServerObj1("obj1");
 		ServerObj1 obj11 = new ServerObj1("obj11");
 		ServerObj1 obj12 = new ServerObj1("obj12");
+		ServerObj2 obj2 = new ServerObj2("obj2");
+		
 		storeObject(obj1, "ServerObj1Intf");
 		storeObject(obj11, "ServerObj1Intf");
 		storeObject(obj12, "ServerObj1Intf");
-		
-		ServerObj2 obj2 = new ServerObj2("obj2");
 		storeObject(obj2, "ServerObj2Intf");
-		
 		
 		/* Prepare the server to listen to requests from clients */
 		try {
@@ -78,6 +77,7 @@ public class Server {
 				runner.start();
 			} catch (IOException e) {
 				System.err.println("Failed to accept socket connection");
+				e.printStackTrace();
 			}	
 		}
 	}

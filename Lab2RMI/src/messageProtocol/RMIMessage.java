@@ -27,8 +27,7 @@ public class RMIMessage extends Message{
 		return args;
 	}
 	
-	public Class[] getClassArguments()
-	{
+	public Class<?>[] getClassArguments() {
 		return classArgs;
 	}
 }

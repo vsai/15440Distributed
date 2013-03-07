@@ -56,7 +56,7 @@ public class RegistryClientListener extends RegistryListener{
 				}
 				listener.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.err.println("Could not read or interpret request from client");
 				e.printStackTrace();
 		 	}
 		}

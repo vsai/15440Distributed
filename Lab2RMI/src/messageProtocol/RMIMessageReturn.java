@@ -1,10 +1,6 @@
 package messageProtocol;
 
 public class RMIMessageReturn extends Message {
-
-	/*
-	 * TODO: What if the return object itself is not-serializable?
-	 */
 	
 	boolean completed;
 	Object returnObject;

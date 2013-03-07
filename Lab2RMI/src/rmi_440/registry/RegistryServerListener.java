@@ -41,9 +41,9 @@ public class RegistryServerListener extends RegistryListener{
 					e.printStackTrace();
 				}
 			} catch (IOException e) {
+				System.err.println("Could not get input stream");
 				e.printStackTrace();
 		 	}
 		}
 	}
-	
 }

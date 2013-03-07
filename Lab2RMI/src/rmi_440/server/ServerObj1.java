@@ -2,10 +2,6 @@ package rmi_440.server;
 
 class ServerObj1 extends ServerObjects implements ServerObj1Intf{
 
-	/**
-	 * @param args
-	 */
-	
 	String message;
 	int score;
 	
@@ -42,6 +38,5 @@ class ServerObj1 extends ServerObjects implements ServerObj1Intf{
 	@Override
 	public void setScore(int newScore) {
 		this.score = newScore;
-		
 	}		
 }

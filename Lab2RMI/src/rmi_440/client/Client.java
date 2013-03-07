@@ -60,6 +60,9 @@ public class Client {
 		System.out.println("Expected: 3, Actual: " + soi2.getStubScore(soi1));
 		System.out.println("Expected: 6, Actual: " + soi2.getValue2());
 		
+		soi2.problemExceptionThrow();
+		System.err.println("Shouldn't reach here!!!!!!");
+		
 	}
 	
 	public static void main(String[] args) {

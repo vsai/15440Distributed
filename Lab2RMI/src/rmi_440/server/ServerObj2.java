@@ -1,5 +1,6 @@
 package rmi_440.server;
 
+import rmi_440.Remote440_Exception;
 
 class ServerObj2 extends ServerObjects implements ServerObj2Intf{
 
@@ -24,5 +25,10 @@ class ServerObj2 extends ServerObjects implements ServerObj2Intf{
 	
 	public void incrementValue2() {
 		value2+=1;
+	}
+
+	public void problemExceptionThrow() throws Exception {
+		throw new Remote440_Exception();
+		
 	}
 }

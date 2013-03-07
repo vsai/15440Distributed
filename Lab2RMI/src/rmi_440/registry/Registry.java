@@ -26,5 +26,4 @@ public class Registry {
 		clientListen.start();
 		serverListen.start();
 	}
-	
 }

@@ -23,6 +23,5 @@ public abstract class ServerObjects {
 			e.printStackTrace();
 		}
 		return ip.getHostAddress().toString();
-	}
-	
+	}	
 }

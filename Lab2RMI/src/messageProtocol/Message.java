@@ -16,5 +16,4 @@ public abstract class Message implements Serializable {
 		message += TERMINATOR;
 		return message;
 	}
-		
 }

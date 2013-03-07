@@ -4,8 +4,7 @@ import rmi_440.RemoteObjectReference;
 
 public class StubGenerator {
 
-	public StubGenerator() {
-		
+	public StubGenerator() {		
 	}
 	
 	public Stub createStub(RemoteObjectReference ror) {

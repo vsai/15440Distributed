@@ -40,7 +40,6 @@ public class ServerReader extends Thread{
 			Class<?>[] classArgs = rmiMess.getClassArguments();
 			
 			//Converts RemoteObjectReferences into their respective stubs
-
 			if (argus!=null) {
 				for (int i = 0; i < argus.length; i++) {
 					if (argus[i] instanceof RemoteObjectReference) {

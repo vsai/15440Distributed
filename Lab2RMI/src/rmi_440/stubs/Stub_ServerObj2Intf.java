@@ -53,8 +53,7 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 		
-		if (c && o==null && e==null){
-			assert(o== null);
+		if (c && e==null){
 			return;
 		} else if (e != null) {
 			throw e;
@@ -72,7 +71,23 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 		
-		if (c && o!=null && e==null){
+		if (c && e==null){
+			return;
+		} else if (e != null) {
+			throw e;
+		}
+		return;
+	}
+
+	@Override
+	public void problemExceptionThrow() throws Exception {
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null, null);
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		
+		if (c && e==null){
 			return;
 		} else if (e != null) {
 			throw e;
