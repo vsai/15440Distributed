@@ -1,8 +1,0 @@
-// You'll want to change this to match your own host
-grant
-{
-  permission java.net.SocketPermission 
-         "127.0.0.1:1099", "connect";
-  permission java.net.SocketPermission 
-         "127.0.0.1:80", "connect";
-};

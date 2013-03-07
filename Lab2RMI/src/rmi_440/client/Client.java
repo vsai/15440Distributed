@@ -60,8 +60,14 @@ public class Client {
 		System.out.println("Expected: 3, Actual: " + soi2.getStubScore(soi1));
 		System.out.println("Expected: 6, Actual: " + soi2.getValue2());
 		
-		soi2.problemExceptionThrow();
-		System.err.println("Shouldn't reach here!!!!!!");
+		try {
+			soi2.problemExceptionThrow();
+		} catch (Exception e) {
+			System.out.println("Thrown an exception as expected");
+			e.printStackTrace();
+		}
+		
+		System.out.println("SUCCESSFULLY PASSED ALL TESTS");
 		
 	}
 	

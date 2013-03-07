@@ -1,0 +1,22 @@
+This is a basic implementation of Java's RMI facility, without actually using the RMI library.
+
+To run:
+1. Edit the ipAddresses of the registry to which you connect to.
+2. Run the following classes in specified order:
+	2.1 If you wish to run Registry on local system		Run: Registry
+	2.2 If you wish to run Server on local system		Run: Server
+	2.3 If you wish to run Client on local system		Run: Client
+
+
+
+In this implementation, we have a global registry. We can have multiple servers, but each server is 
+responsible for storing all the objects it creates to the registry and its own mapping. We assume that each server
+will not try and create and store an object to a registry with the same name as something that already exists. 
+The client is then responsible for performing a lookup and calling methods for the remote objects.
+
+
+As of now the stubs are hard-coded, but as the methods basically share very similar code, this can be further optimized.
+There are 2 remote server objects defined: ServerObj1 and ServerObj2 each containing some methods to test with.
+
+There is a Client, which as now tests and compares whether certain method calls have the expected results. 
+Upon client modification, it can be used to actually use those methods for its own purpose.
