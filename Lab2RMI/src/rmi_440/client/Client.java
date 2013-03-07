@@ -6,7 +6,7 @@ import rmi_440.server.ServerObj2Intf;
 
 public class Client {
 	
-	public static void main(String[] args) {
+	public static void clientDoStuff() throws Exception{
 		String registry_ip=Settings.registry_ipAddress;
 		int registry_port=Settings.registry_listeningToClientPortnum;
 		RegistryLookup registry = new RegistryLookup(registry_ip,registry_port);
@@ -50,5 +50,25 @@ public class Client {
 		System.out.println("Expected: 12, Actual: " + soi2.getStubScore(soi));
 		System.out.println("Expected: 12, Actual: " + soi2.getStubScore(soi1));
 		System.out.println("Expected: 6, Actual: " + soi2.getValue2());
+		
+		soi2.setStubScore(soi, 3);
+		
+		System.out.println("Expected: 3, Actual: " + soi.getScore());
+		System.out.println("Expected: 3, Actual: " + soi1.getScore());
+		System.out.println("Expected: 10, Actual: " + soi11.getScore());
+		System.out.println("Expected: 3, Actual: " + soi2.getStubScore(soi));
+		System.out.println("Expected: 3, Actual: " + soi2.getStubScore(soi1));
+		System.out.println("Expected: 6, Actual: " + soi2.getValue2());
+		
+	}
+	
+	public static void main(String[] args) {
+		try {
+			clientDoStuff();
+		} catch (Exception e) {
+			System.err.println("Received an exception on remote objects");
+			e.printStackTrace();
+		}
+		
 	}
 }

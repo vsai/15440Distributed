@@ -62,8 +62,8 @@ public class Server {
 		try {
 			listen = new ServerSocket(hostPortnum);
 		} catch (IOException e1) {
-			System.out.println("Couldn't listen on: " + registryPortnum);
-			e1.printStackTrace();
+			System.err.println("Couldn't listen on: " + registryPortnum);
+			System.err.println("Try restarting the server");
 			System.exit(1);
 		}
 
@@ -77,10 +77,8 @@ public class Server {
 				runner = new ServerReader(clientConn);
 				runner.start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+				System.err.println("Failed to accept socket connection");
+			}	
 		}
 	}
 }

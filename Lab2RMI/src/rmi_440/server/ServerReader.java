@@ -39,9 +39,8 @@ public class ServerReader extends Thread{
 			Object[] argus = rmiMess.getArguments();
 			Class<?>[] classArgs = rmiMess.getClassArguments();
 			
-			/*
-			 * Converts RemoteObjectReferences into their respective stubs
-			 */
+			//Converts RemoteObjectReferences into their respective stubs
+
 			if (argus!=null) {
 				for (int i = 0; i < argus.length; i++) {
 					if (argus[i] instanceof RemoteObjectReference) {
@@ -58,22 +57,15 @@ public class ServerReader extends Thread{
 			try {
 				meth=objInvoke.getClass().getDeclaredMethod(m, classArgs);
 				result = meth.invoke(objInvoke,argus);
-				System.out.println("result is:"+result);
 				completed = true;
-				System.out.println("method is completed:"+completed);
-
 			} catch (IllegalArgumentException e) {
 				ex = e;
-				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				ex = e;
-				e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				ex = e;
-				e.printStackTrace();
 			} catch (Exception e) {
 				ex = e;
-				e.printStackTrace();
 			}
 			rmiRet = new RMIMessageReturn(completed, result, ex);
 			out.writeObject(rmiRet);
@@ -81,10 +73,12 @@ public class ServerReader extends Thread{
 			in.close();
 			out.close();
 		} catch (IOException e1) {
+			System.err.println("Failed to read/write from/to socket");
 			e1.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
-				
+		catch (ClassNotFoundException e) {
+			System.err.println("Expected RMIMessage input. Received unexpected object");
+			e.printStackTrace();
+		}				
 	}
 }

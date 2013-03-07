@@ -37,5 +37,11 @@ class ServerObj1 extends ServerObjects implements ServerObj1Intf{
 			strargs += ar[i] + " ";
 		}
 		return str + " ; " + strargs + "; " + num + " ;";
+	}
+
+	@Override
+	public void setScore(int newScore) {
+		this.score = newScore;
+		
 	}		
 }

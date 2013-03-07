@@ -12,7 +12,7 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 	}
 
 	@Override
-	public int getStubScore(ServerObj1Intf a) {
+	public int getStubScore(ServerObj1Intf a) throws Exception {
 		Object [] args={a};
 		Class<?>[] classArgs= {ServerObj1Intf.class};
 		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args, classArgs);
@@ -21,43 +21,61 @@ public class Stub_ServerObj2Intf extends Stub implements ServerObj2Intf{
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 
-		if (c) {
+		if (c && e==null) {
 			return (Integer)o;
 		} else if (e != null) {
-//			throw e;			
+			throw e;
 		}
 		return -1;
 	}
 
 	@Override
-	public int getValue2() {
+	public int getValue2() throws Exception{
 		RMIMessageReturn returnObject= rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null,null);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 
-		if (c) {
+		if (c && e==null) {
 			return (Integer)o;
 		} else if (e != null) {
-//			throw e;			
+			throw e;
 		}
 		return -1;
 	}
 
 	@Override
-	public void incrementValue2() {
+	public void incrementValue2() throws Exception{
 		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), null,null);
 		
 		boolean c = returnObject.getIsCompleted();
 		Object o = returnObject.getReturnObject();
 		Exception e = returnObject.getExceptionThrown();
 		
-		if (c){
-			assert(o== null); //TODO throw an exception instead?
+		if (c && o==null && e==null){
+			assert(o== null);
 			return;
 		} else if (e != null) {
-//			throw e;
+			throw e;
+		}
+		return;
+	}
+
+	@Override
+	public void setStubScore(ServerObj1Intf a, int newScore) throws Exception {
+		Object [] args={a, newScore};
+		Class<?>[] classArgs= {ServerObj1Intf.class, int.class};
+		RMIMessageReturn returnObject = rmiMessageHandler.sendInvocation(ror, getCurrentMethodName(), args,classArgs);
+		
+		boolean c = returnObject.getIsCompleted();
+		Object o = returnObject.getReturnObject();
+		Exception e = returnObject.getExceptionThrown();
+		
+		if (c && o!=null && e==null){
+			return;
+		} else if (e != null) {
+			throw e;
 		}
 		return;
 	}
