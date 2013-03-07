@@ -68,7 +68,6 @@ public class Client {
 		}
 		
 		System.out.println("SUCCESSFULLY PASSED ALL TESTS");
-		
 	}
 	
 	public static void main(String[] args) {
@@ -78,6 +77,5 @@ public class Client {
 			System.err.println("Received an exception on remote objects");
 			e.printStackTrace();
 		}
-		
 	}
 }
