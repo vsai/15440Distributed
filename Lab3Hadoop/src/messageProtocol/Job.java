@@ -5,10 +5,13 @@ import java.net.URL;
 
 public class Job implements Serializable {
 	
+	public enum State {
+		INIT, STARTED, ENDED
+	}
+	
 	public enum InputType {
 		TEXT, KEYVALUE
 	}
-	
 	
 	String jobName;
 	String inputFilename;

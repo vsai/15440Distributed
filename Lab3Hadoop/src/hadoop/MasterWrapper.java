@@ -10,4 +10,12 @@ public class MasterWrapper {
 		this.portnum = portnum;
 	}
 
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public int getPortnum() {
+		return portnum;
+	}
+
 }

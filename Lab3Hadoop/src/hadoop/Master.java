@@ -1,9 +1,6 @@
 package hadoop;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -11,13 +8,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import messageProtocol.InitiateConnection;
+import messageProtocol.Job;
 
 public class Master extends Thread {
 
 	String ipAddress;
 	int portnum;
-	
-	ArrayList<Slave> slaves;
+	ArrayList<SlaveWrapper> slaves;
+	ArrayList<Job> jobs;
 	
 	public Master (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
@@ -30,6 +28,9 @@ public class Master extends Thread {
 		ObjectInputStream in;
 		ObjectOutputStream out;
 		InitiateConnection initConn;
+		Job jobRequest;
+		Object inobj;
+		SlaveWrapper newSlave;
 		try {
 			ss = new ServerSocket(portnum);
 			while (true) {
@@ -38,14 +39,25 @@ public class Master extends Thread {
 					in = new ObjectInputStream(s.getInputStream());
 					out = new ObjectOutputStream(s.getOutputStream());
 					try {
-						initConn = (InitiateConnection) in.readObject();
+						inobj = in.readObject();
+						if (inobj instanceof InitiateConnection) {
+							initConn = (InitiateConnection) inobj;
+							newSlave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum());
+							newSlave.setConnToSlave(s);
+							newSlave.setIn(in);
+							newSlave.setOut(out);
+							slaves.add(newSlave);
+						} else if (inobj instanceof Job) {
+							jobRequest = (Job) inobj;
+							jobs.add(jobRequest);
+							out.writeBoolean(true);
+							in.close();
+							out.close();
+							s.close();
+						}
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					in.close();
-					out.close();
-					s.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -53,12 +65,6 @@ public class Master extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		//start a server socket running on the portnum
-		//listen to incoming connections from slaves and create a list of slaves
-		//listen to incoming connections from users
 		
 		//scheduler + dispatcher
 	}

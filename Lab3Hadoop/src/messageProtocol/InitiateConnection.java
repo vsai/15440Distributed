@@ -16,4 +16,17 @@ public class InitiateConnection {
 		this.startpos = startpos;
 	}
 	
+	public String getSelfIp() {
+		return selfIp;
+	}
+
+	public int getSelfPortnum() {
+		return selfPortnum;
+	}
+
+	public Source getStartpos() {
+		return startpos;
+	}
+	
+	
 }
