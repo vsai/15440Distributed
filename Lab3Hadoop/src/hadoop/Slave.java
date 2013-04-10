@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import messageProtocol.InitiateConnection;
-import messageProtocol.InitiateConnection.Source;
+//import messageProtocol.InitiateConnection.Source;
 
 import fileIO.ConfigReader;
 
@@ -25,7 +25,7 @@ public class Slave extends Thread {
 		ConfigReader cread = new ConfigReader();
 		MasterWrapper m = cread.readMaster();
 		Socket toMaster;
-		InitiateConnection initConn = new InitiateConnection(ipAddress, portnum, Source.SLAVE);
+		InitiateConnection initConn = new InitiateConnection(ipAddress, portnum);//, Source.SLAVE);
 		ObjectInputStream in;
 		ObjectOutputStream out;
 		try {

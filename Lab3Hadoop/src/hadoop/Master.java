@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import messageProtocol.InitiateConnection;
 import messageProtocol.Job;
@@ -14,12 +16,16 @@ public class Master extends Thread {
 
 	String ipAddress;
 	int portnum;
-	ArrayList<SlaveWrapper> slaves;
-	ArrayList<Job> jobs;
+//	ArrayList<SlaveWrapper> slaves;
+//	ArrayList<SlaveMessageHandler> slaves;
+	List<SlaveMessageHandler> slaves;// = Collections.synchronizedList(new ArrayList<SlaveMessageHandler>());
+	List<Job> jobs;
 	
 	public Master (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
+		this.slaves = Collections.synchronizedList(new ArrayList<SlaveMessageHandler>());
+		this.jobs = Collections.synchronizedList(new ArrayList<Job>());
 	}
 	
 	public void run () {
@@ -30,7 +36,7 @@ public class Master extends Thread {
 		InitiateConnection initConn;
 		Job jobRequest;
 		Object inobj;
-		SlaveWrapper newSlave;
+		SlaveMessageHandler slave;
 		try {
 			ss = new ServerSocket(portnum);
 			while (true) {
@@ -42,11 +48,14 @@ public class Master extends Thread {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
 							initConn = (InitiateConnection) inobj;
-							newSlave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum());
-							newSlave.setConnToSlave(s);
-							newSlave.setIn(in);
-							newSlave.setOut(out);
-							slaves.add(newSlave);
+							slave = new SlaveMessageHandler(initConn, s, in, out);
+							slaves.add(slave);
+							slave.start();
+//							newSlave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum());
+//							newSlave.setConnToSlave(s);
+//							newSlave.setIn(in);
+//							newSlave.setOut(out);
+//							slaves.add(newSlave);
 						} else if (inobj instanceof Job) {
 							jobRequest = (Job) inobj;
 							jobs.add(jobRequest);
