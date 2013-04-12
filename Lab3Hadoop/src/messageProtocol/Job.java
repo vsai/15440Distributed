@@ -1,7 +1,6 @@
 package messageProtocol;
 
 import java.io.Serializable;
-import java.net.URL;
 
 public class Job implements Serializable {
 	
@@ -16,8 +15,8 @@ public class Job implements Serializable {
 	String jobName;
 	String inputFilename;
 	String outputFilename;
-	URL mapURL;
-	URL reduceURL;
+	String mapURL;
+	String reduceURL;
 	String mapClass;
 	String reduceClass;
 	String requesterIp;
@@ -55,19 +54,19 @@ public class Job implements Serializable {
 		this.outputFilename = outputFilename;
 	}
 
-	public URL getMapURL() {
+	public String getMapURL() {
 		return mapURL;
 	}
 
-	public void setMapURL(URL mapURL) {
+	public void setMapURL(String mapURL) {
 		this.mapURL = mapURL;
 	}
 
-	public URL getReduceURL() {
+	public String getReduceURL() {
 		return reduceURL;
 	}
 
-	public void setReduceURL(URL reduceURL) {
+	public void setReduceURL(String reduceURL) {
 		this.reduceURL = reduceURL;
 	}
 
@@ -110,6 +109,5 @@ public class Job implements Serializable {
 	public void setInputformat(InputType inputformat) {
 		this.inputformat = inputformat;
 	}
-	
 	
 }
