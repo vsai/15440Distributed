@@ -1,0 +1,15 @@
+.PHONY: compile run-registry run-server run-client 
+
+compile:
+	javac /src/messageProtocol/Message.java 
+	@echo "Run ''make run-registry'', ''make run-server'', and ''make run-client'' to run the example program"
+
+run-registry:
+	java Registry
+
+run-server:
+	java Server
+
+run-client:
+	java Client
+
