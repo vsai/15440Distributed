@@ -20,13 +20,15 @@ public class Job implements Serializable {
 	URL reduceURL;
 	String mapClass;
 	String reduceClass;
-//	String requesterIp;
+	String requesterIp;
 	InputType inputformat;
+	State state;
 	
 	public Job (String jobName, String inputFilename, String outputFilename) {
 		this.jobName = jobName;
 		this.inputFilename = inputFilename;
 		this.outputFilename = outputFilename;
+		this.state = State.INIT;
 	}
 	
 	public String getJobName() {
@@ -85,13 +87,21 @@ public class Job implements Serializable {
 		this.reduceClass = reduceClass;
 	}
 
-//	public String getRequesterIp() {
-//		return requesterIp;
-//	}
-//
-//	public void setRequesterIp(String requesterIp) {
-//		this.requesterIp = requesterIp;
-//	}
+	public String getRequesterIp() {
+		return requesterIp;
+	}
+
+	public void setRequesterIp(String requesterIp) {
+		this.requesterIp = requesterIp;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
 
 	public InputType getInputformat() {
 		return inputformat;

@@ -27,7 +27,6 @@ public class RequestMapReduce {
 		ObjectInputStream in;
 		boolean result = false;
 		Job jobRequest = new Job(null, null, null);
-
 //		bunch of setters for other things of job
 //		jobRequest.set
 		
@@ -41,13 +40,10 @@ public class RequestMapReduce {
 			out.close();
 			in.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -55,9 +51,6 @@ public class RequestMapReduce {
 			System.out.println("Successfully sent job");
 		} else {
 			System.out.println("Failed to send job");
-		}
-		
+		}	
 	}
-	
-
 }
