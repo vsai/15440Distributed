@@ -1,5 +1,10 @@
 package hadoop;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 public class SlaveWrapper {
 
 	public enum Status {
@@ -8,40 +13,42 @@ public class SlaveWrapper {
 	
 	String ipAddress;
 	int portnum;
-//	Socket connToSlave;
-//	ObjectOutputStream out;
-//	ObjectInputStream in;
 	Status status;
+	Socket s; 
+	ObjectOutputStream out;
+	SlaveMessageHandler smh;
 	
 	public SlaveWrapper (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
 		this.status = Status.CHILLIN;
+
+	}
+	
+	public SlaveWrapper (String ipAddress, int portnum, Socket s, ObjectInputStream in, ObjectOutputStream out) {
+		this.ipAddress = ipAddress;
+		this.portnum = portnum;
+		this.status = Status.CHILLIN;
+		this.s = s;
+		this.smh = new SlaveMessageHandler(in);
+		this.out = out;
+	}
+		
+	public String getIpAddress() {
+		return ipAddress;
 	}
 
-//	public Socket getConnToSlave() {
-//		return connToSlave;
-//	}
-//
-//	public void setConnToSlave(Socket connToSlave) {
-//		this.connToSlave = connToSlave;
-//	}
-//
-//	public ObjectOutputStream getOut() {
-//		return out;
-//	}
-//
-//	public void setOut(ObjectOutputStream out) {
-//		this.out = out;
-//	}
-//
-//	public ObjectInputStream getIn() {
-//		return in;
-//	}
-//
-//	public void setIn(ObjectInputStream in) {
-//		this.in = in;
-//	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public int getPortnum() {
+		return portnum;
+	}
+
+	public void setPortnum(int portnum) {
+		this.portnum = portnum;
+	}
 
 	public Status getStatus() {
 		return status;
@@ -50,5 +57,16 @@ public class SlaveWrapper {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	
+
+	public SlaveMessageHandler getSmh() {
+		return smh;
+	}
+
+	public void setSmh(SlaveMessageHandler smh) {
+		this.smh = smh;
+	}
+
+	public void writeToSlave(Object a) throws IOException {
+		out.writeObject(a);
+	}
 }

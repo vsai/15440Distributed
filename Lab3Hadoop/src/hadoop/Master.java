@@ -16,16 +16,16 @@ public class Master extends Thread {
 
 	String ipAddress;
 	int portnum;
-//	ArrayList<SlaveWrapper> slaves;
-//	ArrayList<SlaveMessageHandler> slaves;
-	List<SlaveMessageHandler> slaves;// = Collections.synchronizedList(new ArrayList<SlaveMessageHandler>());
+	List<SlaveWrapper> slaves;
 	List<Job> jobs;
+	Scheduler scheduler;
 	
 	public Master (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
-		this.slaves = Collections.synchronizedList(new ArrayList<SlaveMessageHandler>());
+		this.slaves = Collections.synchronizedList(new ArrayList<SlaveWrapper>());
 		this.jobs = Collections.synchronizedList(new ArrayList<Job>());
+		this.scheduler = new Scheduler(jobs, slaves);
 	}
 	
 	public void run () {
@@ -36,7 +36,10 @@ public class Master extends Thread {
 		InitiateConnection initConn;
 		Job jobRequest;
 		Object inobj;
-		SlaveMessageHandler slave;
+		SlaveWrapper slave;
+		
+		scheduler.start();
+		
 		try {
 			ss = new ServerSocket(portnum);
 			while (true) {
@@ -48,14 +51,9 @@ public class Master extends Thread {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
 							initConn = (InitiateConnection) inobj;
-							slave = new SlaveMessageHandler(initConn, s, in, out);
+							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), s, in, out);
 							slaves.add(slave);
-							slave.start();
-//							newSlave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum());
-//							newSlave.setConnToSlave(s);
-//							newSlave.setIn(in);
-//							newSlave.setOut(out);
-//							slaves.add(newSlave);
+							slave.getSmh().start(); /* to listen to inputs from Slave */
 						} else if (inobj instanceof Job) {
 							jobRequest = (Job) inobj;
 							jobs.add(jobRequest);
@@ -74,7 +72,5 @@ public class Master extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		//scheduler + dispatcher
 	}
 }
