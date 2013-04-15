@@ -1,6 +1,9 @@
 package hadoop;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
@@ -13,6 +16,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import messageProtocol.InitiateConnection;
 import messageProtocol.Job.InputType;
@@ -26,6 +30,7 @@ import fileIO.RecordReader;
 
 public class Slave extends Thread {
 	
+	public final String tempFileDirectory="";
 	String ipAddress;
 	int portnum;
 	
@@ -34,7 +39,8 @@ public class Slave extends Thread {
 		this.portnum = portnum;
 	}
 
-	public MapResult mapper(MapMessage mapMessage) throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+	public MapResult mapper(MapMessage mapMessage) {
+		try {
 		URL classUrl;
     	classUrl = new URL(mapMessage.getclassDirectory());
     	URL[] classUrls = { classUrl };
@@ -74,6 +80,41 @@ public class Slave extends Thread {
     			mapMethod.invoke(inst, args);
     		
     	}
+    	//Writing mapped key values to temp files
+    	String jobName =mapMessage.getJobName();
+    	int partitionNum = mapMessage.getPartitionNum();
+    	String filePath = mapMessage.getJobDirectory()+"/"+partitionNum;
+    	boolean success = (new File(filePath)).mkdirs();
+    	
+    	//Making the dir failed
+    	if(!success){
+    		return (new MapResult(null,false,-1,null));
+    	}
+    	
+    	ArrayList<Tuple<String,String>> data = output.getData();
+    	for(Tuple<String,String> tup: data){
+    		key= tup.getX();
+    		value= tup.getY();
+    		
+    		File file =new File(filePath+"/"+key);
+    		 //if file doesnt exists, then create it
+    		if(!file.exists()){
+    			file.createNewFile();
+    		}
+ 
+    		//true = append file
+    		FileWriter fileWritter = new FileWriter(file.getName(),true);
+    		
+    		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	        bufferWritter.write(value+"/n");
+	        bufferWritter.close();
+    	}
+    	return (new MapResult(filePath,true,partitionNum,jobName));
+		}
+		catch(Exception e){
+			return (new MapResult(null,false,-1,null));
+		}
+    	//file = jobName/partitionNum/key.txt
     	
     	//write to files from outputcollector
     	//then return mapResult
