@@ -33,7 +33,6 @@ public class Slave extends Thread {
 		//TODO
 		return null;
 	}
-	
 	public void run() {
 		ConfigReader cread = new ConfigReader();
 		MasterWrapper m = cread.readMaster();
