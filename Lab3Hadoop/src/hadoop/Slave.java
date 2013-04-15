@@ -3,10 +3,17 @@ package hadoop;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.UnknownHostException;
 
 import messageProtocol.InitiateConnection;
+import messageProtocol.Job.InputType;
 import messageProtocol.MapMessage;
 import messageProtocol.MapResult;
 import messageProtocol.ReduceMessage;
@@ -24,11 +31,31 @@ public class Slave extends Thread {
 		this.portnum = portnum;
 	}
 
-	public MapResult mapper(MapMessage mapMessage) {
-		//TODO
-		return null;
+	public MapResult mapper(MapMessage mapMessage) throws MalformedURLException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		URL classUrl;
+    	classUrl = new URL(mapMessage.getclassDirectory());
+    	URL[] classUrls = { classUrl };
+    	URLClassLoader ucl = new URLClassLoader(classUrls);
+    	Class c = ucl.loadClass(mapMessage.getClassName());
+    	Constructor cotr = c.getConstructors()[0];
+    	Method [] methods = c.getMethods();
+    	Method mapMethod=null;
+    	for(Method m :methods){
+    		if(m.getName().equals("map"))
+    			mapMethod=m;
+    	}
+    	Object [] args = getArgsForMapMethod(mapMessage.getInputType(),mapMessage.getInputFile(),mapMessage.getStartSeek(),mapMessage.getEndSeek());
+    	mapMethod.invoke(cotr.newInstance(),args);
+    	return null;
 	}
 	
+	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int endSeek) {
+		Object [] objArr = new Object [3];
+		
+		
+		return null;
+	}
+
 	public ReduceResult reducer(ReduceMessage reduceMessage) {
 		//TODO
 		return null;
