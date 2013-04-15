@@ -6,7 +6,7 @@ public class MapMessage {
 
 	
 	int startSeek;
-	int endSeek;
+	int numLines;
 	int partitionNum;
 	String classDirectory;
 	String className;
@@ -16,7 +16,7 @@ public class MapMessage {
 	
 	public MapMessage(int startSeek, int endSeek, int partitionNum, String className, String classDirectory, String jobName, InputType type, String inputFile){
 		this.startSeek = startSeek;
-		this.endSeek = endSeek;
+		this.numLines = endSeek;
 		this.partitionNum = partitionNum;
 		this.className = className;
 		this.classDirectory = classDirectory;
@@ -29,8 +29,8 @@ public class MapMessage {
 		return startSeek;
 	}
 	
-	public int getEndSeek(){
-		return endSeek;
+	public int getNumLines(){
+		return numLines;
 	}
 	
 	public int getPartitionNum(){

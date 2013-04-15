@@ -1,6 +1,8 @@
 package hadoop;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
@@ -20,6 +22,7 @@ import messageProtocol.ReduceMessage;
 import messageProtocol.ReduceResult;
 
 import fileIO.ConfigReader;
+import fileIO.RecordReader;
 
 public class Slave extends Thread {
 	
@@ -31,7 +34,7 @@ public class Slave extends Thread {
 		this.portnum = portnum;
 	}
 
-	public MapResult mapper(MapMessage mapMessage) throws MalformedURLException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public MapResult mapper(MapMessage mapMessage) throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
 		URL classUrl;
     	classUrl = new URL(mapMessage.getclassDirectory());
     	URL[] classUrls = { classUrl };
@@ -44,14 +47,44 @@ public class Slave extends Thread {
     		if(m.getName().equals("map"))
     			mapMethod=m;
     	}
-    	Object [] args = getArgsForMapMethod(mapMessage.getInputType(),mapMessage.getInputFile(),mapMessage.getStartSeek(),mapMessage.getEndSeek());
-    	mapMethod.invoke(cotr.newInstance(),args);
-    	return null;
+    	int startLine = mapMessage.getStartSeek();
+    	int numLines= mapMessage.getNumLines();
+    	OutputCollector output = new OutputCollector();
+    	InputType type = mapMessage.getInputType();
+    	String fileName=mapMessage.getInputFile();
+    	LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
+    	lnr.setLineNumber(startLine);
+    	String line=null;
+    	Object inst = cotr.newInstance();
+    	String key,value;
+    	for(int i=0; i <numLines;i++){
+    		line=lnr.readLine();
+    		//
+    		if(type == InputType.KEYVALUE){
+    			String [] keyValuePair = line.split("/t");
+    			key = keyValuePair[0];
+    			value = keyValuePair[1];
+    		}
+    		else {
+    			 Integer num = i + startLine;
+    			key=fileName+"_"+num.toString();
+    			value=line;
+    		}
+    			Object [] args = {key,value,output};
+    			mapMethod.invoke(inst, args);
+    		
+    	}
+    	
+    	//write to files from outputcollector
+    	//then return mapResult
+    	
 	}
 	
-	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int endSeek) {
+	
+	//PROBALY DONT NEED ANYMORE
+	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int numLine) throws IOException {
 		Object [] objArr = new Object [3];
-		
+		String partitionText = RecordReader.readPartition(startSeek,numLine,inputFile);
 		
 		return null;
 	}
