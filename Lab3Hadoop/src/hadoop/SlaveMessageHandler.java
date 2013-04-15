@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.InitiateConnection;
+import messageProtocol.MapMessage;
 import messageProtocol.MapResult;
 import messageProtocol.ReduceResult;
 
@@ -18,9 +21,12 @@ import messageProtocol.ReduceResult;
 public class SlaveMessageHandler extends Thread{
 
 	ObjectInputStream in;
+	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
 	
-	public SlaveMessageHandler (ObjectInputStream in) {
+	public SlaveMessageHandler (ObjectInputStream in, 
+			ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
 		this.in = in;
+		this.slaves = slaves;
 	}
 	
 	public void run() {

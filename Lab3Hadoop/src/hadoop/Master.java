@@ -6,25 +6,35 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.InitiateConnection;
 import messageProtocol.Job;
+import messageProtocol.MapMessage;
 
 public class Master extends Thread {
 
+	/*
+	 * Master is responsible for listening to incoming connections, and handles
+	 * new job requests, and new slaves joining.
+	 * 
+	 * It spawns a Scheduler thread which is responsible for handling the messages
+	 * to each of the slaves, and handles completion of jobs. 
+	 */
+	
 	String ipAddress;
 	int portnum;
-	List<SlaveWrapper> slaves;
-	List<Job> jobs;
+	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
+	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
+	
 	Scheduler scheduler;
 	
 	public Master (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
-		this.slaves = Collections.synchronizedList(new ArrayList<SlaveWrapper>());
-		this.jobs = Collections.synchronizedList(new ArrayList<Job>());
+		this.slaves = new ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>>();
+		this.jobs = new ConcurrentHashMap<Job, ArrayList<MapMessage>>();
+		
 		this.scheduler = new Scheduler(jobs, slaves);
 	}
 	
@@ -51,12 +61,13 @@ public class Master extends Thread {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
 							initConn = (InitiateConnection) inobj;
-							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), s, in, out);
-							slaves.add(slave);
-							slave.getSmh().start(); /* to listen to inputs from Slave */
+							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), 
+													s, in, out, slaves);
+							slaves.put(slave, new ArrayList<MapMessage>());
+							slave.getSmh().start(); /* start master's listener from slave */
 						} else if (inobj instanceof Job) {
 							jobRequest = (Job) inobj;
-							jobs.add(jobRequest);
+							jobs.put(jobRequest, new ArrayList<MapMessage>());
 							out.writeBoolean(true);
 							in.close();
 							out.close();

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+import messageProtocol.MapMessage;
 
 public class SlaveWrapper {
 
@@ -25,12 +29,13 @@ public class SlaveWrapper {
 
 	}
 	
-	public SlaveWrapper (String ipAddress, int portnum, Socket s, ObjectInputStream in, ObjectOutputStream out) {
+	public SlaveWrapper (String ipAddress, int portnum, Socket s, ObjectInputStream in, 
+			ObjectOutputStream out,ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
 		this.status = Status.CHILLIN;
 		this.s = s;
-		this.smh = new SlaveMessageHandler(in);
+		this.smh = new SlaveMessageHandler(in, slaves);
 		this.out = out;
 	}
 		
