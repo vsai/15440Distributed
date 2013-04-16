@@ -20,13 +20,13 @@ import java.util.ArrayList;
 
 public class OutputCollector {
 	
-	ArrayList<Tuple<Writable, Writable>>  data = new ArrayList<Tuple<Writable, Writable>>();
+	ArrayList<Tuple<String, String>>  data = new ArrayList<Tuple<String, String>>();
 	
-	public void collect(Writable key, Writable value){	
-		data.add(new Tuple<Writable, Writable>(key,value));
+	public void collect(String key, String value){	
+		data.add(new Tuple<String, String>(key,value));
 	}
 	
-	public ArrayList<Tuple<Writable, Writable>> getData(){ 
+	public ArrayList<Tuple<String, String>> getData(){ 
 		return data;
 	}
 }
