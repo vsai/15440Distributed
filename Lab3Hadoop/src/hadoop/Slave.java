@@ -1,10 +1,15 @@
 package hadoop;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,6 +32,7 @@ import messageProtocol.ReduceResult;
 
 import fileIO.ConfigReader;
 import fileIO.RecordReader;
+import fileIO.DirectoryHandler;
 
 public class Slave extends Thread {
 	
@@ -96,7 +102,7 @@ public class Slave extends Thread {
     		key= tup.getX();
     		value= tup.getY();
     		
-    		File file =new File(filePath+"/"+key);
+    		File file =new File(filePath+"/"+key+".txt");
     		 //if file doesnt exists, then create it
     		if(!file.exists()){
     			file.createNewFile();
@@ -122,17 +128,66 @@ public class Slave extends Thread {
 	}
 	
 	
-	//PROBALY DONT NEED ANYMORE
-	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int numLine) throws IOException {
-		Object [] objArr = new Object [3];
-		String partitionText = RecordReader.readPartition(startSeek,numLine,inputFile);
-		
-		return null;
-	}
 
-	public ReduceResult reducer(ReduceMessage reduceMessage) {
-		//TODO
-		return null;
+	public ReduceResult reducer(ReduceMessage reduceMessage){
+		try{
+			URL classUrl;
+	    	classUrl = new URL(reduceMessage.getClassDirectory());
+	    	URL[] classUrls = { classUrl };
+	    	URLClassLoader ucl = new URLClassLoader(classUrls);
+	    	Class c = ucl.loadClass(reduceMessage.getClassName());
+	    	Constructor cotr = c.getConstructors()[0];
+	    	Method [] methods = c.getMethods();
+	    	Method reduceMethod=null;
+	    	for(Method m :methods){
+	    		if(m.getName().equals("reduce"))
+	    			reduceMethod=m;
+	    	}
+			
+			ArrayList<String> fileNames = DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
+			String key;
+			String val;
+			DataInputStream in;
+			BufferedReader br;
+			OutputCollector output = new OutputCollector();
+			ArrayList<String> values = new ArrayList<String>();
+			for(String fileName : fileNames){
+				key = DirectoryHandler.extractKey(fileName);
+				FileInputStream fstream = new FileInputStream(fileName);
+				// Get the object of DataInputStream
+				in = new DataInputStream(fstream);
+				br = new BufferedReader(new InputStreamReader(in));
+				
+				val="";
+				values.clear();
+				while ((val = br.readLine()) != null)   {
+					values.add(val);
+				}
+				Object [] args = {key,values.iterator(),output};
+				reduceMethod.invoke(cotr, args);
+				
+			}
+			
+			writeOutputToFile(output,reduceMessage.getOutputFile());
+			return (new ReduceResult(true,reduceMessage.getOutputFile()));
+		}
+		catch(Exception e){
+			return (new ReduceResult(true,null));
+		}
+	}
+	
+	public void writeOutputToFile(OutputCollector output, String outputFile) throws IOException{
+		FileWriter fileWritter = new FileWriter(outputFile);
+		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+		String key,value;
+		ArrayList<Tuple<String, String>> data = output.getData();
+		for(Tuple<String, String> tup : data){
+			key=tup.getX();
+			value=tup.getY();
+			bufferWritter.write(key+"/t"+value);
+		}
+        bufferWritter.close();
+		
 	}
 	public void run() {
 		ConfigReader cread = new ConfigReader();
