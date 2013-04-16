@@ -1,7 +1,5 @@
 package hadoop;
 
-//import hadoop.SlaveWrapper.Status;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,7 +8,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.Job;
-import messageProtocol.Job.InputType;
 import messageProtocol.MapMessage;
 
 public class Scheduler extends Thread {
