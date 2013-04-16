@@ -6,10 +6,12 @@ public class ReduceResult implements Serializable {
 
 	boolean success;
 	String outputFile;
+	String jobName;
 	
-	public ReduceResult(boolean success, String outputFile){
+	public ReduceResult(boolean success, String outputFile, String jobName){
 		this.success = success;
 		this.outputFile = outputFile;
+		this .jobName = jobName;
 	}
 	
 	public boolean getSuccess(){
@@ -18,5 +20,9 @@ public class ReduceResult implements Serializable {
 	
 	public String getOutputFile(){
 		return outputFile;
+	}
+	
+	public String getJobName(){
+		return jobName;
 	}
 }

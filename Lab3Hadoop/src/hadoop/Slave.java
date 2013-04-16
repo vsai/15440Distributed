@@ -169,10 +169,10 @@ public class Slave extends Thread {
 			}
 			
 			writeOutputToFile(output,reduceMessage.getOutputFile());
-			return (new ReduceResult(true,reduceMessage.getOutputFile()));
+			return (new ReduceResult(true,reduceMessage.getOutputFile(), reduceMessage.getJobName()));
 		}
 		catch(Exception e){
-			return (new ReduceResult(true,null));
+			return (new ReduceResult(true,null,null));
 		}
 	}
 	
