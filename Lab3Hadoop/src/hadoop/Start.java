@@ -23,17 +23,24 @@ public class Start {
 		}
 		ConfigReader cread = new ConfigReader();
 		MasterWrapper m = cread.readMaster();
+		
 		ArrayList<SlaveWrapper> sw = cread.readSlaves();
-		
+		System.out.println(sw);
+		System.out.println(sw.size());
+		System.out.println(ipAddress);
+		System.out.println(m);
 		if (m.getIpAddress().equals(ipAddress)) {
+			System.out.println("ABC");
 			Master master = new Master(m.getIpAddress(), m.getPortnum());
-			master.run();
+			master.start();
 		}
-		
+		System.out.println("Setup master if needed");
 		for (SlaveWrapper s : sw) {
+			System.out.println("parsing slavewrappers");
 			if (s.getIpAddress().equals(ipAddress)) {
 				Slave slave = new Slave(s.getIpAddress(), s.getPortnum());
-				slave.run();
+				System.out.println("Setting up slave");
+				slave.start();
 			}
 		}
 		
