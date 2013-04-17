@@ -1,11 +1,14 @@
 package hadoop;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+
+import fileIO.RecordReader;
 
 import messageProtocol.Job;
 import messageProtocol.MapMessage;
@@ -21,8 +24,48 @@ public class Scheduler extends Thread {
 		this.slaves = slaves;
 	}
 	
-	public void dispatch(Job job) {
+	public void dispatchMap(Job job) {
 		/* Create a MapMessage partition and write it to each of the slaves*/
+		RecordReader jobInput = new RecordReader(job.getInputFilename());
+		int numLines = 0;
+		int numSlaves = slaves.keySet().size();
+		int perSlave = 0;
+		int startSeek = 0;
+		try {
+			numLines = jobInput.fileNumberOfLines();
+			perSlave = (numLines / numSlaves) + 1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String jobDir = "./" + job.getJobName();
+		boolean success = (new File(jobDir)).mkdirs();
+		int partitionNumber = 0;
+		
+		for (SlaveWrapper sw : slaves.keySet()) {
+			if (numLines > 0) {
+				int partitionLines = ((numLines>perSlave) ? perSlave : numLines);
+				MapMessage m = new MapMessage(startSeek, partitionLines, partitionNumber,
+						job.getMapClass(), job.getMapURL(), job.getJobName(),
+						job.getInputformat(), job.getInputFilename(), jobDir);
+								
+				try {
+					sw.writeToSlave(m);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				numLines -= partitionLines;
+				startSeek += partitionLines;
+			}
+			partitionNumber +=1;
+		}
+		job.setState(Job.State.STARTED);
+	}
+
+	public void dispatchReduce(Job job) {
+		
 	}
 
 
@@ -32,11 +75,13 @@ public class Scheduler extends Thread {
 			// clean away completed jobs
 			int numJobsStarted = 0;
 			for (Job j : jobs.keySet()) {
+
 				if (j.getState().equals(Job.State.ENDED)) {
 					jobs.remove(j);
-				} else if (j.getState().equals(Job.State.STARTED)) {
-					System.out.println("Jobs running: " + j.getJobName());
-					numJobsStarted+=1;
+				} else if (j.getState().equals(Job.State.INIT)) {
+					dispatchMap(j);
+				} else if (j.getState().equals(Job.State.STARTED) && (jobs.get(j).size() == 0)) {
+					//dispatchReduce
 				}
 			}
 			if (numJobsStarted == 1) {

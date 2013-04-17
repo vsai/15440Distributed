@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.InitiateConnection;
+import messageProtocol.Job;
 import messageProtocol.MapMessage;
 import messageProtocol.MapResult;
 import messageProtocol.ReduceResult;
@@ -21,11 +22,14 @@ import messageProtocol.ReduceResult;
 public class SlaveMessageHandler extends Thread{
 
 	ObjectInputStream in;
+	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
 	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
 	
 	public SlaveMessageHandler (ObjectInputStream in, 
+			ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs,
 			ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
 		this.in = in;
+		this.jobs = jobs;
 		this.slaves = slaves;
 	}
 	
@@ -35,8 +39,13 @@ public class SlaveMessageHandler extends Thread{
 			try {
 				inobj = in.readObject();
 				if (inobj instanceof MapResult) {
+					//if successful MapResult
+					//remove map message from job
+					//remove map message from slave
 					
+					//if failed MapResult
 				} else if (inobj instanceof ReduceResult) {
+					//set job state to ended in jobs hashmap (scheduler will clean it out)
 					
 				}
 			} catch (IOException e) {

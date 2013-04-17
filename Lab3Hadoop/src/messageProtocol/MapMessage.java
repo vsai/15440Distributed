@@ -3,24 +3,25 @@ package messageProtocol;
 import messageProtocol.Job.InputType;
 
 public class MapMessage {
-
 	
 	int startSeek;
 	int numLines;
 	int partitionNum;
-	String classDirectory;
+	String classURL;
 	String className;
 	String jobName;
 	String jobDirectory;
 	InputType type;
 	String inputFile;
 	
-	public MapMessage(int startSeek, int endSeek, int partitionNum, String className, String classDirectory, String jobName, InputType type, String inputFile, String jobDirectory){
+	public MapMessage(int startSeek, int numLines, int partitionNum, 
+			String className, String classURL, String jobName, 
+			InputType type, String inputFile, String jobDirectory){
 		this.startSeek = startSeek;
-		this.numLines = endSeek;
+		this.numLines = numLines;
 		this.partitionNum = partitionNum;
 		this.className = className;
-		this.classDirectory = classDirectory;
+		this.classURL = classURL;
 		this.jobName = jobName;
 		this.type = type;
 		this.inputFile = inputFile;
@@ -39,8 +40,8 @@ public class MapMessage {
 		return partitionNum;
 	}
 	
-	public String getclassDirectory(){
-		return classDirectory;
+	public String getclassURL(){
+		return classURL;
 	}
 	
 	public String getClassName(){

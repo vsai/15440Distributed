@@ -42,7 +42,7 @@ public class Slave extends Thread {
 	public MapResult mapper(MapMessage mapMessage) {
 		try {
 		URL classUrl;
-    	classUrl = new URL(mapMessage.getclassDirectory());
+    	classUrl = new URL(mapMessage.getclassURL());
     	URL[] classUrls = { classUrl };
     	URLClassLoader ucl = new URLClassLoader(classUrls);
     	Class c = ucl.loadClass(mapMessage.getClassName());
@@ -123,12 +123,12 @@ public class Slave extends Thread {
 	
 	
 	//PROBALY DONT NEED ANYMORE
-	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int numLine) throws IOException {
-		Object [] objArr = new Object [3];
-		String partitionText = RecordReader.readPartition(startSeek,numLine,inputFile);
-		
-		return null;
-	}
+//	private Object[] getArgsForMapMethod(InputType inputType, String inputFile,int startSeek, int numLine) throws IOException {
+//		Object [] objArr = new Object [3];
+//		String partitionText = RecordReader.readPartition(startSeek,numLine,inputFile);
+//		
+//		return null;
+//	}
 
 	public ReduceResult reducer(ReduceMessage reduceMessage) {
 		//TODO

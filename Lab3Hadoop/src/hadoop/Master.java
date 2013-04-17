@@ -62,7 +62,7 @@ public class Master extends Thread {
 						if (inobj instanceof InitiateConnection) {
 							initConn = (InitiateConnection) inobj;
 							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), 
-													s, in, out, slaves);
+													s, in, out, jobs, slaves);
 							slaves.put(slave, new ArrayList<MapMessage>());
 							slave.getSmh().start(); /* start master's listener from slave */
 						} else if (inobj instanceof Job) {
