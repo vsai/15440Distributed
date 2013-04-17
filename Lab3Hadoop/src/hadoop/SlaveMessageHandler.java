@@ -2,12 +2,9 @@ package hadoop;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import messageProtocol.InitiateConnection;
 import messageProtocol.Job;
 import messageProtocol.MapMessage;
 import messageProtocol.MapResult;
@@ -22,13 +19,15 @@ import messageProtocol.ReduceResult;
 public class SlaveMessageHandler extends Thread{
 
 	ObjectInputStream in;
+	SlaveWrapper sw;
 	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
 	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
 	
-	public SlaveMessageHandler (ObjectInputStream in, 
+	public SlaveMessageHandler (ObjectInputStream in, SlaveWrapper sw,
 			ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs,
 			ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
 		this.in = in;
+		this.sw = sw;
 		this.jobs = jobs;
 		this.slaves = slaves;
 	}
@@ -39,12 +38,35 @@ public class SlaveMessageHandler extends Thread{
 			try {
 				inobj = in.readObject();
 				if (inobj instanceof MapResult) {
-					//if successful MapResult
-					//remove map message from job
-					//remove map message from slave
+					MapResult mr = (MapResult) inobj;
 					
+					ArrayList<MapMessage> inslave = slaves.get(sw);
+					for (MapMessage mm : inslave) {
+						if (mm.getPartitionNum() == mr.getPartitionNum()) {
+							inslave.remove(mm);
+						}
+					}
+					
+					for (Job j : jobs.keySet()) {
+						if (j.getJobName().equals(mr.getJobName())) {
+							ArrayList<MapMessage> injob = jobs.get(j);
+							for (MapMessage mm : injob) {
+								if (mm.getPartitionNum() == mr.getPartitionNum()) {
+									injob.remove(mm);
+								}
+							}
+						}
+					}
 					//if failed MapResult
 				} else if (inobj instanceof ReduceResult) {
+					ReduceResult rr = (ReduceResult) inobj;
+					
+					for (Job j : jobs.keySet()) {
+						if (j.getJobName().equals(rr.getJobName())) {
+							j.setState(Job.State.ENDED);
+						}
+					}
+					
 					//set job state to ended in jobs hashmap (scheduler will clean it out)
 					
 				}

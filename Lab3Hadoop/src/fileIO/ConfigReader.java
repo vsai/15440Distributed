@@ -8,9 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class ConfigReader {
+	
+	final static String tempMapFiles = "./TempMapFiles/";
+	final static String resultFiles = "./ResultFiles/";
 	
 	public ConfigReader() {
 		
@@ -72,5 +74,13 @@ public class ConfigReader {
 			e.printStackTrace();
 		}
 		return m;
+	}
+	
+	public static String getTempmapfiles() {
+		return tempMapFiles;
+	}
+
+	public static String getResultfiles() {
+		return resultFiles;
 	}
 }

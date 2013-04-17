@@ -26,7 +26,7 @@ public class Master extends Thread {
 	int portnum;
 	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
 	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
-	
+	ConcurrentHashMap<SlaveWrapper, Thread> listeners;
 	Scheduler scheduler;
 	
 	public Master (String ipAddress, int portnum) {
@@ -34,7 +34,7 @@ public class Master extends Thread {
 		this.portnum = portnum;
 		this.slaves = new ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>>();
 		this.jobs = new ConcurrentHashMap<Job, ArrayList<MapMessage>>();
-		
+		this.listeners = new ConcurrentHashMap<SlaveWrapper, Thread>();
 		this.scheduler = new Scheduler(jobs, slaves);
 	}
 	

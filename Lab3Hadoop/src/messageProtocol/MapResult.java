@@ -15,4 +15,22 @@ public class MapResult implements Serializable {
 		this.partitionNum = partitionNum;
 		this.jobName = jobName;
 	}
+	
+	
+	public String getDirectoryName() {
+		return directoryName;
+	}
+
+	public String getJobName() {
+		return jobName;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public int getPartitionNum() {
+		return partitionNum;
+	}
+	
 }

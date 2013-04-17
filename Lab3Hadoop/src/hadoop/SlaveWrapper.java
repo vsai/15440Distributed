@@ -38,7 +38,7 @@ public class SlaveWrapper {
 		this.portnum = portnum;
 		this.status = Status.CHILLIN;
 		this.s = s;
-		this.smh = new SlaveMessageHandler(in, jobs, slaves);
+		this.smh = new SlaveMessageHandler(in, this, jobs, slaves);
 		this.out = out;
 	}
 		
