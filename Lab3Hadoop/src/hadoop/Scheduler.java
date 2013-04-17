@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import fileIO.ConfigReader;
-import fileIO.DirectoryHandler;
 import fileIO.RecordReader;
 
 import messageProtocol.Job;
@@ -67,12 +65,6 @@ public class Scheduler extends Thread {
 	}
 
 	public void dispatchReduce(Job job) {
-		DirectoryHandler dh = new DirectoryHandler();
-		String destDir = ConfigReader.getResultfiles() + job.getJobName();
-		String sourceDir = ConfigReader.getTempmapfiles() + job.getJobName();
-		dh.collectAllFiles(destDir, sourceDir, ".txt");
-		
-		// now for every file in the destDir, send a reduce job
 		
 	}
 
