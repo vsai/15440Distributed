@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Job implements Serializable {
 	
 	public enum State {
-		INIT, STARTED, ENDED
+		INIT, STARTED, REDUCING, ENDED
 	}
 	
 	public enum InputType {

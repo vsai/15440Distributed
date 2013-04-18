@@ -30,11 +30,11 @@ public class ConfigReader {
 			in = new BufferedReader(new FileReader(configFile));	
 			while ((line = in.readLine()) != null) {
 				String[] linears = line.split("\t");
-				if (linears.length > 2) {
+				if (linears.length == 3) {
 					ip = linears[0];
 					role = linears[1];
 					runport = Integer.parseInt(linears[2]);
-					if (role.equals("MASTER")) {
+					if (role.equals("SLAVE")) {
 						s.add(new SlaveWrapper(ip, runport));
 					}
 				}
@@ -58,17 +58,12 @@ public class ConfigReader {
 		try {
 			in = new BufferedReader(new FileReader(configFile));	
 			while ((line = in.readLine()) != null) {
-//				System.out.println(line);
 				String[] linears = line.split("\t");
-				if (linears.length > 2) {
+				if (linears.length == 3) {
 					ip = linears[0];
 					role = linears[1];
-//					System.out.println(ip);
-//					System.out.println(role);
 					runport = Integer.parseInt(linears[2]);
-//					System.out.println(runport);
 					if (role.equals("MASTER")) {
-						System.out.println("YES GOT A MASTER");
 						m = new MasterWrapper(ip, runport);
 						return m;
 					}

@@ -47,13 +47,13 @@ public class Slave extends Thread {
 
 	public MapResult mapper(MapMessage mapMessage) {
 		try {
-		System.out.println("In MAP");
+//		System.out.println("In MAP");
 		URL classUrl;
     	classUrl = new URL(mapMessage.getclassURL());
     	URL[] classUrls = { classUrl };
-    	System.out.println("OK?>>>>");
+//    	System.out.println("OK?>>>>");
     	URLClassLoader ucl = new URLClassLoader(classUrls);
-    	System.out.println("OK?>11111111>>>");
+//    	System.out.println("OK?>11111111>>>");
     	Class c = ucl.loadClass(mapMessage.getClassName());
     	Constructor cotr = c.getConstructors()[0];
     	Method [] methods = c.getMethods();
@@ -67,32 +67,38 @@ public class Slave extends Thread {
     	OutputCollector output = new OutputCollector();
     	InputType type = mapMessage.getInputType();
     	String fileName=mapMessage.getInputFile();
-    	System.out.println("good?1");
+//    	System.out.println("good?1");
     	LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
-    	System.out.println("good?2");
-    	lnr.setLineNumber(startLine);
-    	System.out.println("good?3");
+//    	System.out.println("good?2");
+    	//lnr.setLineNumber(startLine);
+    	for(int i=0;i<startLine;i++)
+    		lnr.readLine();
+    	
+//    	System.out.println("good?3");
     	String line=null;
     	Object inst = cotr.newInstance();
-    	System.out.println("good?4");
+    	System.out.format("In Slave: startLine = %d\n", startLine);
+    	System.out.format("In Slave: numLines = %d\n", numLines);
+//    	System.out.println("good?4");
     	String key,value;
     	for(int i=0; i <numLines;i++){
     		line=lnr.readLine();
+    		System.out.println(line);
     		//
     		if(type == InputType.KEYVALUE){
-    			String [] keyValuePair = line.split("/t");
+    			String [] keyValuePair = line.split("\t");
     			key = keyValuePair[0];
     			value = keyValuePair[1];
     		}
     		else {
-    			 Integer num = i + startLine;
-    			 String[] a = fileName.split("/");
+    			Integer num = i + startLine;
+    			String[] a = fileName.split("/");
     			key=a[a.length-1]+"_"+num.toString();
     			value=line;
     		}
     			Object [] args = {key,value,output};
     			mapMethod.invoke(inst, args);
-    			System.out.println("good?5");
+//    			System.out.println("good?5");
     		
     	}
     	//Writing mapped key values to temp files
@@ -112,8 +118,8 @@ public class Slave extends Thread {
     	for(Tuple<String,String> tup: data){
     		key= tup.getX();
     		value= tup.getY();
-    		System.out.println("Key:"+key);
-    		System.out.println("Value:"+value);
+//    		System.out.println("Key:"+key);
+//    		System.out.println("Value:"+value);
     		
     		String filep = filePath + "/" + key + ".txt";
     		//System.out.println(filePath);
@@ -224,23 +230,22 @@ public class Slave extends Thread {
 		Object inobj;
 		try {
 			toMaster = new Socket(m.ipAddress, m.portnum);
-			System.out.println("fuck you1");
+//			System.out.println("fuck you1");
 			out = new ObjectOutputStream(toMaster.getOutputStream());
-			System.out.println("fuck you2");
+//			System.out.println("fuck you2");
 			in = new ObjectInputStream(toMaster.getInputStream());
-			
-			
-			System.out.println("fuck you3");
+//			System.out.println("fuck you3");
 			out.writeObject(initConn);
 			
 			while (true) {
 				try {
 					inobj = in.readObject();
 					if (inobj instanceof MapMessage) {
-						System.out.println("I GOT A MAPPPPPPPPP");
+						System.out.println("Received map job");
 						MapResult mr = mapper((MapMessage) inobj); 
 						out.writeObject(mr);
 					} else if (inobj instanceof ReduceMessage) {
+						System.out.println("Received Reduce job");
 						ReduceResult rr = reducer((ReduceMessage) inobj);
 						out.writeObject(rr);
 					}

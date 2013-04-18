@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.InitiateConnection;
@@ -24,16 +26,16 @@ public class Master extends Thread {
 	
 	String ipAddress;
 	int portnum;
-	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
-	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
+	ConcurrentHashMap<SlaveWrapper, List<MapMessage>> slaves;
+	ConcurrentHashMap<Job, List<MapMessage>> jobs;
 	ConcurrentHashMap<SlaveWrapper, Thread> listeners;
 	Scheduler scheduler;
 	
 	public Master (String ipAddress, int portnum) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
-		this.slaves = new ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>>();
-		this.jobs = new ConcurrentHashMap<Job, ArrayList<MapMessage>>();
+		this.slaves = new ConcurrentHashMap<SlaveWrapper, List<MapMessage>>();
+		this.jobs = new ConcurrentHashMap<Job, List<MapMessage>>();
 		this.listeners = new ConcurrentHashMap<SlaveWrapper, Thread>();
 		this.scheduler = new Scheduler(jobs, slaves);
 	}
@@ -54,14 +56,14 @@ public class Master extends Thread {
 			ss = new ServerSocket(portnum);
 			while (true) {
 				try {
-					System.out.println("go");
+//					System.out.println("go");
 					s = ss.accept();
-					System.out.println("go1");
-					System.out.println(s);
+//					System.out.println("go1");
+//					System.out.println(s);
 					in = new ObjectInputStream(s.getInputStream());
-					System.out.println("go2");
+//					System.out.println("go2");
 					out = new ObjectOutputStream(s.getOutputStream());
-					System.out.println("go3");
+//					System.out.println("go3");
 					try {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
@@ -69,12 +71,12 @@ public class Master extends Thread {
 							initConn = (InitiateConnection) inobj;
 							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), 
 													s, in, out, jobs, slaves);
-							slaves.put(slave, new ArrayList<MapMessage>());
+							slaves.put(slave, Collections.synchronizedList(new ArrayList<MapMessage>()));
 							slave.getSmh().start(); /* start master's listener from slave */
 						} else if (inobj instanceof Job) {
 							System.out.println("Received a job");
 							jobRequest = (Job) inobj;
-							jobs.put(jobRequest, new ArrayList<MapMessage>());
+							jobs.put(jobRequest, Collections.synchronizedList(new ArrayList<MapMessage>()));
 //							out.writeBoolean(true);
 //							out.flush();
 							in.close();

@@ -3,11 +3,9 @@ package userRequest;
 import java.util.Iterator;
 
 import hadoop.OutputCollector;
-import hadoop.Writable;
 
 public class UserMapper {
 
-	
 	//program written to determine how many times different words appear in a set of files.
 	
 	//This is an example of a TEXT Input map function

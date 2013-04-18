@@ -3,6 +3,7 @@ package hadoop;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.Job;
@@ -20,12 +21,12 @@ public class SlaveMessageHandler extends Thread{
 
 	ObjectInputStream in;
 	SlaveWrapper sw;
-	ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs;
-	ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves;
+	ConcurrentHashMap<Job, List<MapMessage>> jobs;
+	ConcurrentHashMap<SlaveWrapper, List<MapMessage>> slaves;
 	
 	public SlaveMessageHandler (ObjectInputStream in, SlaveWrapper sw,
-			ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs,
-			ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
+			ConcurrentHashMap<Job, List<MapMessage>> jobs,
+			ConcurrentHashMap<SlaveWrapper, List<MapMessage>> slaves) {
 		this.in = in;
 		this.sw = sw;
 		this.jobs = jobs;
@@ -38,9 +39,10 @@ public class SlaveMessageHandler extends Thread{
 			try {
 				inobj = in.readObject();
 				if (inobj instanceof MapResult) {
+					System.out.println("received mapresult");
 					MapResult mr = (MapResult) inobj;
 					
-					ArrayList<MapMessage> inslave = slaves.get(sw);
+					List<MapMessage> inslave = slaves.get(sw);
 					for (MapMessage mm : inslave) {
 						if (mm.getPartitionNum() == mr.getPartitionNum()) {
 							inslave.remove(mm);
@@ -49,10 +51,15 @@ public class SlaveMessageHandler extends Thread{
 					
 					for (Job j : jobs.keySet()) {
 						if (j.getJobName().equals(mr.getJobName())) {
-							ArrayList<MapMessage> injob = jobs.get(j);
-							for (MapMessage mm : injob) {
-								if (mm.getPartitionNum() == mr.getPartitionNum()) {
-									injob.remove(mm);
+							List<MapMessage> injob = jobs.get(j);
+							synchronized(injob) {
+								for (MapMessage mm : injob) {
+									if (mm.getPartitionNum() == mr.getPartitionNum()) {
+										injob.remove(mm);
+//										jobs.get(j).remove(mm);
+										System.out.println("AFter remove:"+jobs.get(j).size());
+										break;
+									}
 								}
 							}
 						}

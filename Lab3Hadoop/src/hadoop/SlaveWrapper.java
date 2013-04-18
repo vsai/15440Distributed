@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messageProtocol.Job;
@@ -32,8 +33,8 @@ public class SlaveWrapper {
 	
 	public SlaveWrapper (String ipAddress, int portnum, Socket s, ObjectInputStream in, 
 			ObjectOutputStream out,
-			ConcurrentHashMap<Job, ArrayList<MapMessage>> jobs,
-			ConcurrentHashMap<SlaveWrapper, ArrayList<MapMessage>> slaves) {
+			ConcurrentHashMap<Job, List<MapMessage>> jobs,
+			ConcurrentHashMap<SlaveWrapper, List<MapMessage>> slaves) {
 		this.ipAddress = ipAddress;
 		this.portnum = portnum;
 		this.status = Status.CHILLIN;
