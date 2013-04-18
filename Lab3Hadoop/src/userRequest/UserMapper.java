@@ -16,7 +16,7 @@ public class UserMapper {
 	//(word,"1") in our output collector as our map function
 	//our reduce function will take this and add up all the same words
 	public static void map(String key, String value, OutputCollector output){
-		String [] ar = key.split(" ");
+		String [] ar = value.split(" ");
 		for(String word: ar)
 			output.collect(word, "1");
 	}

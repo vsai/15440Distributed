@@ -26,6 +26,7 @@ public class Scheduler extends Thread {
 	
 	public void dispatchMap(Job job) {
 		/* Create a MapMessage partition and write it to each of the slaves*/
+		System.out.println("In dispatchMap");
 		RecordReader jobInput = new RecordReader(job.getInputFilename());
 		int numLines = 0;
 		int numSlaves = slaves.keySet().size();
@@ -41,9 +42,13 @@ public class Scheduler extends Thread {
 		
 		String jobDir = "./" + job.getJobName();
 		boolean success = (new File(jobDir)).mkdirs();
+		System.out.println("In scheduler, creating folder");
+		System.out.println(jobDir);
+		System.out.println(success);
 		int partitionNumber = 0;
 		
 		for (SlaveWrapper sw : slaves.keySet()) {
+			System.out.println(sw);
 			if (numLines > 0) {
 				int partitionLines = ((numLines>perSlave) ? perSlave : numLines);
 				MapMessage m = new MapMessage(startSeek, partitionLines, partitionNumber,
@@ -71,6 +76,7 @@ public class Scheduler extends Thread {
 
 	public void run() {
 		while (true) {
+//			System.out.println("in sched");
 			BufferedReader br = null;
 			// clean away completed jobs
 			int numJobsStarted = 0;

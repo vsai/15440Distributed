@@ -47,10 +47,13 @@ public class Slave extends Thread {
 
 	public MapResult mapper(MapMessage mapMessage) {
 		try {
+		System.out.println("In MAP");
 		URL classUrl;
     	classUrl = new URL(mapMessage.getclassURL());
     	URL[] classUrls = { classUrl };
+    	System.out.println("OK?>>>>");
     	URLClassLoader ucl = new URLClassLoader(classUrls);
+    	System.out.println("OK?>11111111>>>");
     	Class c = ucl.loadClass(mapMessage.getClassName());
     	Constructor cotr = c.getConstructors()[0];
     	Method [] methods = c.getMethods();
@@ -64,10 +67,14 @@ public class Slave extends Thread {
     	OutputCollector output = new OutputCollector();
     	InputType type = mapMessage.getInputType();
     	String fileName=mapMessage.getInputFile();
+    	System.out.println("good?1");
     	LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
+    	System.out.println("good?2");
     	lnr.setLineNumber(startLine);
+    	System.out.println("good?3");
     	String line=null;
     	Object inst = cotr.newInstance();
+    	System.out.println("good?4");
     	String key,value;
     	for(int i=0; i <numLines;i++){
     		line=lnr.readLine();
@@ -79,45 +86,60 @@ public class Slave extends Thread {
     		}
     		else {
     			 Integer num = i + startLine;
-    			key=fileName+"_"+num.toString();
+    			 String[] a = fileName.split("/");
+    			key=a[a.length-1]+"_"+num.toString();
     			value=line;
     		}
     			Object [] args = {key,value,output};
     			mapMethod.invoke(inst, args);
+    			System.out.println("good?5");
     		
     	}
     	//Writing mapped key values to temp files
     	String jobName =mapMessage.getJobName();
     	int partitionNum = mapMessage.getPartitionNum();
     	String filePath = mapMessage.getJobDirectory()+"/"+partitionNum;
+    	//System.out.println(filePath);
     	boolean success = (new File(filePath)).mkdirs();
     	
     	//Making the dir failed
-    	if(!success){
-    		return (new MapResult(null,false,-1,null));
-    	}
+//    	if(!success){
+//    		System.out.println("???");
+//    		//return (new MapResult(null,false,-1,null));
+//    	}
     	
     	ArrayList<Tuple<String,String>> data = output.getData();
     	for(Tuple<String,String> tup: data){
     		key= tup.getX();
     		value= tup.getY();
+    		System.out.println("Key:"+key);
+    		System.out.println("Value:"+value);
     		
-    		File file =new File(filePath+"/"+key+".txt");
+    		String filep = filePath + "/" + key + ".txt";
+    		//System.out.println(filePath);
+    		//System.out.println(filep);
+    		File file =new File(filep);
+    		
+    		
+    		
     		 //if file doesnt exists, then create it
     		if(!file.exists()){
     			file.createNewFile();
     		}
  
     		//true = append file
-    		FileWriter fileWritter = new FileWriter(file.getName(),true);
+    		FileWriter fileWritter = new FileWriter(file,true);
     		
     		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-	        bufferWritter.write(value+"/n");
+	        bufferWritter.write(value+"\n");
 	        bufferWritter.close();
     	}
+    	System.out.println("FINISHED MAP");
     	return (new MapResult(filePath,true,partitionNum,jobName));
 		}
 		catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e);
 			return (new MapResult(null,false,-1,null));
 		}
     	//file = jobName/partitionNum/key.txt
@@ -144,7 +166,7 @@ public class Slave extends Thread {
 	    			reduceMethod=m;
 	    	}
 			
-			ArrayList<String> fileNames = DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
+			ArrayList<String> fileNames = reduceMessage.getFileNames();//DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
 			String key;
 			String val;
 			DataInputStream in;
@@ -168,30 +190,36 @@ public class Slave extends Thread {
 				
 			}
 			
-			writeOutputToFile(output,reduceMessage.getOutputFile());
-			return (new ReduceResult(true,reduceMessage.getOutputFile(), reduceMessage.getJobName()));
+			writeOutputToFile(output,reduceMessage.getPathFile());
+			return (new ReduceResult(true,reduceMessage.getPathFile(), reduceMessage.getJobName()));
 		}
 		catch(Exception e){
 			return (new ReduceResult(true,null,null));
 		}
 	}
 	
-	public void writeOutputToFile(OutputCollector output, String outputFile) throws IOException{
-		FileWriter fileWritter = new FileWriter(outputFile);
-		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	public void writeOutputToFile(OutputCollector output, String pathFile) throws IOException{
+		FileWriter fileWritter; 
+		BufferedWriter bufferWritter;
 		String key,value;
 		ArrayList<Tuple<String, String>> data = output.getData();
 		for(Tuple<String, String> tup : data){
 			key=tup.getX();
 			value=tup.getY();
-			bufferWritter.write(key+"/t"+value);
+			fileWritter = new FileWriter(pathFile+"/"+key+".txt");
+			bufferWritter = new BufferedWriter(fileWritter);
+			bufferWritter.write(value);
+			bufferWritter.close();
 		}
-        bufferWritter.close();
+        
 		
 	}
 	public void run() {
+		System.out.println("Slave has stated");
 		ConfigReader cread = new ConfigReader();
 		MasterWrapper m = cread.readMaster();
+		System.out.println("In slave printing master");
+		System.out.println(m);
 		Socket toMaster;
 		InitiateConnection initConn = new InitiateConnection(ipAddress, portnum);
 		ObjectInputStream in;
@@ -199,14 +227,20 @@ public class Slave extends Thread {
 		Object inobj;
 		try {
 			toMaster = new Socket(m.ipAddress, m.portnum);
-			in = new ObjectInputStream(toMaster.getInputStream());
+			System.out.println("fuck you1");
 			out = new ObjectOutputStream(toMaster.getOutputStream());
+			System.out.println("fuck you2");
+			in = new ObjectInputStream(toMaster.getInputStream());
+			
+			
+			System.out.println("fuck you3");
 			out.writeObject(initConn);
 			
 			while (true) {
 				try {
 					inobj = in.readObject();
 					if (inobj instanceof MapMessage) {
+						System.out.println("I GOT A MAPPPPPPPPP");
 						MapResult mr = mapper((MapMessage) inobj); 
 						out.writeObject(mr);
 					} else if (inobj instanceof ReduceMessage) {

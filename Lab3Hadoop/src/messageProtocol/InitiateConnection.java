@@ -1,6 +1,6 @@
 package messageProtocol;
 
-public class InitiateConnection {
+public class InitiateConnection implements java.io.Serializable{
 	
 	String selfIp;
 	int selfPortnum;

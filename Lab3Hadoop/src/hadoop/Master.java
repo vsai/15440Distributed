@@ -54,21 +54,29 @@ public class Master extends Thread {
 			ss = new ServerSocket(portnum);
 			while (true) {
 				try {
+					System.out.println("go");
 					s = ss.accept();
+					System.out.println("go1");
+					System.out.println(s);
 					in = new ObjectInputStream(s.getInputStream());
+					System.out.println("go2");
 					out = new ObjectOutputStream(s.getOutputStream());
+					System.out.println("go3");
 					try {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
+							System.out.println("INITIATING CONECTION");
 							initConn = (InitiateConnection) inobj;
 							slave = new SlaveWrapper(initConn.getSelfIp(), initConn.getSelfPortnum(), 
 													s, in, out, jobs, slaves);
 							slaves.put(slave, new ArrayList<MapMessage>());
 							slave.getSmh().start(); /* start master's listener from slave */
 						} else if (inobj instanceof Job) {
+							System.out.println("Received a job");
 							jobRequest = (Job) inobj;
 							jobs.put(jobRequest, new ArrayList<MapMessage>());
-							out.writeBoolean(true);
+//							out.writeBoolean(true);
+//							out.flush();
 							in.close();
 							out.close();
 							s.close();

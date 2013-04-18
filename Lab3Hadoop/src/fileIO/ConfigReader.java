@@ -13,6 +13,7 @@ public class ConfigReader {
 	
 	final static String tempMapFiles = "./TempMapFiles/";
 	final static String resultFiles = "./ResultFiles/";
+	final static String configFile = "./src/config.txt";
 	
 	public ConfigReader() {
 		
@@ -26,10 +27,10 @@ public class ConfigReader {
 		int runport;
 		ArrayList<SlaveWrapper> s = new ArrayList<SlaveWrapper>();
 		try {
-			in = new BufferedReader(new FileReader("src/config.txt"));	
+			in = new BufferedReader(new FileReader(configFile));	
 			while ((line = in.readLine()) != null) {
 				String[] linears = line.split("\t");
-				if (linears.length > 3) {
+				if (linears.length > 2) {
 					ip = linears[0];
 					role = linears[1];
 					runport = Integer.parseInt(linears[2]);
@@ -55,14 +56,19 @@ public class ConfigReader {
 		MasterWrapper m = null;
 		
 		try {
-			in = new BufferedReader(new FileReader("src/config.txt"));	
+			in = new BufferedReader(new FileReader(configFile));	
 			while ((line = in.readLine()) != null) {
+//				System.out.println(line);
 				String[] linears = line.split("\t");
-				if (linears.length > 3) {
+				if (linears.length > 2) {
 					ip = linears[0];
 					role = linears[1];
+//					System.out.println(ip);
+//					System.out.println(role);
 					runport = Integer.parseInt(linears[2]);
+//					System.out.println(runport);
 					if (role.equals("MASTER")) {
+						System.out.println("YES GOT A MASTER");
 						m = new MasterWrapper(ip, runport);
 						return m;
 					}

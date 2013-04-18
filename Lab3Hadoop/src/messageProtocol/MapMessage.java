@@ -2,7 +2,7 @@ package messageProtocol;
 
 import messageProtocol.Job.InputType;
 
-public class MapMessage {
+public class MapMessage implements java.io.Serializable{
 	
 	int startSeek;
 	int numLines;

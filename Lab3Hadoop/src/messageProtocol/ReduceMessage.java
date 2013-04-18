@@ -1,26 +1,28 @@
 package messageProtocol;
 
+import java.util.ArrayList;
+
 public class ReduceMessage {
 
-	String jobTmpFilesDirecotry;
-	String outputFile;
+	ArrayList<String> fileNames;
+	String pathFile;
 	String classDirectory;
 	String className;
 	String jobName;
-	public ReduceMessage(String jobTmpFilesDirectory, String outputFile, String classDirectory, String className, String jobName){
-		this.jobTmpFilesDirecotry = jobTmpFilesDirectory;
-		this.outputFile = outputFile;
+	public ReduceMessage(ArrayList<String> fileNames, String outputFile, String classDirectory, String className, String jobName){
+		this.fileNames = fileNames;
+		this.pathFile = outputFile;
 		this.classDirectory = classDirectory;
 		this.className = className;
 		this.jobName = jobName;
 	}
 	
-	public String getJobTmpFileDirectory(){
-		return jobTmpFilesDirecotry;
+	public ArrayList<String> getFileNames(){
+		return fileNames;
 	}
 	
-	public String getOutputFile(){
-		return outputFile;
+	public String getPathFile(){
+		return pathFile;
 	}
 	
 	public String getClassDirectory(){
