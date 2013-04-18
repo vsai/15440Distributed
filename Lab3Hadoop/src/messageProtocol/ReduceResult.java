@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class ReduceResult implements Serializable {
 
 	boolean success;
-	String outputFile;
+	String pathFile;
 	String jobName;
 	
-	public ReduceResult(boolean success, String outputFile, String jobName){
+	public ReduceResult(boolean success, String pathFile, String jobName){
 		this.success = success;
-		this.outputFile = outputFile;
+		this.pathFile = pathFile;
 		this .jobName = jobName;
 	}
 	
@@ -18,8 +18,8 @@ public class ReduceResult implements Serializable {
 		return success;
 	}
 	
-	public String getOutputFile(){
-		return outputFile;
+	public String getPathFile(){
+		return pathFile;
 	}
 	
 	public String getJobName(){

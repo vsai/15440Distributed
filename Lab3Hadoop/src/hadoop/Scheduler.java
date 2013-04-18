@@ -15,6 +15,7 @@ import fileIO.RecordReader;
 
 import messageProtocol.Job;
 import messageProtocol.MapMessage;
+import messageProtocol.ReduceMessage;
 
 public class Scheduler extends Thread {
 	
@@ -53,7 +54,7 @@ public class Scheduler extends Thread {
 		int partitionNumber = 0;
 		
 		for (SlaveWrapper sw : slaves.keySet()) {
-			System.out.println(sw);
+//			System.out.println(sw);
 			if (numLines > 0) {
 				int partitionLines = ((numLines>perSlave) ? perSlave : numLines);
 				System.out.format("Partition Number: %d\n", partitionNumber);
@@ -80,6 +81,7 @@ public class Scheduler extends Thread {
 	}
 
 	public void dispatchReduce(Job job) {
+
 		DirectoryHandler dh = new DirectoryHandler();
 		String destDir = ConfigReader.getResultfiles() + job.getJobName();
 		String sourceDir = ConfigReader.getTempmapfiles() + job.getJobName();
@@ -88,6 +90,27 @@ public class Scheduler extends Thread {
 		dh.collectAllFiles(destDir, sourceDir, ".txt");
 		
 		// now for every file in the destDir, send a reduce job
+		
+		
+		
+		String pathfile = destDir;
+		String classdirectory = job.getReduceURL();
+		String classname = job.getReduceClass();
+		String jobname = job.getJobName();
+		
+		for (SlaveWrapper sw : slaves.keySet()) {
+			ArrayList<String> filenames = DirectoryHandler.getAllFiles(destDir, ".txt");
+			ReduceMessage rm = new ReduceMessage(filenames, pathfile, classdirectory, classname, jobname);
+			try {
+				sw.writeToSlave(rm);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		}
+		
+		
 		
 	}
 

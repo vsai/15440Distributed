@@ -172,7 +172,7 @@ public class Slave extends Thread {
 	    			reduceMethod=m;
 	    	}
 			
-			ArrayList<String> fileNames = DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
+			ArrayList<String> fileNames = reduceMessage.getFileNames();//DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
 			String key;
 			String val;
 			DataInputStream in;
@@ -196,25 +196,28 @@ public class Slave extends Thread {
 				
 			}
 			
-			writeOutputToFile(output,reduceMessage.getOutputFile());
-			return (new ReduceResult(true,reduceMessage.getOutputFile(), reduceMessage.getJobName()));
+			writeOutputToFile(output,reduceMessage.getPathFile());
+			return (new ReduceResult(true,reduceMessage.getPathFile(), reduceMessage.getJobName()));
 		}
 		catch(Exception e){
 			return (new ReduceResult(true,null,null));
 		}
 	}
 	
-	public void writeOutputToFile(OutputCollector output, String outputFile) throws IOException{
-		FileWriter fileWritter = new FileWriter(outputFile);
-		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	public void writeOutputToFile(OutputCollector output, String pathFile) throws IOException{
+		FileWriter fileWritter; 
+		BufferedWriter bufferWritter;
 		String key,value;
 		ArrayList<Tuple<String, String>> data = output.getData();
 		for(Tuple<String, String> tup : data){
 			key=tup.getX();
 			value=tup.getY();
-			bufferWritter.write(key+"/t"+value);
+			fileWritter = new FileWriter(pathFile+"/"+key);
+			bufferWritter = new BufferedWriter(fileWritter);
+			bufferWritter.write(value);
+			bufferWritter.close();
 		}
-        bufferWritter.close();
+        
 		
 	}
 	public void run() {

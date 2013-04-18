@@ -1,0 +1,7 @@
+apple	3
+go	1
+hi	3
+mall	1
+the	1
+this	3
+to	1

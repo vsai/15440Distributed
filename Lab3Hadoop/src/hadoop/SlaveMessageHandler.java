@@ -1,10 +1,18 @@
 package hadoop;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import fileIO.ConfigReader;
+import fileIO.DirectoryHandler;
 
 import messageProtocol.Job;
 import messageProtocol.MapMessage;
@@ -71,8 +79,10 @@ public class SlaveMessageHandler extends Thread{
 					for (Job j : jobs.keySet()) {
 						if (j.getJobName().equals(rr.getJobName())) {
 							j.setState(Job.State.ENDED);
+							writeDataToOutputFile(j);
 						}
 					}
+					
 					
 					//set job state to ended in jobs hashmap (scheduler will clean it out)
 					
@@ -88,5 +98,34 @@ public class SlaveMessageHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	
+	
+	private void writeDataToOutputFile(Job j) throws IOException {
+		// TODO Auto-generated method stub
+		String filePath = ConfigReader.getResultfiles() + j.getJobName() + "/";
+		ArrayList<String> allFiles = DirectoryHandler.getAllFiles(filePath, ".txt");
+		String outputFile = j.getOutputFilename();
+		String key;
+		String value = null;
+		FileWriter fileWritter = new FileWriter(outputFile);
+		
+		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+		for (String filename : allFiles){
+			String[] fileparts = filename.split("/");
+			key = fileparts[fileparts.length-1].replace(".txt", "");
+			
+			LineNumberReader lnr = new LineNumberReader(new FileReader(filename));
+			String line;
+			value="";
+			while((line=lnr.readLine()) !=null) {
+				value+=line;
+			}
+			
+	        bufferWritter.write(key + "\t" + value+"\n");
+	        
+		}
+		bufferWritter.close();
 	}
 }
