@@ -16,25 +16,22 @@ public class Start {
 		String ipAddress = null;
 		try {
 			ipAddress = InetAddress.getLocalHost().getHostAddress();
+			System.out.println(ipAddress);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			System.err.println("Could not get ipAddress");
 			System.exit(-1);
 		}
-		ConfigReader cread = new ConfigReader();
-		MasterWrapper m = cread.readMaster();
+		MasterWrapper m = ConfigReader.readMaster();
 		
-//		System.out.println(sw);
-//		System.out.println(sw.size());
-//		System.out.println(ipAddress);
-//		System.out.println(m);
 		if (m.getIpAddress().equals(ipAddress)) {
 			System.out.println("this is a master");
 			Master master = new Master(m.getIpAddress(), m.getPortnum());
+			System.out.println("STARTING MASTER");
 			master.start();
 		}
 
-		ArrayList<SlaveWrapper> sw = cread.readSlaves();
+		ArrayList<SlaveWrapper> sw = ConfigReader.readSlaves();
 		System.out.println("starting");
 		System.out.println("arraylist size: " + sw.size());
 		
@@ -46,7 +43,6 @@ public class Start {
 //				System.out.println("Setting up slave");
 				slave.start();
 			}
-		}
-		
+		}	
 	}
 }

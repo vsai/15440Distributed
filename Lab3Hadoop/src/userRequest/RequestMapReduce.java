@@ -20,8 +20,6 @@ public class RequestMapReduce {
 		
 	}
 	
-	//get master details - ip address, 
-	
 	public static void main(String args[]) throws UnknownHostException {
 		ConfigReader cread = new ConfigReader();
 		MasterWrapper master = cread.readMaster();
@@ -31,14 +29,11 @@ public class RequestMapReduce {
 		boolean result = false;
 		Job jobRequest = new Job(null, null, null);
 		
-		String jobName = "Job2";
-		
-		jobName = randomString(20);
+		String jobName = randomString(20);
 		System.out.println("JOBNAME TO BE CREATED: " + jobName);
 		
 		InputType inType = InputType.TEXT;
 		String myIp = InetAddress.getLocalHost().getHostAddress();
-//		String inputFilename = "/Users/apple/Desktop/15-440/15440Distributed/Lab3Hadoop/src/inputfile.txt";
 		String inputFilename = "/Users/apple/Desktop/15-440/15440Distributed/Lab3Hadoop/inputTest.txt";
 		String outputFilename = "testOutputFile.txt";
 		String mapClass = "userRequest.UserMapper";

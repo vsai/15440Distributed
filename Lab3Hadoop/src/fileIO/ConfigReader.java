@@ -15,11 +15,7 @@ public class ConfigReader {
 	final static String resultFiles = "./ResultFiles/";
 	final static String configFile = "./src/config.txt";
 	
-	public ConfigReader() {
-		
-	}
-	
-	public ArrayList<SlaveWrapper> readSlaves() {
+	public static ArrayList<SlaveWrapper> readSlaves() {
 		BufferedReader in;
 		String line;
 		String ip;
@@ -47,7 +43,7 @@ public class ConfigReader {
 		return s;
 	}
 	
-	public MasterWrapper readMaster() {
+	public static MasterWrapper readMaster() {
 		BufferedReader in;
 		String line;
 		String ip;
