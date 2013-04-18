@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,9 +13,7 @@ import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -47,112 +44,84 @@ public class Slave extends Thread {
 
 	public MapResult mapper(MapMessage mapMessage) {
 		try {
-//		System.out.println("In MAP");
-		URL classUrl;
-    	classUrl = new URL(mapMessage.getclassURL());
-    	URL[] classUrls = { classUrl };
-//    	System.out.println("OK?>>>>");
-    	URLClassLoader ucl = new URLClassLoader(classUrls);
-//    	System.out.println("OK?>11111111>>>");
-    	Class c = ucl.loadClass(mapMessage.getClassName());
-    	Constructor cotr = c.getConstructors()[0];
-    	Method [] methods = c.getMethods();
-    	Method mapMethod=null;
-    	for(Method m :methods){
-    		if(m.getName().equals("map"))
-    			mapMethod=m;
-    	}
-    	int startLine = mapMessage.getStartSeek();
-    	int numLines= mapMessage.getNumLines();
-    	OutputCollector output = new OutputCollector();
-    	InputType type = mapMessage.getInputType();
-    	String fileName=mapMessage.getInputFile();
-//    	System.out.println("good?1");
-    	LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
-//    	System.out.println("good?2");
-    	//lnr.setLineNumber(startLine);
-    	for(int i=0;i<startLine;i++)
-    		lnr.readLine();
+			URL classUrl;
+			classUrl = new URL(mapMessage.getclassURL());
+			URL[] classUrls = { classUrl };
+			URLClassLoader ucl = new URLClassLoader(classUrls);
+			Class c = ucl.loadClass(mapMessage.getClassName());
+			Constructor cotr = c.getConstructors()[0];
+			Method [] methods = c.getMethods();
+			Method mapMethod=null;
+			for(Method m :methods) {
+				if(m.getName().equals("map")) {
+					mapMethod=m;
+				}
+			}
     	
-//    	System.out.println("good?3");
-    	String line=null;
-    	Object inst = cotr.newInstance();
-    	System.out.format("In Slave: startLine = %d\n", startLine);
-    	System.out.format("In Slave: numLines = %d\n", numLines);
-//    	System.out.println("good?4");
-    	String key,value;
-    	for(int i=0; i <numLines;i++){
-    		line=lnr.readLine();
-    		System.out.println(line);
-    		//
-    		if(type == InputType.KEYVALUE){
-    			String [] keyValuePair = line.split("\t");
-    			key = keyValuePair[0];
-    			value = keyValuePair[1];
-    		}
-    		else {
-    			Integer num = i + startLine;
-    			String[] a = fileName.split("/");
-    			key=a[a.length-1]+"_"+num.toString();
-    			value=line;
-    		}
+			int startLine = mapMessage.getStartSeek();
+			int numLines= mapMessage.getNumLines();
+			OutputCollector output = new OutputCollector();
+			InputType type = mapMessage.getInputType();
+			String fileName=mapMessage.getInputFile();
+			LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
+
+			for(int i=0;i<startLine;i++) {
+				lnr.readLine();
+			}
+
+			String line=null;
+			Object inst = cotr.newInstance();
+			String key,value;
+			for(int i=0; i <numLines;i++) {
+				line=lnr.readLine();
+				
+				if(type == InputType.KEYVALUE){
+					String [] keyValuePair = line.split("\t");
+					key = keyValuePair[0];
+					value = keyValuePair[1];
+				} else {
+					Integer num = i + startLine;
+					String[] a = fileName.split("/");
+					key=a[a.length-1]+"_"+num.toString();
+					value=line;
+				}
     			Object [] args = {key,value,output};
     			mapMethod.invoke(inst, args);
-//    			System.out.println("good?5");
-    		
-    	}
-    	//Writing mapped key values to temp files
-    	String jobName =mapMessage.getJobName();
-    	int partitionNum = mapMessage.getPartitionNum();
-    	String filePath = mapMessage.getJobDirectory()+"/"+partitionNum;
-    	//System.out.println(filePath);
-    	boolean success = (new File(filePath)).mkdirs();
-    	
-    	//Making the dir failed
-//    	if(!success){
-//    		System.out.println("???");
-//    		//return (new MapResult(null,false,-1,null));
-//    	}
-    	
-    	ArrayList<Tuple<String,String>> data = output.getData();
-    	for(Tuple<String,String> tup: data){
-    		key= tup.getX();
-    		value= tup.getY();
-//    		System.out.println("Key:"+key);
-//    		System.out.println("Value:"+value);
-    		
-    		String filep = filePath + "/" + key + ".txt";
-    		//System.out.println(filePath);
-    		//System.out.println(filep);
-    		File file =new File(filep);
-    		
-    		
-    		
-    		 //if file doesnt exists, then create it
-    		if(!file.exists()){
-    			file.createNewFile();
-    		}
+			}
+			//Writing mapped key values to temp files
+			String jobName = mapMessage.getJobName();
+			int partitionNum = mapMessage.getPartitionNum();
+			String filePath = mapMessage.getJobDirectory()+"/"+partitionNum;
+
+			boolean success = (new File(filePath)).mkdirs();
+
+			ArrayList<Tuple<String,String>> data = output.getData();
+			for(Tuple<String,String> tup: data){
+				key= tup.getX();
+				value= tup.getY();
+				String filep = filePath + "/" + key + ".txt";
+				File file =new File(filep);
+
+				//if file doesnt exists, then create it
+				if(!file.exists()) {
+					file.createNewFile();
+				}
  
-    		//true = append file
-    		FileWriter fileWritter = new FileWriter(file,true);
+				//true = append file
+				FileWriter fileWritter = new FileWriter(file,true);
     		
-    		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-	        bufferWritter.write(value+"\n");
-	        bufferWritter.close();
-    	}
-    	System.out.println("FINISHED MAP");
-    	return (new MapResult(filePath,true,partitionNum,jobName));
+				BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+				bufferWritter.write(value+"\n");
+				bufferWritter.close();
+			}
+			System.out.println("FINISHED MAP");
+			return (new MapResult(filePath,true,partitionNum,jobName));
 		}
 		catch(Exception e){
 			e.printStackTrace();
 			System.out.println(e);
 			return (new MapResult(null,false,-1,null));
 		}
-    	//file = jobName/partitionNum/key.txt
-    	
-    	//write to files from outputcollector
-    	//then return mapResult
-    	
 	}
 	
 	
@@ -172,7 +141,7 @@ public class Slave extends Thread {
 	    			reduceMethod=m;
 	    	}
 			
-			ArrayList<String> fileNames = reduceMessage.getFileNames();//DirectoryHandler.getAllFiles(reduceMessage.getJobTmpFileDirectory(), ".txt");
+			ArrayList<String> fileNames = reduceMessage.getFileNames();
 			String key;
 			String val;
 			DataInputStream in;
@@ -222,10 +191,7 @@ public class Slave extends Thread {
 	}
 	public void run() {
 		System.out.println("Slave has stated");
-		ConfigReader cread = new ConfigReader();
-		MasterWrapper m = cread.readMaster();
-		System.out.println("In slave printing master");
-		System.out.println(m);
+		MasterWrapper m = ConfigReader.readMaster();
 		Socket toMaster;
 		InitiateConnection initConn = new InitiateConnection(ipAddress, portnum);
 		ObjectInputStream in;
@@ -233,11 +199,8 @@ public class Slave extends Thread {
 		Object inobj;
 		try {
 			toMaster = new Socket(m.ipAddress, m.portnum);
-//			System.out.println("fuck you1");
 			out = new ObjectOutputStream(toMaster.getOutputStream());
-//			System.out.println("fuck you2");
 			in = new ObjectInputStream(toMaster.getInputStream());
-//			System.out.println("fuck you3");
 			out.writeObject(initConn);
 			
 			while (true) {
@@ -260,7 +223,6 @@ public class Slave extends Thread {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 }

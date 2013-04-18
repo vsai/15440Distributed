@@ -1,7 +1,6 @@
 package userRequest;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -16,17 +15,10 @@ import fileIO.ConfigReader;
 
 public class RequestMapReduce {
 	
-	public RequestMapReduce () {
-		
-	}
-	
 	public static void main(String args[]) throws UnknownHostException {
-		ConfigReader cread = new ConfigReader();
-		MasterWrapper master = cread.readMaster();
+		MasterWrapper master = ConfigReader.readMaster();
 		Socket toMaster;
 		ObjectOutputStream out;
-		ObjectInputStream in;
-		boolean result = false;
 		Job jobRequest = new Job(null, null, null);
 		
 		String jobName = randomString(20);
@@ -51,34 +43,19 @@ public class RequestMapReduce {
 		jobRequest.setReduceClass(reduceClass);
 		jobRequest.setReduceURL(reduceURL);
 		jobRequest.setRequesterIp(myIp);
-		
-//		bunch of setters for other things of job
-//		jobRequest.set
-//		System.out.println("1");
 		try {
 			toMaster = new Socket(master.getIpAddress(), master.getPortnum());
-//			System.out.println("2");
 			out = new ObjectOutputStream(toMaster.getOutputStream());
-//			System.out.println("3");
-			//in = new ObjectInputStream(toMaster.getInputStream());
-//			System.out.println("adfadsf");
 			out.writeObject(jobRequest);
-//			System.out.println("adfadsf12312312");
 			out.flush();
 			System.out.println("sent jobrequest");
 			out.close();
-			//result = (Boolean) in.readObject();
-			//in.close();
-//			System.out.println("Received " + result);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
 		}	
 	}
-	
 	
 	public static String randomString(int len) {
 		String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

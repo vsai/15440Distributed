@@ -1,7 +1,6 @@
 package hadoop;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,28 +63,24 @@ public class SlaveMessageHandler extends Thread{
 								for (MapMessage mm : injob) {
 									if (mm.getPartitionNum() == mr.getPartitionNum()) {
 										injob.remove(mm);
-//										jobs.get(j).remove(mm);
-										System.out.println("AFter remove:"+jobs.get(j).size());
 										break;
 									}
 								}
 							}
 						}
 					}
-					//if failed MapResult
+					//here should try to handle if mapresult says it failed
 				} else if (inobj instanceof ReduceResult) {
 					ReduceResult rr = (ReduceResult) inobj;
 					
 					for (Job j : jobs.keySet()) {
 						if (j.getJobName().equals(rr.getJobName())) {
+							//set job state to ended in jobs hashmap (scheduler will clean it out)
 							j.setState(Job.State.ENDED);
 							writeDataToOutputFile(j);
 						}
 					}
-					
-					
-					//set job state to ended in jobs hashmap (scheduler will clean it out)
-					
+
 				}
 			} catch (IOException e) {
 				/* 
@@ -99,11 +94,8 @@ public class SlaveMessageHandler extends Thread{
 			}
 		}
 	}
-
-	
 	
 	private void writeDataToOutputFile(Job j) throws IOException {
-		// TODO Auto-generated method stub
 		String filePath = ConfigReader.getResultfiles() + j.getJobName() + "/";
 		ArrayList<String> allFiles = DirectoryHandler.getAllFiles(filePath, ".txt");
 		String outputFile = j.getOutputFilename();
@@ -122,9 +114,7 @@ public class SlaveMessageHandler extends Thread{
 			while((line=lnr.readLine()) !=null) {
 				value+=line;
 			}
-			
 	        bufferWritter.write(key + "\t" + value+"\n");
-	        
 		}
 		bufferWritter.close();
 	}

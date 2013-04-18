@@ -56,14 +56,9 @@ public class Master extends Thread {
 			ss = new ServerSocket(portnum);
 			while (true) {
 				try {
-//					System.out.println("go");
 					s = ss.accept();
-//					System.out.println("go1");
-//					System.out.println(s);
 					in = new ObjectInputStream(s.getInputStream());
-//					System.out.println("go2");
 					out = new ObjectOutputStream(s.getOutputStream());
-//					System.out.println("go3");
 					try {
 						inobj = in.readObject();
 						if (inobj instanceof InitiateConnection) {
@@ -77,8 +72,6 @@ public class Master extends Thread {
 							System.out.println("Received a job");
 							jobRequest = (Job) inobj;
 							jobs.put(jobRequest, Collections.synchronizedList(new ArrayList<MapMessage>()));
-//							out.writeBoolean(true);
-//							out.flush();
 							in.close();
 							out.close();
 							s.close();

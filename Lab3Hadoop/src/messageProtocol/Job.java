@@ -109,5 +109,4 @@ public class Job implements Serializable {
 	public void setInputformat(InputType inputformat) {
 		this.inputformat = inputformat;
 	}
-	
 }

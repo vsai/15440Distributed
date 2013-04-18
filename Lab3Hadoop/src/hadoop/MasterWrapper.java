@@ -1,7 +1,6 @@
 package hadoop;
 
 public class MasterWrapper {
-	
 	String ipAddress;
 	int portnum;
 	
@@ -17,5 +16,4 @@ public class MasterWrapper {
 	public int getPortnum() {
 		return portnum;
 	}
-
 }

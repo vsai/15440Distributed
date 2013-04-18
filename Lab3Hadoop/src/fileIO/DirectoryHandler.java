@@ -10,13 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.Set;
 
 public class DirectoryHandler {
 
 	public DirectoryHandler() {
-		
 	}
 	/*
 	 * Collects for all files of a particular key into one destination file
@@ -37,7 +34,6 @@ public class DirectoryHandler {
 			while ((strLine = br.readLine()) != null)   {
 				System.out.println(strLine + "\n");
 				out.write(strLine + "\n");
-//				System.out.println("just wrote");
 			}	
 		}
 		//Close the output stream

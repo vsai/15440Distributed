@@ -38,8 +38,6 @@ public class RecordReader {
 		for(int i=0; i<numLines;i++){
 			lines+=lnr.readLine();
 		}
-		return lines;
-		
-	}
-	
+		return lines;	
+	}	
 }
