@@ -1,0 +1,19 @@
+fully tested and debugged code for data set generator
+
+sequential solution
+
+MPI-based solution
+
+report in .pdf format
+- describe approach to parallelizng the algorithm, w/ pseudocode
+- findings from your "Experimentation & Analysis"
+
+
+
+
+Experimentation & Analysis
+- results for 2, 4, 8, 12 processes
+- how does performance scale
+- sweet spot?
+- diminishing marginal returns?
+- ___ use graphs
