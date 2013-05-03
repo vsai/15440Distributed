@@ -1,9 +1,2 @@
-#ghc03.ghc.andrew.cmu.edu
-#ghc07.ghc.andrew.cmu.edu
 ghc11.ghc.andrew.cmu.edu
 ghc13.ghc.andrew.cmu.edu
-#ghc37.ghc.andrew.cmu.edu
-#ghc17.ghc.andrew.cmu.edu
-#ghc19.ghc.andrew.cmu.edu
-#ghc23.ghc.andrew.cmu.edu
-#ghc29.ghc.andrew.cmu.edu

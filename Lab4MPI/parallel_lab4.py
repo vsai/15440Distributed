@@ -10,10 +10,12 @@ initTime = time.time()
 (minx, miny, maxx, maxy) = (0, 0, 100, 100)
 lengthDNA = 20
 numCentroids = 8
-numNodes = 1000000
+numNodes = 1000
 modes = ["node", "DNA"]
-mode = modes[1]
+mode = modes[0]
 #-------------------------------------------------------
+assert (numNodes >= numCentroids)
+
 
 def nodeDistance(src, dest):
 	assert(type(src) == type(dest))

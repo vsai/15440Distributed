@@ -112,11 +112,15 @@ class DNAWorld(World):
 
 
 if __name__ == "__main__":
-	BG = BodyGenerator(0, 10, 0, 10)
+	#worldDimensions
+	(minx, maxx, miny, maxy) = (0, 100, 0, 100)
+	BG = BodyGenerator(minx, maxx, miny, maxy)
 	numNodes = 10000
 	numCentroids = 2
-	NW = NodeWorld(BG.generateRandomNodes(numNodes), numCentroids)
-	BG.printNodes(NW.centroids.keys())
+	lengthDNA = 20
 	numIterations = 40
+	assert (numNodes >= numCentroids)
+	NW = NodeWorld(BG.generateRandomNodes(numNodes), numCentroids)
 	NW.recluster(numIterations)
-	BG.printNodes(NW.centroids.keys())
+	#DNAW = DNAWorld(BG.generateRandomDNA(lengthDNA, numNodes))
+	#DNAW.recluster(numIterations)
